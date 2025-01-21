@@ -12,7 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
         greeting = 'Good evening!';
     }
 
-    greetingElement.textContent = greeting;
+    // Typewriter effect
+    const typewriterElement = document.createElement('span');
+    typewriterElement.id = 'typewriter';
+    typewriterElement.textContent = greeting;
+    greetingElement.appendChild(typewriterElement);
 
     // Back to Top button functionality
     const backToTopButton = document.getElementById('back-to-top');
