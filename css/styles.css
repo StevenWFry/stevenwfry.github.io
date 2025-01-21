@@ -27,6 +27,28 @@ h1 {
     margin: 0;
 }
 
+nav ul {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    display: flex; /* Use flexbox to align items horizontally */
+    justify-content: center; /* Center the items horizontally */
+}
+
+nav ul li {
+    margin: 0 15px; /* Add some space between the items */
+}
+
+nav ul li a {
+    text-decoration: none; /* Remove underline from links */
+    color: #ffffff; /* Set link color */
+    font-weight: bold; /* Make the text bold */
+}
+
+nav ul li a:hover {
+    text-decoration: underline; /* Add underline on hover */
+}
+
 section {
     padding: 20px;
     margin: 10px;
@@ -46,7 +68,7 @@ footer {
 }
 
 #back-to-top {
-    /*display: none;*/ /* Hidden by default */
+    display: none; /* Hidden by default */
     position: fixed; /* Fixed/sticky position */
     bottom: 20px; /* Place the button at the bottom of the page */
     right: 30px; /* Place the button 30px from the right */
