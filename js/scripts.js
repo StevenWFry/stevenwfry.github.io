@@ -13,10 +13,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Typewriter effect
+    function typeWriter(text, element, delay = 100) {
+        let i = 0;
+        function type() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, delay);
+            }
+        }
+        type();
+    }
+
     const typewriterElement = document.createElement('span');
     typewriterElement.id = 'typewriter';
-    typewriterElement.textContent = greeting;
     greetingElement.appendChild(typewriterElement);
+    typeWriter(greeting, typewriterElement);
 
     // Back to Top button functionality
     const backToTopButton = document.getElementById('back-to-top');
