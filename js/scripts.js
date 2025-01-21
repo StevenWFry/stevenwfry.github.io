@@ -74,4 +74,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error fetching IP address:', error);
         });
+
+    // Lightbox functionality
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const lightbox = document.createElement('div');
+            lightbox.classList.add('lightbox');
+            lightbox.innerHTML = `<img src="${item.src}" alt="${item.alt}">`;
+            document.body.appendChild(lightbox);
+            lightbox.addEventListener('click', function() {
+                document.body.removeChild(lightbox);
+            });
+        });
+    });
 });

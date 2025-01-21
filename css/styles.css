@@ -118,3 +118,44 @@ img {
     from, to { border-color: transparent; }
     50% { border-color: orange; }
 }
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.gallery-item {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.gallery-item:hover {
+    transform: scale(1.1);
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.lightbox:target {
+    display: flex;
+}
