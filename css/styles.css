@@ -3,6 +3,17 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.light-mode {
+    background-color: white;
+    color: black;
+}
+
+body.dark-mode {
+    background-color: black;
+    color: white;
 }
 
 header {
@@ -51,4 +62,12 @@ footer {
 
 #back-to-top:hover {
     background-color: #555; /* Add a dark-grey background on hover */
+}
+
+#theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    cursor: pointer;
 }

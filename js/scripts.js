@@ -33,4 +33,18 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
     });
+
+    // Theme toggle functionality
+    const themeToggleButton = document.getElementById('theme-toggle');
+    themeToggleButton.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        document.body.classList.toggle('light-mode');
+    });
+
+    // Set initial theme based on user preference or default to light mode
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add('light-mode');
+    }
 });
