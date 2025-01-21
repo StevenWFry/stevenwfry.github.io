@@ -47,4 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         document.body.classList.add('light-mode');
     }
+
+    // Fetch and display visitor's IP address
+    fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            const ipElement = document.getElementById('visitor-ip');
+            ipElement.textContent = `Your IP: ${data.ip}`;
+        })
+        .catch(error => {
+            console.error('Error fetching IP address:', error);
+        });
 });
