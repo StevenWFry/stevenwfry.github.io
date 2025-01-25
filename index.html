@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
     <header>
@@ -42,6 +43,27 @@
         </div>
     </section>
     
+    <section id="3d-model">
+        <h2>3D Model</h2>
+        <canvas id="3d-canvas"></canvas>
+    </section>
+
+    <section id="testimonials">
+        <h2>Testimonials</h2>
+        <div class="testimonial">
+            <p>"This pirate is the best! His tales are legendary and his adventures are thrilling!"</p>
+            <p>- Captain Jack Sparrow</p>
+        </div>
+        <div class="testimonial">
+            <p>"A true master of the seas. His knowledge and skills are unmatched."</p>
+            <p>- Blackbeard</p>
+        </div>
+        <div class="testimonial">
+            <p>"Sailing with him was the best decision I ever made. Highly recommended!"</p>
+            <p>- Anne Bonny</p>
+        </div>
+    </section>
+    
     <section id="contact">
         <h2>Contact</h2>
         <img src="images/contact.jpg" alt="Contact Image" style="width:100%;max-width:600px;">
@@ -55,5 +77,6 @@
     
     <button id="back-to-top" title="Back to Top">↑</button>
     <script src="js/scripts.js"></script>
+    <script src="js/3d-model.js"></script>
 </body>
 </html>
