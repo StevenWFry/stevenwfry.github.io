@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fedora 43 × Omakub Style Setup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --done: #3fb950;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    background: linear-gradient(180deg, #161b22 0%, transparent 100%);
+  }
+
+  .header-left h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .header-left h1 span { color: var(--accent); }
+  .header-left h1 em { color: var(--accent4); font-style: normal; }
+
+  .subtitle {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  .progress-panel {
+    text-align: right;
+    min-width: 180px;
+  }
+
+  .progress-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .progress-bar {
+    width: 180px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    margin-left: auto;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  .progress-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .progress-count small {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .section {
+    margin-bottom: 40px;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.10s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.20s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .icon-terminal  { background: rgba(88,166,255,0.12); border: 1px solid rgba(88,166,255,0.25); }
+  .icon-gnome     { background: rgba(210,168,255,0.12); border: 1px solid rgba(210,168,255,0.25); }
+  .icon-apps      { background: rgba(63,185,80,0.12); border: 1px solid rgba(63,185,80,0.25); }
+  .icon-dotfiles  { background: rgba(247,129,102,0.12); border: 1px solid rgba(247,129,102,0.25); }
+
+  .section-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .section-count {
+    margin-left: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: transparent;
+    transition: background 0.2s;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .item:hover {
+    border-color: #444c56;
+    background: var(--surface2);
+    transform: translateX(2px);
+  }
+
+  .item.done {
+    border-color: rgba(63,185,80,0.25);
+    background: rgba(63,185,80,0.04);
+  }
+
+  .item.done::before {
+    background: var(--done);
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: transparent;
+  }
+
+  .item.done .checkbox {
+    background: var(--done);
+    border-color: var(--done);
+  }
+
+  .checkmark {
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.2s cubic-bezier(.4,0,.2,1);
+    color: #0d1117;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .item.done .checkmark {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .item-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .item.done .item-name {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: #444;
+  }
+
+  .item-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.5;
+  }
+
+  .item-cmd {
+    margin-top: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid #2d333b;
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--accent);
+    word-break: break-all;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    position: relative;
+  }
+
+  .item-cmd .prompt {
+    color: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  .copy-btn {
+    position: absolute;
+    right: 6px; top: 5px;
+    background: #2d333b;
+    border: none;
+    color: var(--muted);
+    border-radius: 4px;
+    padding: 3px 7px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .copy-btn:hover { background: var(--accent); color: #0d1117; }
+
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .badge-dnf    { background: rgba(88,166,255,0.15); color: #79c0ff; border: 1px solid rgba(88,166,255,0.2); }
+  .badge-flatpak{ background: rgba(210,168,255,0.15); color: #d2a8ff; border: 1px solid rgba(210,168,255,0.2); }
+  .badge-manual { background: rgba(247,129,102,0.15); color: #ffa198; border: 1px solid rgba(247,129,102,0.2); }
+  .badge-config { background: rgba(63,185,80,0.15);  color: #7ee787; border: 1px solid rgba(63,185,80,0.2);  }
+
+  .reset-btn {
+    display: block;
+    margin: 48px auto 0;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+
+  .reset-btn:hover {
+    border-color: var(--accent3);
+    color: var(--accent3);
+  }
+
+  .congrats {
+    display: none;
+    margin-top: 40px;
+    padding: 28px;
+    background: rgba(63,185,80,0.07);
+    border: 1px solid rgba(63,185,80,0.3);
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .congrats.show { display: block; }
+
+  .congrats .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+  .congrats h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    margin-bottom: 6px;
+  }
+  .congrats p { font-size: 0.85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1><span>Fedora 43</span> × <em>Omakub</em> Style</h1>
+    <div class="subtitle">// Manual setup checklist — inspired by DHH's opinionated Ubuntu workflow</div>
+  </div>
+  <div class="progress-panel">
+    <div class="progress-label">Overall progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-count"><span id="doneCount">0</span> <small>/ <span id="totalCount">0</span> done</small></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- SECTION 1: Terminal & Shell -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-terminal">⚡</div>
+      <div class="section-title">Terminal & Shell</div>
+      <div class="section-count" id="count-0"></div>
+    </div>
+    <div class="items" id="section-0"></div>
+  </div>
+
+  <!-- SECTION 2: GNOME Theming -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-gnome">🎨</div>
+      <div class="section-title">GNOME Theming</div>
+      <div class="section-count" id="count-1"></div>
+    </div>
+    <div class="items" id="section-1"></div>
+  </div>
+
+  <!-- SECTION 3: App Installations -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-apps">📦</div>
+      <div class="section-title">App Installations</div>
+      <div class="section-count" id="count-2"></div>
+    </div>
+    <div class="items" id="section-2"></div>
+  </div>
+
+  <!-- SECTION 4: Dotfiles & Config -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-dotfiles">⚙️</div>
+      <div class="section-title">Dotfiles & Configs</div>
+      <div class="section-count" id="count-3"></div>
+    </div>
+    <div class="items" id="section-3"></div>
+  </div>
+
+  <div class="congrats" id="congrats">
+    <div class="emoji">🚀</div>
+    <h2>// SETUP COMPLETE</h2>
+    <p>Your Fedora 43 is now running in full Omakub style. Happy hacking.</p>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ Reset all checkboxes</button>
+</main>
+
+<script>
+const data = [
+  // Section 0: Terminal & Shell
+  [
+    {
+      name: "Install Zsh", badge: "dnf",
+      desc: "Zsh is a powerful shell with a rich plugin ecosystem. Set it as your default after installing.",
+      cmd: "sudo dnf install -y zsh && chsh -s $(which zsh)"
+    },
+    {
+      name: "Install Oh My Zsh", badge: "manual",
+      desc: "Framework for managing Zsh configuration with plugins and themes baked in.",
+      cmd: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
+    },
+    {
+      name: "Install Starship prompt", badge: "manual",
+      desc: "Minimal, blazing-fast cross-shell prompt. The Omakub aesthetic equivalent for Fedora.",
+      cmd: 'curl -sS https://starship.rs/install.sh | sh'
+    },
+    {
+      name: "Install Alacritty terminal", badge: "dnf",
+      desc: "GPU-accelerated terminal used by Omakub. Fast, minimal, themeable.",
+      cmd: "sudo dnf install -y alacritty"
+    },
+    {
+      name: "Install Zellij (terminal multiplexer)", badge: "manual",
+      desc: "Modern tmux alternative. Omakub uses this for multi-pane sessions and tab layout.",
+      cmd: "cargo install --locked zellij\n# or: sudo dnf copr enable varlad/zellij && sudo dnf install zellij"
+    },
+    {
+      name: "Install Nerd Font (JetBrains Mono)", badge: "manual",
+      desc: "Nerd Fonts add developer icons to your terminal. JetBrains Mono is Omakub's default. Place in ~/.local/share/fonts/ and run fc-cache.",
+      cmd: "mkdir -p ~/.local/share/fonts && cd ~/.local/share/fonts && curl -fLo 'JetBrainsMono.zip' https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip && unzip JetBrainsMono.zip && fc-cache -fv"
+    },
+    {
+      name: "Configure Alacritty with Tokyo Night theme", badge: "config",
+      desc: "Create ~/.config/alacritty/alacritty.toml with the Tokyo Night color scheme. Omakub ships this as a default.",
+      cmd: "mkdir -p ~/.config/alacritty\n# Download a ready-made config:\ncurl -fLo ~/.config/alacritty/alacritty.toml https://raw.githubusercontent.com/folke/tokyonight.nvim/main/extras/alacritty/tokyonight_night.toml"
+    },
+    {
+      name: "Install zsh-autosuggestions & zsh-syntax-highlighting", badge: "dnf",
+      desc: "Essential Zsh plugins that mimic fish shell UX. Omakub enables both by default.",
+      cmd: "sudo dnf install -y zsh-autosuggestions zsh-syntax-highlighting"
+    },
+    {
+      name: "Install modern CLI tools (eza, fzf, ripgrep, zoxide, bat)", badge: "dnf",
+      desc: "The exact CLI utility stack from Omakub. Replaces ls, cat, grep, cd with smarter alternatives.",
+      cmd: "sudo dnf install -y eza fzf ripgrep zoxide bat"
+    },
+  ],
+  // Section 1: GNOME Theming
+  [
+    {
+      name: "Install GNOME Tweaks", badge: "dnf",
+      desc: "Essential tool to apply themes, change fonts, and tweak GNOME Shell behavior.",
+      cmd: "sudo dnf install -y gnome-tweaks"
+    },
+    {
+      name: "Install GNOME Extensions app", badge: "flatpak",
+      desc: "Manage GNOME Shell extensions via a GUI. Needed to enable window tiling & other Omakub-style enhancements.",
+      cmd: "flatpak install -y flathub org.gnome.Extensions"
+    },
+    {
+      name: "Enable Pop Shell (tiling windows)", badge: "dnf",
+      desc: "Omakub uses GNOME's built-in tiling + keyboard shortcuts. Pop Shell gives you a similar experience on Fedora.",
+      cmd: "sudo dnf install -y gnome-shell-extension-pop-shell"
+    },
+    {
+      name: "Disable GNOME animations", badge: "config",
+      desc: "Omakub removes animations entirely for instant workspace switching. Run this via gsettings.",
+      cmd: "gsettings set org.gnome.desktop.interface enable-animations false"
+    },
+    {
+      name: "Install Papirus icon theme", badge: "dnf",
+      desc: "Clean, consistent icon set that pairs well with the Tokyo Night color palette.",
+      cmd: "sudo dnf install -y papirus-icon-theme"
+    },
+    {
+      name: "Apply icon theme", badge: "config",
+      desc: "Set Papirus as the active icon theme system-wide using gsettings.",
+      cmd: "gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'"
+    },
+    {
+      name: "Install & apply Adwaita Dark (or Graphite theme)", badge: "manual",
+      desc: "Use GNOME's built-in dark mode, or install Graphite for a more refined dark shell experience.",
+      cmd: "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'\n# For Graphite: https://github.com/vinceliuice/Graphite-gtk-theme"
+    },
+    {
+      name: "Set up keyboard-first workspace shortcuts", badge: "config",
+      desc: "Omakub binds Super+1–6 for workspace switching. Configure this in Settings → Keyboard → Shortcuts.",
+      cmd: "# Go to: Settings → Keyboard → Keyboard Shortcuts → Navigation\n# Set 'Switch to workspace N' to Super+N"
+    },
+    {
+      name: "Install Catppuccin or Tokyo Night GNOME theme", badge: "manual",
+      desc: "A dark color palette to match your terminal. Catppuccin Mocha mirrors the Omakub aesthetic closely on Fedora.",
+      cmd: "# Catppuccin GTK: https://github.com/catppuccin/gtk\ncurl -LsSO https://github.com/catppuccin/gtk/releases/latest/download/Catppuccin-Mocha-Standard-Blue-Dark.zip"
+    },
+    {
+      name: "Customize Alacritty: remove window decorations", badge: "config",
+      desc: "Omakub runs Alacritty without a system title bar for a cleaner look. Add decorations = 'none' to your alacritty.toml.",
+      cmd: "# In ~/.config/alacritty/alacritty.toml add:\n# [window]\n# decorations = \"none\"\n# opacity = 0.95"
+    },
+  ],
+  // Section 2: App Installations
+  [
+    {
+      name: "Install Flatpak & Flathub", badge: "dnf",
+      desc: "Fedora ships with Flatpak. Add the Flathub remote to access the full app catalog Omakub uses.",
+      cmd: "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+    },
+    {
+      name: "Install Google Chrome", badge: "manual",
+      desc: "Omakub sets Chrome as the default browser. Add the repo and install via dnf.",
+      cmd: "sudo dnf install -y 'https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm'"
+    },
+    {
+      name: "Install VSCode", badge: "manual",
+      desc: "Omakub ships VSCode preconfigured. Add Microsoft's dnf repo for updates.",
+      cmd: "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && sudo sh -c 'echo -e \"[code]\\nname=Visual Studio Code\\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\\nenabled=1\\ngpgcheck=1\\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\" > /etc/yum.repos.d/vscode.repo' && sudo dnf install -y code"
+    },
+    {
+      name: "Install Neovim (latest)", badge: "dnf",
+      desc: "Omakub's in-terminal editor. Install the latest build for LazyVim compatibility.",
+      cmd: "sudo dnf install -y neovim"
+    },
+    {
+      name: "Install LazyVim (Neovim distro)", badge: "manual",
+      desc: "The Neovim config Omakub uses. Backs up your existing config and installs LazyVim starter.",
+      cmd: "git clone https://github.com/LazyVim/starter ~/.config/nvim && rm -rf ~/.config/nvim/.git"
+    },
+    {
+      name: "Install Docker", badge: "manual",
+      desc: "Omakub sets up Docker with preconfigured MySQL & Redis containers. Use the official Docker repo on Fedora.",
+      cmd: "sudo dnf -y install dnf-plugins-core && sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo && sudo dnf install -y docker-ce docker-ce-cli containerd.io && sudo systemctl enable --now docker && sudo usermod -aG docker $USER"
+    },
+    {
+      name: "Install lazydocker (Docker TUI)", badge: "manual",
+      desc: "Omakub's Docker dashboard — a beautiful terminal UI to manage containers.",
+      cmd: 'curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_lazydocker.sh | bash'
+    },
+    {
+      name: "Install mise (runtime version manager)", badge: "manual",
+      desc: "Omakub uses mise to manage Node.js, Ruby, Python, Go. Replaces nvm/rbenv/pyenv with one tool.",
+      cmd: "curl https://mise.run | sh\n# Then add to ~/.zshrc: eval \"$(mise activate zsh)\"\nmise use --global node@lts ruby@latest"
+    },
+    {
+      name: "Install GitHub CLI (gh)", badge: "dnf",
+      desc: "Official GitHub command-line tool — clone, PR, issue workflows from the terminal.",
+      cmd: "sudo dnf install -y gh"
+    },
+    {
+      name: "Install Flameshot (screenshots)", badge: "dnf",
+      desc: "Omakub replaces the default screenshot tool with Flameshot for annotation and quick sharing. Bind to Ctrl+Print.",
+      cmd: "sudo dnf install -y flameshot"
+    },
+    {
+      name: "Install Signal & Spotify", badge: "flatpak",
+      desc: "Communication and music apps included in Omakub's daily driver setup.",
+      cmd: "flatpak install -y flathub org.signal.Signal com.spotify.Client"
+    },
+    {
+      name: "Install VLC & Obsidian", badge: "flatpak",
+      desc: "VLC for media, Obsidian for Markdown note-taking. Both in Omakub's GUI app list.",
+      cmd: "flatpak install -y flathub org.videolan.VLC md.obsidian.Obsidian"
+    },
+  ],
+  // Section 3: Dotfiles & Config
+  [
+    {
+      name: "Configure Starship prompt (Tokyo Night preset)", badge: "config",
+      desc: "Set up your Starship config to match Omakub's clean, informative prompt style.",
+      cmd: "mkdir -p ~/.config && starship preset tokyo-night -o ~/.config/starship.toml\n# Add to ~/.zshrc: eval \"$(starship init zsh)\""
+    },
+    {
+      name: "Create ~/.zshrc with Omakub-style aliases", badge: "config",
+      desc: "Add useful aliases: ls → eza, cat → bat, cd → zoxide, etc. These come preconfigured in Omakub.",
+      cmd: "# Add to ~/.zshrc:\nalias ls='eza --icons'\nalias ll='eza -la --icons'\nalias cat='bat'\nalias cd='z'\nalias lzd='lazydocker'\neval \"$(zoxide init zsh)\""
+    },
+    {
+      name: "Set up fzf key bindings & fuzzy completion", badge: "config",
+      desc: "fzf integrates with Ctrl+R (history), Ctrl+T (files), Alt+C (dirs). Omakub enables all three.",
+      cmd: "# Add to ~/.zshrc:\nsource /usr/share/fzf/shell/key-bindings.zsh\nsource /usr/share/fzf/shell/completion.zsh"
+    },
+    {
+      name: "Configure Neovim (Tokyo Night colorscheme)", badge: "config",
+      desc: "If using LazyVim, add Tokyo Night as your theme in ~/.config/nvim/lua/plugins/colorscheme.lua.",
+      cmd: '# In ~/.config/nvim/lua/plugins/colorscheme.lua:\n# { "folke/tokyonight.nvim", opts = { style = "night" } }'
+    },
+    {
+      name: "Configure Zellij layout (Omakub-style)", badge: "config",
+      desc: "Set Zellij default layout with a status bar and pane structure. Place config in ~/.config/zellij/.",
+      cmd: "mkdir -p ~/.config/zellij && zellij setup --dump-config > ~/.config/zellij/config.kdl"
+    },
+    {
+      name: "Install and configure git with global settings", badge: "config",
+      desc: "Omakub sets global git settings including delta as a pager, and your identity.",
+      cmd: "git config --global user.name 'Your Name'\ngit config --global user.email 'you@example.com'\ngit config --global core.pager delta\ngit config --global init.defaultBranch main"
+    },
+    {
+      name: "Install delta (git diff pager)", badge: "dnf",
+      desc: "Beautiful syntax-highlighted git diffs. Omakub configures delta as the default git pager.",
+      cmd: "sudo dnf install -y git-delta"
+    },
+    {
+      name: "Set up SSH keys for GitHub", badge: "manual",
+      desc: "Generate an ed25519 key, add to ssh-agent, and paste the public key to GitHub.",
+      cmd: 'ssh-keygen -t ed25519 -C "you@example.com"\neval "$(ssh-agent -s)"\nssh-add ~/.ssh/id_ed25519\ngh ssh-key add ~/.ssh/id_ed25519.pub'
+    },
+  ],
+];
+
+const sectionColors = [
+  '#58a6ff', '#d2a8ff', '#3fb950', '#f78166'
+];
+
+let state = [];
+
+function init() {
+  // Load state from localStorage
+  const saved = localStorage.getItem('fedora-omakub-state');
+  
+  let totalCount = 0;
+  data.forEach((section, si) => {
+    section.forEach((item, ii) => {
+      totalCount++;
+    });
+  });
+  document.getElementById('totalCount').textContent = totalCount;
+
+  data.forEach((section, si) => {
+    const container = document.getElementById(`section-${si}`);
+    if (!state[si]) state[si] = {};
+
+    section.forEach((item, ii) => {
+      const isDone = saved ? (JSON.parse(saved)[`${si}-${ii}`] || false) : false;
+      state[`${si}-${ii}`] = isDone;
+      container.appendChild(createItem(item, si, ii, isDone));
+    });
+  });
+
+  updateProgress();
+}
+
+function createItem(item, si, ii, isDone) {
+  const div = document.createElement('div');
+  div.className = 'item' + (isDone ? ' done' : '');
+  div.id = `item-${si}-${ii}`;
+  div.onclick = () => toggle(si, ii);
+
+  const badgeClass = {
+    dnf: 'badge-dnf', flatpak: 'badge-flatpak', manual: 'badge-manual', config: 'badge-config'
+  }[item.badge] || 'badge-config';
+
+  div.innerHTML = `
+    <div class="checkbox"><span class="checkmark">✓</span></div>
+    <div class="item-body">
+      <div class="item-name">
+        ${item.name}
+        <span class="badge ${badgeClass}">${item.badge}</span>
+      </div>
+      <div class="item-desc">${item.desc}</div>
+      ${item.cmd ? `<div class="item-cmd">
+        <span class="prompt">$</span>
+        <span style="flex:1; padding-right: 40px">${item.cmd.replace(/\n/g, '<br>')}</span>
+        <button class="copy-btn" onclick="event.stopPropagation(); copyCmd(this, \`${item.cmd.replace(/`/g, '\\`')}\`)">copy</button>
+      </div>` : ''}
+    </div>
+  `;
+  return div;
+}
+
+function toggle(si, ii) {
+  const key = `${si}-${ii}`;
+  state[key] = !state[key];
+  const el = document.getElementById(`item-${si}-${ii}`);
+  el.classList.toggle('done', state[key]);
+  saveState();
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = Object.keys(state).length;
+  const done = Object.values(state).filter(Boolean).length;
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('progressFill').style.width = total ? `${(done/total)*100}%` : '0%';
+
+  // Section counts
+  data.forEach((section, si) => {
+    const sectionDone = section.filter((_, ii) => state[`${si}-${ii}`]).length;
+    document.getElementById(`count-${si}`).textContent = `${sectionDone}/${section.length}`;
+  });
+
+  const congrats = document.getElementById('congrats');
+  if (done === total && total > 0) {
+    congrats.classList.add('show');
+  } else {
+    congrats.classList.remove('show');
+  }
+}
+
+function saveState() {
+  const toSave = {};
+  Object.entries(state).forEach(([k, v]) => { toSave[k] = v; });
+  localStorage.setItem('fedora-omakub-state', JSON.stringify(toSave));
+}
+
+function resetAll() {
+  if (!confirm('Reset all checkboxes?')) return;
+  Object.keys(state).forEach(k => state[k] = false);
+  document.querySelectorAll('.item').forEach(el => el.classList.remove('done'));
+  localStorage.removeItem('fedora-omakub-state');
+  updateProgress();
+}
+
+function copyCmd(btn, cmd) {
+  navigator.clipboard.writeText(cmd).then(() => {
+    btn.textContent = 'copied!';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
