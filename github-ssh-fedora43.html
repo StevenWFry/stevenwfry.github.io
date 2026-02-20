@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub SSH Keys on Fedora 43 — swf.wtf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #00ff88;
+    --accent2: #ff3366;
+    --accent3: #6644ff;
+    --text: #e2e2f0;
+    --muted: #666680;
+    --code-bg: #0d0d18;
+    --code-border: #252540;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Fira Code', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* Ambient glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -40%;
+    left: -20%;
+    width: 80vw;
+    height: 80vh;
+    background: radial-gradient(ellipse, rgba(0,255,136,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+  }
+
+  .site-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .site-logo span { color: var(--muted); }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-left: 2rem;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    padding: 5rem 3rem 3rem;
+    max-width: 860px;
+    margin: 0 auto;
+    z-index: 10;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .tag {
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.25);
+    color: var(--accent);
+    padding: 0.2em 0.7em;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+  }
+
+  .sep { color: var(--border); }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 600px;
+    border-left: 2px solid var(--accent3);
+    padding-left: 1rem;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    max-width: 860px;
+    margin: 2rem auto;
+    padding: 0 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    z-index: 10;
+    position: relative;
+  }
+
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 3rem 6rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Step blocks */
+  .step {
+    margin: 3rem 0;
+    position: relative;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0.7;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    font-size: 0.875rem;
+    line-height: 1.85;
+    color: #aaaacc;
+    margin-bottom: 1rem;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-left: 3px solid var(--accent);
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+  }
+
+  .code-label {
+    background: var(--code-border);
+    color: var(--muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2em 0.6em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .copy-btn.copied {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  pre {
+    padding: 1.2rem 1.4rem;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+
+  code {
+    font-family: 'Fira Code', monospace;
+    color: var(--text);
+  }
+
+  /* Syntax-ish coloring */
+  .cmd { color: #00ff88; }
+  .flag { color: #6644ff; }
+  .str { color: #ffaa44; }
+  .com { color: #444466; font-style: italic; }
+  .key { color: #ff3366; }
+
+  /* Callout boxes */
+  .callout {
+    border: 1px solid var(--code-border);
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #aaaacc;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .callout::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .callout.info { border-color: rgba(102,68,255,0.3); background: rgba(102,68,255,0.05); }
+  .callout.info::before { background: var(--accent3); }
+  .callout.info .callout-icon { color: var(--accent3); }
+
+  .callout.warn { border-color: rgba(255,170,68,0.3); background: rgba(255,170,68,0.05); }
+  .callout.warn::before { background: #ffaa44; }
+  .callout.warn .callout-icon { color: #ffaa44; }
+
+  .callout.tip { border-color: rgba(0,255,136,0.2); background: rgba(0,255,136,0.04); }
+  .callout.tip::before { background: var(--accent); }
+  .callout.tip .callout-icon { color: var(--accent); }
+
+  .callout-icon {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+
+  /* Inline code */
+  code.inline {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    color: var(--accent);
+    padding: 0.1em 0.4em;
+    font-size: 0.85em;
+  }
+
+  /* Section separator */
+  .section-break {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 3.5rem 0;
+    color: var(--border);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+  }
+
+  .section-break::before,
+  .section-break::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Terminal animation */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    background: var(--accent);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1.1s step-end infinite;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    position: relative;
+    z-index: 10;
+  }
+
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+
+  /* Page load animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero, .content { animation: fadeUp 0.5s ease both; }
+  .content { animation-delay: 0.1s; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    header, .hero, .divider, .content { padding-left: 1.2rem; padding-right: 1.2rem; }
+    h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="site-logo" href="#">swf<span>.wtf</span></a>
+  <nav>
+    <a href="#">Blog</a>
+    <a href="#">Notes</a>
+    <a href="#">About</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="post-meta">
+    <span class="tag">Fedora 43</span>
+    <span class="tag">Git</span>
+    <span class="tag">SSH</span>
+    <span class="sep">·</span>
+    <span>Feb 2026</span>
+    <span class="sep">·</span>
+    <span>5 min read</span>
+  </div>
+
+  <h1>GitHub SSH Keys<br>on <em>Fedora 43</em></h1>
+
+  <p class="subtitle">
+    Generate a proper ed25519 key, wire it into the ssh-agent, upload it to GitHub,
+    and never type a password again. Done in under five minutes.
+  </p>
+</div>
+
+<div class="divider">// start here</div>
+
+<div class="content">
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">Step 01 —</span>
+      <h2>Check for existing SSH keys</h2>
+    </div>
+    <p>Before generating anything new, check if you already have a key pair sitting in <code class="inline">~/.ssh</code>. If you see files like <code class="inline">id_ed25519.pub</code> or <code class="inline">id_rsa.pub</code>, you can skip straight to Step 3.</p>
+
+    <div class="code-block">
+      <div class="code-label">
+        <span>bash</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><code><span class="cmd">ls</span> <span class="flag">-al</span> ~/.ssh</code></pre>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">◆ Info</span>
+      If the directory doesn't exist at all, that's fine — the keygen command in the next step will create it automatically.
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">Step 02 —</span>
+      <h2>Generate a new ed25519 key</h2>
+    </div>
+    <p>Use <code class="inline">ed25519</code> — it's faster and more secure than the older RSA approach. Swap in the email address tied to your GitHub account.</p>
+
+    <div class="code-block">
+      <div class="code-label">
+        <span>bash</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><code><span class="cmd">ssh-keygen</span> <span class="flag">-t</span> ed25519 <span class="flag">-C</span> <span class="str">"you@example.com"</span></code></pre>
+    </div>
+
+    <p>When prompted:</p>
+    <div class="code-block">
+      <div class="code-label"><span>output</span></div>
+      <pre><code><span class="com"># Press Enter to accept the default location (~/.ssh/id_ed25519)</span>
+Enter file in which to save the key: <span class="cursor"></span>
+
+<span class="com"># Add a passphrase (recommended) or press Enter to skip</span>
+Enter passphrase (empty for no passphrase): <span class="cursor"></span></code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">◆ Tip</span>
+      A passphrase protects your private key if your machine is ever compromised. You'll only need to type it once per session if you use ssh-agent (next step).
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">Step 03 —</span>
+      <h2>Add the key to ssh-agent</h2>
+    </div>
+    <p>The agent holds your key in memory so you don't re-enter the passphrase on every git push. Start it, then register the key.</p>
+
+    <div class="code-block">
+      <div class="code-label">
+        <span>bash</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><code><span class="com"># Start the ssh-agent in the background</span>
+<span class="cmd">eval</span> <span class="str">"$(ssh-agent -s)"</span>
+
+<span class="com"># Register your private key</span>
+<span class="cmd">ssh-add</span> ~/.ssh/id_ed25519</code></pre>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">◆ Persist across reboots</span>
+      On Fedora with systemd, you can also enable the user ssh-agent socket so it starts automatically: <code class="inline">systemctl --user enable --now ssh-agent</code>, then add <code class="inline">export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"</code> to your <code class="inline">~/.bashrc</code>.
+    </div>
+  </div>
+
+  <div class="section-break">// github time</div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">Step 04 —</span>
+      <h2>Copy your public key</h2>
+    </div>
+    <p>Print the public key to your terminal, then copy it to your clipboard. Only ever share the <code class="inline">.pub</code> file — the private key never leaves your machine.</p>
+
+    <div class="code-block">
+      <div class="code-label">
+        <span>bash</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><code><span class="cmd">cat</span> ~/.ssh/id_ed25519.pub
+
+<span class="com"># Or pipe straight to clipboard with xclip / xsel</span>
+<span class="cmd">cat</span> ~/.ssh/id_ed25519.pub <span class="key">|</span> <span class="cmd">xclip</span> <span class="flag">-selection</span> clipboard</code></pre>
+    </div>
+
+    <p>If <code class="inline">xclip</code> isn't installed: <code class="inline">sudo dnf install xclip -y</code></p>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">Step 05 —</span>
+      <h2>Add the key to GitHub</h2>
+    </div>
+    <p>Head to GitHub in your browser and navigate to:</p>
+
+    <div class="code-block">
+      <div class="code-label"><span>url</span></div>
+      <pre><code>github.com → Settings → SSH and GPG keys → New SSH key</code></pre>
+    </div>
+
+    <p>Paste your public key into the <strong>Key</strong> field. Give it a recognisable title (e.g. <code class="inline">fedora43-laptop</code>). Leave the key type as <strong>Authentication Key</strong>, then click <strong>Add SSH key</strong>.</p>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠ Warning</span>
+      Make sure there are no trailing newlines or extra whitespace when you paste. The key should start with <code class="inline">ssh-ed25519</code> and end with your email.
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">Step 06 —</span>
+      <h2>Test the connection</h2>
+    </div>
+    <p>One command confirms everything is wired up correctly:</p>
+
+    <div class="code-block">
+      <div class="code-label">
+        <span>bash</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><code><span class="cmd">ssh</span> <span class="flag">-T</span> git@github.com</code></pre>
+    </div>
+
+    <p>Expected output:</p>
+
+    <div class="code-block">
+      <div class="code-label"><span>output</span></div>
+      <pre><code>Hi <span class="str">username</span>! You've successfully authenticated,
+but GitHub does not provide shell access.</code></pre>
+    </div>
+
+    <p>If you see that message, you're done. All git operations using SSH URLs will now authenticate silently.</p>
+
+    <div class="callout tip">
+      <span class="callout-icon">◆ Switch existing repos to SSH</span>
+      Already cloned over HTTPS? Update the remote URL with:<br><br>
+      <code class="inline">git remote set-url origin git@github.com:USER/REPO.git</code>
+    </div>
+  </div>
+
+  <div class="section-break">// optional extras</div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">Bonus —</span>
+      <h2>Configure ~/.ssh/config for multiple accounts</h2>
+    </div>
+    <p>If you use multiple GitHub accounts (personal + work), create a config file to map different hostnames to different keys:</p>
+
+    <div class="code-block">
+      <div class="code-label">
+        <span>~/.ssh/config</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><code><span class="com"># Personal account</span>
+<span class="key">Host</span> github.com
+  <span class="flag">HostName</span>     github.com
+  <span class="flag">User</span>         git
+  <span class="flag">IdentityFile</span> ~/.ssh/id_ed25519
+
+<span class="com"># Work account</span>
+<span class="key">Host</span> github-work
+  <span class="flag">HostName</span>     github.com
+  <span class="flag">User</span>         git
+  <span class="flag">IdentityFile</span> ~/.ssh/id_ed25519_work</code></pre>
+    </div>
+
+    <p>Then clone work repos with: <code class="inline">git clone git@github-work:ORG/REPO.git</code></p>
+  </div>
+
+  <!-- Quick reference -->
+  <div class="section-break">// tldr</div>
+
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">TL;DR —</span>
+      <h2>The whole thing in one block</h2>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">
+        <span>bash — full setup</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <pre><code><span class="com"># 1. Generate key</span>
+<span class="cmd">ssh-keygen</span> <span class="flag">-t</span> ed25519 <span class="flag">-C</span> <span class="str">"you@example.com"</span>
+
+<span class="com"># 2. Start agent + add key</span>
+<span class="cmd">eval</span> <span class="str">"$(ssh-agent -s)"</span>
+<span class="cmd">ssh-add</span> ~/.ssh/id_ed25519
+
+<span class="com"># 3. Copy public key (install xclip first if needed)</span>
+<span class="cmd">sudo dnf install</span> xclip <span class="flag">-y</span>
+<span class="cmd">cat</span> ~/.ssh/id_ed25519.pub <span class="key">|</span> <span class="cmd">xclip</span> <span class="flag">-selection</span> clipboard
+
+<span class="com"># 4. Paste into github.com → Settings → SSH keys</span>
+
+<span class="com"># 5. Test</span>
+<span class="cmd">ssh</span> <span class="flag">-T</span> git@github.com</code></pre>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>
+    <a href="#">swf.wtf</a>
+    &nbsp;·&nbsp;
+    Written with a terminal and too much coffee
+    &nbsp;·&nbsp;
+    <a href="#">← back to blog</a>
+  </p>
+</footer>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

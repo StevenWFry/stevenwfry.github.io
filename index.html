@@ -357,6 +357,8 @@ header {
 .post-item:nth-child(2) { animation-delay: 0.6s; }
 .post-item:nth-child(3) { animation-delay: 0.65s; }
 .post-item:nth-child(4) { animation-delay: 0.7s; }
+.post-item:nth-child(5) { animation-delay: 0.75s; }
+.post-item:nth-child(6) { animation-delay: 0.8s; }
 
 .post-item:hover .post-item-title { color: var(--accent); }
 .post-item:hover { padding-left: 8px; }
@@ -556,23 +558,29 @@ footer {
     <div class="section-label">Latest writing</div>
 
     <!-- Featured post -->
-    <a href="virtualbox-guest-additions.html" class="post-featured">
+    <a href="github-ssh-fedora43.html" class="post-featured">
       <div class="post-featured-label">★ Latest post</div>
-      <div class="post-featured-title">VirtualBox Guest Additions on Linux</div>
+      <div class="post-featured-title">GitHub SSH Keys on Fedora 43</div>
       <div class="post-featured-excerpt">
-        The page I made so I'd stop Googling this every single time. Pick your distro — Fedora, Ubuntu, Debian, Arch, or Mint — run the commands, reboot, done.
+        Generate a proper ed25519 key, wire it into the ssh-agent, upload it to GitHub, and never type a password again. Done in under five minutes.
       </div>
       <div class="post-meta">
         <span>Feb 20, 2026</span>
         <span>·</span>
-        <span>reference</span>
-        <span class="tag">linux</span>
-        <span class="tag">virtualbox</span>
+        <span>guide</span>
+        <span class="tag">fedora</span>
+        <span class="tag">git</span>
+        <span class="tag">ssh</span>
       </div>
     </a>
 
     <!-- Post list -->
     <div class="post-list">
+      <a href="virtualbox-guest-additions.html" class="post-item">
+        <span class="post-item-date">Feb 20, 2026</span>
+        <span class="post-item-title">VirtualBox Guest Additions on Linux</span>
+        <span class="post-item-tag">linux</span>
+      </a>
       <a href="how-i-set-up-swf-wtf.html" class="post-item">
         <span class="post-item-date">Feb 20, 2026</span>
         <span class="post-item-title">How I set up swf.wtf in one morning</span>
