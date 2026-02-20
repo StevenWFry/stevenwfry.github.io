@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtualBox Guest Additions on Linux — swf.wtf</title>
+<meta name="description" content="How to install VirtualBox Guest Additions on Fedora, Ubuntu, Debian, Arch, and Linux Mint. The page I wish existed so I'd stop Googling this every time.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+:root {
+  --bg: #080b0f;
+  --surface: #0e1318;
+  --surface2: #141a22;
+  --border: #1e2a36;
+  --accent: #00ff9d;
+  --accent2: #ff4d6d;
+  --accent3: #ffd60a;
+  --accent4: #79c0ff;
+  --text: #d4e0ec;
+  --muted: #5a7a94;
+  --dim: #2a3f52;
+  --font-mono: 'Martian Mono', monospace;
+  --font-body: 'Lora', Georgia, serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  cursor: none;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
+  );
+  pointer-events: none;
+  z-index: 997;
+}
+
+.cursor {
+  position: fixed;
+  width: 12px; height: 20px;
+  background: var(--accent);
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  animation: blink 1.1s step-end infinite;
+  mix-blend-mode: screen;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* NAV */
+nav {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+  position: sticky;
+  top: 0;
+  background: rgba(8,11,15,0.92);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+}
+nav .inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+nav a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--muted);
+  transition: color 0.2s;
+  cursor: none;
+}
+nav a:hover { color: var(--accent); }
+nav .logo { color: var(--accent) !important; font-weight: 600; }
+
+.nav-distros {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.nav-distro-btn {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: none;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+.nav-distro-btn:hover,
+.nav-distro-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0,255,157,0.06);
+}
+
+/* LAYOUT */
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* HEADER */
+.page-header {
+  padding: 56px 0 48px;
+  border-bottom: 1px solid var(--border);
+  animation: fadeIn 0.4s ease both;
+}
+
+.page-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-tag::before { content: ''; display: inline-block; width: 24px; height: 1px; background: var(--accent2); }
+
+.page-header h1 {
+  font-family: var(--font-body);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+
+.page-header .subtitle {
+  font-size: 1rem;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.6;
+  max-width: 580px;
+}
+
+/* WHAT ARE GUEST ADDITIONS */
+.intro-box {
+  margin: 40px 0 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent4);
+  border-radius: 8px;
+  padding: 24px 28px;
+  animation: fadeIn 0.4s ease 0.1s both;
+}
+
+.intro-box h2 {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent4);
+  margin-bottom: 12px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.feature {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.feature span { color: var(--accent); }
+
+/* DISTRO TABS */
+.distro-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 48px 0 0;
+  flex-wrap: wrap;
+  animation: fadeIn 0.4s ease 0.2s both;
+}
+
+.tab-btn {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 9px 18px;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: none;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.tab-btn:hover { border-color: var(--dim); color: var(--text); }
+.tab-btn.active {
+  background: rgba(0,255,157,0.08);
+  border-color: rgba(0,255,157,0.35);
+  color: var(--accent);
+}
+
+/* DISTRO PANELS */
+.distro-panel {
+  display: none;
+  animation: fadeIn 0.3s ease both;
+  margin-top: 24px;
+}
+.distro-panel.active { display: block; }
+
+/* STEP */
+.steps { display: flex; flex-direction: column; gap: 16px; }
+
+.step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.step:hover { border-color: var(--dim); }
+
+.step-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(0,255,157,0.1);
+  border: 1px solid rgba(0,255,157,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.step-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  flex: 1;
+}
+
+.step-desc {
+  padding: 0 20px 16px 62px;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.step-desc strong { color: var(--text); }
+
+/* Code block */
+.code-block {
+  margin: 12px 20px 16px 62px;
+  background: #060910;
+  border: 1px solid #1a2535;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid #1a2535;
+  background: #0a0d13;
+}
+
+.code-lang {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.copy-btn {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  background: #1a2535;
+  border: none;
+  color: var(--muted);
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: none;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.copy-btn:hover { background: var(--accent); color: #080b0f; }
+
+.code-block pre {
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.8;
+  color: var(--accent);
+}
+
+.code-block pre .comment { color: var(--dim); }
+.code-block pre .cmd { color: var(--accent); }
+.code-block pre .flag { color: var(--accent3); }
+.code-block pre .path { color: #79c0ff; }
+
+/* Warning / tip callout */
+.callout {
+  margin: 8px 20px 16px 62px;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.callout.tip {
+  background: rgba(0,255,157,0.04);
+  border: 1px solid rgba(0,255,157,0.15);
+  color: var(--muted);
+}
+.callout.warn {
+  background: rgba(255,214,10,0.04);
+  border: 1px solid rgba(255,214,10,0.15);
+  color: var(--muted);
+}
+.callout.info {
+  background: rgba(121,192,255,0.04);
+  border: 1px solid rgba(121,192,255,0.15);
+  color: var(--muted);
+}
+.callout-icon { flex-shrink: 0; font-size: 0.9rem; margin-top: 1px; }
+.callout strong { color: var(--text); }
+
+/* Verify section */
+.verify-box {
+  margin-top: 32px;
+  background: rgba(63,185,80,0.05);
+  border: 1px solid rgba(63,185,80,0.2);
+  border-radius: 10px;
+  padding: 20px 24px;
+}
+.verify-box h3 {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #3fb950;
+  margin-bottom: 12px;
+}
+.verify-box p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+.verify-box p:last-child { margin-bottom: 0; }
+
+/* Troubleshoot */
+.troubleshoot {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+  animation: fadeIn 0.4s ease 0.3s both;
+}
+.troubleshoot h2 {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.troubleshoot h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.trouble-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.trouble-q {
+  padding: 14px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.2s;
+}
+.trouble-q:hover { background: var(--surface2); }
+.trouble-q .arrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--dim);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.trouble-item.open .trouble-q .arrow { transform: rotate(90deg); color: var(--accent); }
+.trouble-a {
+  display: none;
+  padding: 0 18px 16px;
+  font-size: 0.87rem;
+  color: var(--muted);
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+}
+.trouble-item.open .trouble-a { display: block; padding-top: 14px; }
+.trouble-a code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--accent3);
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 0 48px;
+  margin-top: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-sig { font-family: var(--font-mono); font-size: 0.65rem; color: var(--dim); }
+.footer-sig span { color: var(--accent2); }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a {
+  font-family: var(--font-mono); font-size: 0.65rem; color: var(--dim);
+  text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; cursor: none;
+}
+.footer-links a:hover { color: var(--accent); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .nav-distros { display: none; }
+  .step-desc, .code-block, .callout { margin-left: 20px; }
+  .features { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="index.html" class="logo">swf.wtf</a>
+    <div class="nav-distros">
+      <button class="nav-distro-btn" onclick="switchTab('fedora')">Fedora</button>
+      <button class="nav-distro-btn" onclick="switchTab('ubuntu')">Ubuntu</button>
+      <button class="nav-distro-btn" onclick="switchTab('debian')">Debian</button>
+      <button class="nav-distro-btn" onclick="switchTab('arch')">Arch</button>
+      <button class="nav-distro-btn" onclick="switchTab('mint')">Mint</button>
+    </div>
+    <a href="index.html">← home</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-tag">Reference guide</div>
+    <h1>VirtualBox Guest Additions on Linux</h1>
+    <p class="subtitle">The page I made so I'd stop Googling this every single time. Pick your distro, run the commands, reboot, done.</p>
+
+    <div class="intro-box">
+      <h2>// What do Guest Additions actually give you?</h2>
+      <p style="font-size:0.87rem; color: var(--muted); line-height:1.65;">A small package of drivers and utilities that make your VM feel like a real computer instead of a potato running inside another computer.</p>
+      <div class="features">
+        <div class="feature"><span>→</span> Auto-resize screen</div>
+        <div class="feature"><span>→</span> Shared clipboard</div>
+        <div class="feature"><span>→</span> Drag & drop files</div>
+        <div class="feature"><span>→</span> Shared folders</div>
+        <div class="feature"><span>→</span> Seamless mouse</div>
+        <div class="feature"><span>→</span> Better video perf</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- DISTRO TABS -->
+  <div class="distro-tabs">
+    <button class="tab-btn active" onclick="switchTab('fedora')" id="tab-fedora">🎩 Fedora</button>
+    <button class="tab-btn" onclick="switchTab('ubuntu')" id="tab-ubuntu">🟠 Ubuntu</button>
+    <button class="tab-btn" onclick="switchTab('debian')" id="tab-debian">🌀 Debian</button>
+    <button class="tab-btn" onclick="switchTab('arch')" id="tab-arch">🏹 Arch / Manjaro</button>
+    <button class="tab-btn" onclick="switchTab('mint')" id="tab-mint">🌿 Linux Mint</button>
+  </div>
+
+  <!-- ══ FEDORA ══ -->
+  <div class="distro-panel active" id="panel-fedora">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">Update your system first</div>
+        </div>
+        <div class="step-desc">Always update before installing kernel-related packages. A mismatch between your running kernel and headers will cause the build to fail.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo dnf update -y && sudo reboot</pre>
+        </div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>Actually reboot after updating. Skipping this is the #1 reason Guest Additions fails to compile on Fedora.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">Install build tools and kernel headers</div>
+        </div>
+        <div class="step-desc">Guest Additions compiles kernel modules on the fly, so it needs your kernel headers and build tools.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo dnf install -y gcc make perl kernel-headers kernel-devel dkms</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">Insert the Guest Additions CD image</div>
+        </div>
+        <div class="step-desc">In the VirtualBox window menu: <strong>Devices → Insert Guest Additions CD Image…</strong><br>A dialog will pop up — click <strong>Cancel</strong> (don't let it autorun).</div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>If the CD doesn't appear, it usually mounts automatically at <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">/run/media/$USER/VBox_GAs_*</code></span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-title">Run the installer</div>
+        </div>
+        <div class="step-desc">Navigate to the mounted CD and run the Linux installer script as root.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># Replace YOUR_USERNAME with your actual username</span>
+cd /run/media/$USER/VBox_GAs_*/
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+        <div class="step-desc" style="padding-top:0">This takes 2–4 minutes. You'll see it building kernel modules — that's normal.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">5</div>
+          <div class="step-title">Reboot</div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin: 0;">
+        <span class="callout-icon">ℹ</span>
+        <span><strong>Alternatively:</strong> You can skip steps 3–5 entirely by installing from RPM Fusion instead:<br>
+        <code style="font-family:var(--font-mono);font-size:0.73rem;background:rgba(0,0,0,0.3);padding:2px 7px;border-radius:3px;color:var(--accent3)">sudo dnf install -y virtualbox-guest-additions</code><br>
+        This is simpler but may lag behind the latest VirtualBox version.</span>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <p>After reboot, the VM window should auto-resize when you drag it. You can also confirm the services are running:</p>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ UBUNTU ══ -->
+  <div class="distro-panel" id="panel-ubuntu">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Update and install build dependencies</div></div>
+        <div class="step-desc">Ubuntu needs the same build tools as Fedora. One command handles it all.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo apt update && sudo apt upgrade -y
+sudo apt install -y build-essential dkms linux-headers-$(uname -r)</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Insert the Guest Additions CD</div></div>
+        <div class="step-desc">In the VirtualBox menu: <strong>Devices → Insert Guest Additions CD Image…</strong><br>Ubuntu may auto-open a file manager — close it and use the terminal instead.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Mount and run the installer</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># CD usually automounts — navigate to it:</span>
+cd /media/$USER/VBox_GAs_*/
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>If automount didn't work: <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">sudo mount /dev/cdrom /mnt && cd /mnt</code></span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Reboot</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <p>Window should auto-resize after reboot. To check services:</p>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DEBIAN ══ -->
+  <div class="distro-panel" id="panel-debian">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Update and install dependencies</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo apt update && sudo apt upgrade -y
+sudo apt install -y build-essential dkms linux-headers-$(uname -r)</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Insert Guest Additions CD</div></div>
+        <div class="step-desc"><strong>Devices → Insert Guest Additions CD Image…</strong> in the VirtualBox window.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Mount the CD manually (Debian often doesn't automount)</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo mkdir -p /mnt/cdrom
+sudo mount /dev/cdrom /mnt/cdrom
+cd /mnt/cdrom
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>Debian is the pickiest distro about kernel header versions. If the build fails, run <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">apt install linux-headers-$(uname -r)</code> and try again.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Reboot</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ ARCH ══ -->
+  <div class="distro-panel" id="panel-arch">
+    <div class="steps">
+
+      <div class="callout tip" style="margin: 0 0 16px;">
+        <span class="callout-icon">🏹</span>
+        <span><strong>Good news:</strong> Arch is actually the easiest. Install from the official repos — no CD image needed, no manual compilation.</span>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Update your system</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo pacman -Syu</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Install Guest Additions from official repos</div></div>
+        <div class="step-desc">For systems with a desktop (X11 or Wayland). Use <code style="font-family:var(--font-mono);font-size:0.8rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">virtualbox-guest-utils-nox</code> for headless/server setups.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># For desktop systems (Gnome, KDE, etc.):</span>
+sudo pacman -S virtualbox-guest-utils
+
+<span class="comment"># For headless / server:</span>
+sudo pacman -S virtualbox-guest-utils-nox</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Enable and start the service</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo systemctl enable --now vboxservice</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Add yourself to the vboxsf group (for shared folders)</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo usermod -aG vboxsf $USER
+sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin: 0;">
+        <span class="callout-icon">ℹ</span>
+        <span><strong>Manjaro:</strong> Same commands, but Manjaro often ships with Guest Additions already installed. Check first with <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">pacman -Qs virtualbox-guest</code></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MINT ══ -->
+  <div class="distro-panel" id="panel-mint">
+    <div class="steps">
+
+      <div class="callout tip" style="margin: 0 0 16px;">
+        <span class="callout-icon">🌿</span>
+        <span><strong>Linux Mint tip:</strong> Mint is Ubuntu/Debian-based, so the process is nearly identical to Ubuntu — but Mint often has a GUI shortcut worth trying first.</span>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Try the GUI shortcut first</div></div>
+        <div class="step-desc">In the VirtualBox window: <strong>Devices → Insert Guest Additions CD Image…</strong><br>Mint usually pops up an autorun dialog. If it does, click <strong>Run</strong> and follow the prompts — you're done.</div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>If the autorun worked and the screen resizes after reboot, skip the rest. You're all set.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">If autorun didn't work — install manually</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo apt update
+sudo apt install -y build-essential dkms linux-headers-$(uname -r)
+
+<span class="comment"># Navigate to the mounted CD:</span>
+cd /media/$USER/VBox_GAs_*/
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Reboot</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="troubleshoot">
+    <h2>Troubleshooting</h2>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Screen doesn't resize after reboot <span class="arrow">▶</span></div>
+      <div class="trouble-a">First, make sure <strong>View → Auto-resize Guest Display</strong> is ticked in the VirtualBox menu. If it is, check that <code>vboxservice</code> is running with <code>systemctl status vboxservice</code>. If the service failed, the build likely didn't compile correctly — re-run the installer after confirming kernel headers match your running kernel (<code>uname -r</code>).</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Installer says "kernel headers not found" <span class="arrow">▶</span></div>
+      <div class="trouble-a">Your running kernel version and installed headers don't match. Run <code>uname -r</code> to see your kernel version, then install the exact matching headers. On Fedora: <code>sudo dnf install kernel-headers-$(uname -r) kernel-devel-$(uname -r)</code>. On Ubuntu/Debian/Mint: <code>sudo apt install linux-headers-$(uname -r)</code>. Then re-run the installer.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Shared clipboard isn't working <span class="arrow">▶</span></div>
+      <div class="trouble-a">Two things to check: (1) In VirtualBox settings for the VM, go to <strong>General → Advanced</strong> and set Shared Clipboard to <strong>Bidirectional</strong>. (2) Make sure <code>vboxclient --clipboard</code> is running. You can add it to your desktop startup if it isn't launching automatically. On Fedora/GNOME this usually starts itself — if not, add it to your <code>~/.bash_profile</code>.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">After a kernel update, Guest Additions stopped working <span class="arrow">▶</span></div>
+      <div class="trouble-a">This is the most common ongoing issue. When your kernel updates, the Guest Additions modules need to be recompiled. If you installed via the CD script, just re-run <code>sudo ./VBoxLinuxAdditions.run</code> again after updating. If you installed via your package manager (dnf/pacman), update the package too. DKMS should handle this automatically — but sometimes it doesn't. Run <code>sudo dkms status</code> to check.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Can't access shared folders (permission denied) <span class="arrow">▶</span></div>
+      <div class="trouble-a">You need to add your user to the <code>vboxsf</code> group: <code>sudo usermod -aG vboxsf $USER</code>. Then log out and back in (or reboot) for the group change to take effect. Shared folders mount at <code>/media/sf_foldername</code> by default.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">// swf<span>.wtf</span> — Steven William Fry</div>
+    <div class="footer-links">
+      <a href="index.html">home</a>
+      <a href="fedora-setup.html">fedora guide</a>
+      <a href="mailto:steven@swf.wtf">contact</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 2}px, ${e.clientY}px)`;
+});
+
+// Tab switching
+function switchTab(distro) {
+  document.querySelectorAll('.distro-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-distro-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + distro).classList.add('active');
+  document.getElementById('tab-' + distro).classList.add('active');
+  document.querySelectorAll('.nav-distro-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(distro === 'arch' ? 'arch' : distro === 'mint' ? 'mint' : distro)) {
+      b.classList.add('active');
+    }
+  });
+  document.querySelector('.distro-tabs').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Copy buttons
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  });
+}
+
+// Troubleshoot accordion
+function toggleTrouble(el) {
+  el.classList.toggle('open');
+}
+</script>
+</body>
+</html>
