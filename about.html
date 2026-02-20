@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>swf.wtf(1) — About</title>
+<meta name="description" content="man swf.wtf — a manual page for this blog.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300;400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b0f;
+  --surface: #0e1318;
+  --surface2: #141a22;
+  --border: #1e2a36;
+  --accent: #00ff9d;
+  --accent2: #ff4d6d;
+  --accent3: #ffd60a;
+  --text: #d4e0ec;
+  --muted: #5a7a94;
+  --dim: #2a3f52;
+  --font-mono: 'Martian Mono', monospace;
+  --font-body: 'IBM Plex Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Custom cursor */
+.cursor {
+  position: fixed;
+  width: 12px; height: 20px;
+  background: var(--accent);
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-2px, 0);
+  animation: cursorBlink 1.1s step-end infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes cursorBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* Scanlines */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px
+  );
+  pointer-events: none;
+  z-index: 997;
+}
+
+/* Noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 998;
+  opacity: 0.4;
+}
+
+/* ── TERMINAL BAR ── */
+.terminal-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+}
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+
+.terminal-title {
+  flex: 1;
+  text-align: center;
+  color: var(--dim);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+}
+
+.terminal-cmd {
+  color: var(--dim);
+  font-size: 0.68rem;
+}
+
+.terminal-back {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.68rem;
+  transition: color 0.2s;
+  cursor: none;
+}
+
+.terminal-back:hover { color: var(--accent); }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ── MAN PAGE WRAPPER ── */
+.manpage {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 4rem 6rem;
+  animation: fadeIn 0.3s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── MAN PAGE HEADER ── */
+.man-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.man-header-left,
+.man-header-right {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.man-header-center {
+  font-size: 0.78rem;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+}
+
+/* ── SECTION HEADERS ── */
+.section {
+  margin: 2.5rem 0 0.8rem;
+}
+
+.section-title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent3);
+  margin-bottom: 0.8rem;
+}
+
+/* ── SYNOPSIS ── */
+.synopsis {
+  padding-left: 2rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.synopsis .cmd { font-weight: 700; color: var(--accent); }
+.synopsis .arg { font-style: italic; color: var(--muted); }
+.synopsis .opt { color: var(--muted); }
+
+/* ── BODY TEXT ── */
+.man-body {
+  padding-left: 2rem;
+}
+
+.man-body p {
+  margin-bottom: 1rem;
+  text-align: justify;
+  hyphens: auto;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+/* ── DEFINITION LIST ── */
+.def-list {
+  padding-left: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.def-item {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  align-items: start;
+}
+
+.def-term {
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+  padding-top: 0.05rem;
+}
+
+.def-term .flag {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.def-desc {
+  font-size: 0.87rem;
+  line-height: 1.7;
+  color: var(--muted);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── RETURN VALUE ── */
+.return-block {
+  padding-left: 2rem;
+}
+
+.return-item {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.return-code {
+  font-weight: 700;
+  color: var(--accent2);
+  font-family: var(--font-mono);
+}
+
+.return-desc { color: var(--muted); }
+
+/* ── INLINE CODE ── */
+code {
+  font-family: var(--font-body);
+  font-weight: 500;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 0.05em 0.35em;
+  font-size: 0.9em;
+}
+
+strong { font-weight: 700; color: var(--text); }
+em { font-style: italic; }
+
+/* ── SUPERSCRIPTS ── */
+sup {
+  color: var(--accent2);
+  font-size: 0.65rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* ── NOTE BLOCK ── */
+.note-block {
+  margin: 1rem 0 1rem 2rem;
+  border-left: 3px solid var(--accent);
+  padding: 0.8rem 1.2rem;
+  background: rgba(0,255,157,0.04);
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: var(--muted);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.note-label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--accent);
+}
+
+/* ── SEE ALSO ── */
+.see-also {
+  padding-left: 2rem;
+  font-size: 0.88rem;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+.see-also a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--dim);
+  transition: color 0.2s;
+  cursor: none;
+}
+
+.see-also a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+
+/* ── FOOTNOTES ── */
+.footnotes-section {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.footnote {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: var(--dim);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.fn-num {
+  color: var(--accent2);
+  font-weight: 700;
+  padding-top: 0.05rem;
+  font-family: var(--font-mono);
+}
+
+/* ── MAN PAGE FOOTER ── */
+.man-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 3.5rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  .manpage { padding: 2rem 1.2rem 4rem; }
+  .def-item { grid-template-columns: 1fr; gap: 0.2rem; }
+  .man-header-center { display: none; }
+  .footnote { grid-template-columns: 30px 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<div class="terminal-bar">
+  <div class="terminal-dots">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+  </div>
+  <div class="terminal-title">man swf.wtf — bash — 220×52</div>
+  <a href="/" class="terminal-back">← swf.wtf</a>
+  <div class="terminal-cmd">q to quit <span class="blink">▋</span></div>
+</div>
+
+<div class="manpage">
+
+  <!-- MAN PAGE HEADER -->
+  <div class="man-header">
+    <span class="man-header-left">swf.wtf(1)</span>
+    <span class="man-header-center">User Commands</span>
+    <span class="man-header-right">swf.wtf(1)</span>
+  </div>
+
+  <!-- NAME -->
+  <div class="section">
+    <div class="section-title">Name</div>
+    <div class="synopsis">
+      <span class="cmd">swf.wtf</span> — a blog about Linux, developer tooling, and things that should be simpler than they are
+    </div>
+  </div>
+
+  <!-- SYNOPSIS -->
+  <div class="section">
+    <div class="section-title">Synopsis</div>
+    <div class="synopsis">
+      <span class="cmd">swf.wtf</span>
+      [<span class="opt">--read</span> <span class="arg">post</span>]
+      [<span class="opt">--rant</span> <span class="arg">topic</span>]
+      [<span class="opt">--footnote-count</span> <span class="arg">N</span>]
+      [<span class="opt">--coffee</span>]
+      [<span class="opt">--no-bullshit</span>]
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="section">
+    <div class="section-title">Description</div>
+    <div class="man-body">
+      <p><strong>swf.wtf</strong> is a personal technical blog operated by a human being who uses Fedora Linux by choice — and yes, that sentence does contain a certain amount of implied personality. It publishes guides, notes, and opinions about software development, Linux, and the specific kind of low-grade institutional frustration that accumulates when you spend enough time reading documentation that was clearly written by someone who understood the subject so completely that they forgot what it was like not to.</p>
+
+      <p>Posts on <strong>swf.wtf</strong> attempt to be technically accurate, occasionally funny, and — this is the part that distinguishes them from approximately forty percent of the internet — honest about when something is genuinely annoying.<sup><a href="#fn1">[1]</a></sup> The working assumption is that you are an adult who can handle sentences that contain both a <code>git rebase</code> command and an opinion about it.</p>
+
+      <p>The name <strong>swf.wtf</strong> is not explained here. This is intentional. It is, however, pronounced however you want to pronounce it, because the author lacks both the authority and the desire to police that.<sup><a href="#fn2">[2]</a></sup></p>
+    </div>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="section">
+    <div class="section-title">Options</div>
+    <div class="def-list">
+
+      <div class="def-item">
+        <div class="def-term">--read <span class="flag">post</span></div>
+        <div class="def-desc">The primary function. Posts cover Linux configuration, developer tooling, CLI workflows, and whatever else has recently caused the author to stare at a terminal for twenty minutes before discovering the solution was a single environment variable. Written with the assumption that you know what a terminal is but not the assumption that you've memorised every flag of every command.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--rant <span class="flag">topic</span></div>
+        <div class="def-desc">Some posts contain digressions. These digressions are clearly labelled and entirely optional, but they are also correct, so you should probably read them. Topics include but are not limited to: outdated documentation that hasn't been updated since 2019, software that adds a GUI to something that did not require a GUI, and the specific emotional experience of an error message that is technically accurate but provides zero actionable information.<sup><a href="#fn3">[3]</a></sup></div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--footnote-count <span class="flag">N</span></div>
+        <div class="def-desc">Posts on this site contain footnotes. More footnotes than are strictly necessary. This is a feature, not a bug. The footnotes are where things that are true but would disrupt the flow of the main text go to live. They deserve to exist. They have been through enough.<sup><a href="#fn4">[4]</a></sup></div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--coffee</div>
+        <div class="def-desc">Most content was produced between the hours of 9pm and 1am, which explains both the quality of the writing and the intensity of the opinions. This flag cannot be disabled.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--no-bullshit</div>
+        <div class="def-desc">Enabled by default. Guides include TL;DR sections for the impatient and full explanations for the curious. Affiliate links: zero. Sponsored content: none. Introductory paragraphs explaining what SSH is before getting to the actual SSH guide: kept to a minimum, despite the temptation.<sup><a href="#fn5">[5]</a></sup></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AUTHOR -->
+  <div class="section">
+    <div class="section-title">Author</div>
+    <div class="man-body">
+      <p>A person. Specifically, a person who runs Fedora Linux on their primary machine, uses the terminal for tasks that could technically be accomplished with a GUI but aren't, and has opinions about SSH key algorithms that are, frankly, completely proportionate to the situation and not at all excessive.</p>
+
+      <p>Professional background: software. Specific details: deliberately omitted, because the about page of a personal blog is not a LinkedIn profile and the author would like to keep it that way. What you need to know is that the technical content is written from experience, not from reading three Stack Overflow answers and synthesising them into false confidence.<sup><a href="#fn6">[6]</a></sup></p>
+
+      <p>The author's relationship with Linux began the way most people's relationships with Linux begin: with an Ubuntu live USB, an afternoon of ambient overconfidence, and the slowly dawning realisation that the Wi-Fi driver situation was going to require a second laptop to resolve. Things have improved substantially since then. The opinions have only deepened.</p>
+    </div>
+
+    <div class="note-block">
+      <span class="note-label">Note — On the choice of Fedora</span>
+      Fedora was chosen after extensive use of Ubuntu (fine, opinionated in ways that occasionally conflict with the user's opinions), Arch (excellent, requires the kind of ongoing maintenance commitment usually reserved for vintage motorcycles), and Debian (stable in the way that a geological formation is stable — technically admirable, practically inconvenient when you need software from this decade). Fedora sits at a point on the stability/freshness curve that suits the author's temperament. This note exists because the author has been asked about the distro choice before and would like to answer it once, here, in a footnote-adjacent block, rather than in every comment section for the rest of the blog's existence.<sup><a href="#fn7">[7]</a></sup>
+    </div>
+  </div>
+
+  <!-- ENVIRONMENT -->
+  <div class="section">
+    <div class="section-title">Environment</div>
+    <div class="def-list">
+
+      <div class="def-item">
+        <div class="def-term">OS</div>
+        <div class="def-desc">Fedora Linux (current release). Updated regularly. Occasionally broken by an update and then fixed within twenty minutes, which the author considers an acceptable trade-off for having current software.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">EDITOR</div>
+        <div class="def-desc">Set to something reasonable. The editor wars will not be relitigated here. Both sides have made their arguments. The arguments are well known. The author has chosen. The choice will not be disclosed because the author values their inbox.<sup><a href="#fn8">[8]</a></sup></div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">SHELL</div>
+        <div class="def-desc">bash. Yes, bash. zsh is lovely. fish is charming. bash is the one that's on every machine you'll ever SSH into without having to install anything, which is an argument that ends a lot of discussions.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">TERMINAL</div>
+        <div class="def-desc">Something that renders colour and doesn't fight with tmux. That's the entire specification. The author has stopped having strong feelings about terminal emulators because there is a finite number of hours in a life.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">COFFEE</div>
+        <div class="def-desc">Present. Non-negotiable. Not a personality trait, just a practical dependency that has been in the requirements file for long enough that removing it would constitute a breaking change.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RETURN VALUE -->
+  <div class="section">
+    <div class="section-title">Return Value</div>
+    <div class="return-block">
+
+      <div class="return-item">
+        <div class="return-code">0</div>
+        <div class="return-desc">You read the post, the command worked, you learned something, life is marginally better. This is the desired outcome and the author is pleased.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">1</div>
+        <div class="return-desc">Something in the guide didn't work on your specific setup. This is not necessarily anyone's fault. Linux is a broad church. File a mental note, check the footnotes, try the thing that's slightly different about your system.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">2</div>
+        <div class="return-desc">You disagree with one of the opinions. That's fine. The opinions are offered freely and with the understanding that reasonable people can disagree. Unreasonable people can also disagree but they tend to do so at higher volume and the author has muted that frequency.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">127</div>
+        <div class="return-desc">Command not found. You're probably looking for a post that doesn't exist yet. Check back. It's likely in a draft state somewhere, half-finished, waiting for the author to stop second-guessing the third paragraph.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">SIGINT</div>
+        <div class="return-desc">You got halfway through a post and had to go do something else. The post will still be here. The author does not take this personally. Much.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BUGS -->
+  <div class="section">
+    <div class="section-title">Bugs</div>
+    <div class="man-body">
+      <p>Technical errors, factual inaccuracies, and commands that have stopped working because a package maintainer decided to change the flag syntax without telling anyone — these are bugs, and the author wants to know about them. The method for reporting them is: write a message, send it somehow, be specific about what broke and how. This process is deliberately unstructured because the author has watched elaborate bug reporting systems get adopted, ignored, and eventually abandoned by projects that would have been better served by a simple email address.</p>
+
+      <p>Opinions you disagree with are not bugs. Jokes that didn't land are not bugs, though the author accepts that they represent a form of failure. Footnotes that are longer than the main text they annotate are a documented feature and will not be patched.</p>
+    </div>
+  </div>
+
+  <!-- SEE ALSO -->
+  <div class="section">
+    <div class="section-title">See Also</div>
+    <div class="see-also">
+      <a href="/">swf.wtf</a> — home<br>
+      <a href="fedora-setup.html">fedora-setup(7)</a> — Fedora × Omakub setup guide<br>
+      <a href="github-ssh-fedora43.html">github-ssh-fedora43(1)</a> — SSH keys on Fedora 43<br>
+      <a href="now.html">now(1)</a> — what I'm currently up to<br>
+      <a href="mailto:steven@swf.wtf">steven@swf.wtf</a> — contact<br>
+      <a href="https://github.com/stevenwfry">github.com/stevenwfry</a> — source code
+    </div>
+  </div>
+
+  <!-- FOOTNOTES -->
+  <div class="footnotes-section">
+    <div class="section-title" style="margin-bottom:1rem;">Footnotes</div>
+
+    <div class="footnote" id="fn1">
+      <span class="fn-num">[1]</span>
+      <span>The forty percent figure is approximate. The actual figure for "internet content that accurately reflects the emotional experience of doing the thing it describes" is difficult to measure, but any developer who has read a tutorial that described a complex multi-step process as "simply" or "just" doing something knows the feeling of being lied to by an adverb. This blog attempts to use the word "simply" only when the thing is, demonstrably, simple. Which is less often than you might hope.</span>
+    </div>
+
+    <div class="footnote" id="fn2">
+      <span class="fn-num">[2]</span>
+      <span>Current leading pronunciations observed in the wild include "swiff dot what the f", "swuff dot wtf" (treating wtf as an initialism within a domain that is itself an initialism, which is a level of recursive obscurity the author finds endearing), and simply reading out the URL letter by letter, which takes longer but has an undeniable precision to it. All are accepted. None are wrong. This is the one area of this blog where there is no opinion.</span>
+    </div>
+
+    <div class="footnote" id="fn3">
+      <span class="fn-num">[3]</span>
+      <span>"No such file or directory" is perhaps the most technically accurate and least useful error message in the history of computing. Yes. That has been established. The file is not there. What would be helpful is knowing whether it was never there, was there and was deleted, was there under a different name, or requires a package that wasn't installed. The operating system knows some of these things. It has chosen not to share them. This represents a philosophical position about user relationships with their tools that the author disagrees with, at length, usually at around 11pm.</span>
+    </div>
+
+    <div class="footnote" id="fn4">
+      <span class="fn-num">[4]</span>
+      <span>The footnotes are not an affectation. They are a structural solution to a genuine problem: technical writing contains information that is true and relevant but would derail the main argument if inserted inline. The alternatives are: omit the information (bad), include it anyway and lose the reader (also bad), or put it in a footnote where it can be found by those who want it and ignored by those who don't (good). David Foster Wallace used footnotes. Legal documents use footnotes. The author is in acceptable company, is the point.</span>
+    </div>
+
+    <div class="footnote" id="fn5">
+      <span class="fn-num">[5]</span>
+      <span>The introductory paragraph explaining what SSH is before an SSH guide is a genuine temptation, because it pads the word count, signals thoroughness, and provides an on-ramp for beginners. The problem is that anyone who needs SSH explained from first principles is probably not yet at the stage where this specific guide is useful to them, and anyone who is at that stage does not need three paragraphs explaining that SSH stands for Secure Shell and was designed by Tatu Ylönen in 1995. The author has made peace with not being all things to all readers.</span>
+    </div>
+
+    <div class="footnote" id="fn6">
+      <span class="fn-num">[6]</span>
+      <span>The "three Stack Overflow answers synthesised into false confidence" method of technical writing is more prevalent than the industry would like to admit. It produces content that is plausible, internally consistent, and wrong in ways that only become apparent when you try to follow it on a slightly different system configuration than the one the author used. The author has made this mistake. The author is not proud of it. The author now runs the commands before publishing them, which is the minimum viable standard and yet somehow distinguishes this blog from a meaningful portion of its competition.</span>
+    </div>
+
+    <div class="footnote" id="fn7">
+      <span class="fn-num">[7]</span>
+      <span>The distro choice note will not, in fact, prevent the question from appearing in comment sections. Nothing prevents a question from appearing in a comment section. The internet is a place where questions arrive regardless of whether they have already been answered, often with the energy of someone who believes they are the first person to have ever thought of asking. The author has made peace with this too. There is a lot of peace-making involved in maintaining a public presence on the internet. It is, in many ways, a practice in radical acceptance.</span>
+    </div>
+
+    <div class="footnote" id="fn8">
+      <span class="fn-num">[8]</span>
+      <span>The editor wars — specifically the vim versus emacs debate, which has been ongoing since approximately 1985 and shows no signs of resolution — represent one of the most sustained examples of human beings arguing about a preference as though it were a moral position. Both editors are good. Both communities contain people who are unreasonable about this in ways that suggest the editor preference is doing a lot of emotional heavy lifting. The author's choice is made, is comfortable, and is staying private, in the same way that one's vote is private: not because it is shameful, but because announcing it solves nothing and invites everything.</span>
+    </div>
+
+    <div class="footnote" id="fn9">
+      <span class="fn-num">[9]</span>
+      <span>The bash manual is 184 pages in its PDF form, which is remarkable for a program whose core value proposition is "runs commands in sequence." This is not a criticism. The feature set is genuinely extensive and much of it is useful. It is, however, a reminder that the tools we think of as simple — the ones we use without thinking, the ones that feel like furniture — often contain entire architectural philosophies that we have never examined. The author finds this humbling and occasionally terrifying in roughly equal measure.</span>
+    </div>
+
+  </div>
+
+  <!-- MAN PAGE FOOTER -->
+  <div class="man-footer">
+    <span>swf.wtf</span>
+    <span>February 2026</span>
+    <span>swf.wtf(1)</span>
+  </div>
+
+</div>
+
+<script>
+// Custom cursor follows mouse
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 2}px, ${e.clientY}px)`;
+});
+document.addEventListener('mousedown', () => cursor.style.opacity = '0');
+document.addEventListener('mouseup',   () => cursor.style.opacity = '1');
+
+// Konami code easter egg
+const konami = [38,38,40,40,37,39,37,39,66,65];
+let ki = 0;
+document.addEventListener('keydown', e => {
+  if (e.keyCode === konami[ki]) {
+    ki++;
+    if (ki === konami.length) {
+      document.body.style.filter = 'hue-rotate(180deg)';
+      setTimeout(() => document.body.style.filter = '', 2000);
+      ki = 0;
+    }
+  } else { ki = 0; }
+});
+</script>
+
+</body>
+</html>
