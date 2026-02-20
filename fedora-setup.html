@@ -715,7 +715,7 @@ function createItem(item, si, ii, isDone) {
       ${item.cmd ? `<div class="item-cmd">
         <span class="prompt">$</span>
         <span style="flex:1; padding-right: 40px">${item.cmd.replace(/\n/g, '<br>')}</span>
-        <button class="copy-btn" onclick="event.stopPropagation(); copyCmd(this, \`${item.cmd.replace(/`/g, '\\`')}\`)">copy</button>
+        <button class="copy-btn" data-cmd="${item.cmd.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/\n/g, '&#10;')}" onclick="event.stopPropagation(); copyCmd(this)">copy</button>
       </div>` : ''}
     </div>
   `;
@@ -765,8 +765,8 @@ function resetAll() {
   updateProgress();
 }
 
-function copyCmd(btn, cmd) {
-  navigator.clipboard.writeText(cmd).then(() => {
+function copyCmd(btn) {
+  navigator.clipboard.writeText(btn.dataset.cmd).then(() => {
     btn.textContent = 'copied!';
     setTimeout(() => btn.textContent = 'copy', 1500);
   });
