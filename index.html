@@ -386,6 +386,12 @@ header {
   flex-shrink: 0;
 }
 
+.post-item--soon {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
 /* ── PROJECTS / LINKS ── */
 .links-grid {
   display: grid;
@@ -549,44 +555,45 @@ footer {
   <section class="section" id="writing">
     <div class="section-label">Latest writing</div>
 
-    <!-- Featured post (placeholder) -->
-    <a href="#" class="post-featured">
+    <!-- Featured post -->
+    <a href="how-I-set-up-swf-wtf.html" class="post-featured">
       <div class="post-featured-label">★ Latest post</div>
-      <div class="post-featured-title">Modding Fedora 43 in the Style of Omakub</div>
+      <div class="post-featured-title">How I set up swf.wtf in one morning</div>
       <div class="post-featured-excerpt">
-        DHH's Omakub is opinionated, beautiful, and built for Ubuntu. I wanted the same vibe on Fedora 43 — so I reverse-engineered every decision and rebuilt it. Here's everything I learned.
+        A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch.
       </div>
       <div class="post-meta">
         <span>Feb 20, 2026</span>
         <span>·</span>
-        <span>8 min read</span>
-        <span class="tag">fedora</span>
+        <span>6 min read</span>
+        <span class="tag">meta</span>
         <span class="tag">linux</span>
+        <span class="tag">web</span>
       </div>
     </a>
 
-    <!-- Post list (placeholders) -->
+    <!-- Post list (coming soon) -->
     <div class="post-list">
-      <a href="#" class="post-item">
-        <span class="post-item-date">Feb 12</span>
+      <span class="post-item post-item--soon">
+        <span class="post-item-date">—</span>
         <span class="post-item-title">Why I switched from VS Code to Neovim (and actually stuck with it)</span>
-        <span class="post-item-tag">neovim</span>
-      </a>
-      <a href="#" class="post-item">
-        <span class="post-item-date">Jan 30</span>
+        <span class="post-item-tag">coming soon</span>
+      </span>
+      <span class="post-item post-item--soon">
+        <span class="post-item-date">—</span>
         <span class="post-item-title">Zellij is the terminal multiplexer I didn't know I needed</span>
-        <span class="post-item-tag">terminal</span>
-      </a>
-      <a href="#" class="post-item">
-        <span class="post-item-date">Jan 15</span>
+        <span class="post-item-tag">coming soon</span>
+      </span>
+      <span class="post-item post-item--soon">
+        <span class="post-item-date">—</span>
         <span class="post-item-title">Dotfile management in 2026 — what actually works</span>
-        <span class="post-item-tag">dotfiles</span>
-      </a>
-      <a href="#" class="post-item">
-        <span class="post-item-date">Jan 02</span>
+        <span class="post-item-tag">coming soon</span>
+      </span>
+      <span class="post-item post-item--soon">
+        <span class="post-item-date">—</span>
         <span class="post-item-title">First impressions: Fedora 43 on a ThinkPad</span>
-        <span class="post-item-tag">fedora</span>
-      </a>
+        <span class="post-item-tag">coming soon</span>
+      </span>
     </div>
   </section>
 
