@@ -510,9 +510,9 @@ const data = [
       cmd: "sudo dnf install -y zsh-autosuggestions zsh-syntax-highlighting"
     },
     {
-      name: "Install modern CLI tools (eza, fzf, ripgrep, zoxide, bat)", badge: "dnf",
-      desc: "The exact CLI utility stack from Omakub. Replaces ls, cat, grep, cd with smarter alternatives.",
-      cmd: "sudo dnf install -y eza fzf ripgrep zoxide bat"
+      name: "Install modern CLI tools (eza, fzf, ripgrep, zoxide, bat)", badge: "manual",
+      desc: "The exact CLI utility stack from Omakub. Replaces ls, cat, grep, cd with smarter alternatives. Note: eza isn't in the default Fedora repos — install it via cargo.",
+      cmd: "sudo dnf install -y fzf ripgrep zoxide bat\n# eza isn't in default Fedora repos — install via cargo:\ncargo install eza"
     },
   ],
   // Section 1: GNOME Theming
