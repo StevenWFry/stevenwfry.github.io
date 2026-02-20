@@ -495,12 +495,70 @@ footer {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── NEOFETCH ── */
+.nf-card {
+  margin-top: 48px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.25s;
+  animation: fadeIn 0.5s ease 0.35s both;
+}
+
+.nf-card:hover { border-color: rgba(0,255,157,0.2); }
+
+.nf-inner {
+  display: flex;
+  gap: 32px;
+  padding: 24px 28px;
+  font-family: var(--font-mono);
+  overflow-x: auto;
+}
+
+.nf-ascii {
+  color: var(--accent);
+  opacity: 0.6;
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 0.52rem;
+  line-height: 1.45;
+  user-select: none;
+}
+
+.nf-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.65rem;
+  line-height: 1.5;
+  padding-top: 1px;
+}
+
+.nf-head    { font-size: 0.8rem; margin-bottom: 1px; }
+.nf-user    { color: var(--accent); font-weight: 600; }
+.nf-at      { color: var(--dim); }
+.nf-host    { color: var(--accent); font-weight: 600; }
+.nf-divider { color: var(--dim); margin-bottom: 2px; }
+.nf-line    { color: var(--muted); }
+.nf-key     { color: var(--accent3); }
+.nf-colon   { color: var(--dim); }
+
+.nf-swatches { display: flex; gap: 5px; margin-top: 10px; }
+.nf-swatch   { width: 13px; height: 13px; border-radius: 2px; }
+.nf-swatch:nth-child(1) { background: var(--accent); }
+.nf-swatch:nth-child(2) { background: var(--accent2); }
+.nf-swatch:nth-child(3) { background: var(--accent3); }
+.nf-swatch:nth-child(4) { background: var(--muted); }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {
   header { padding: 48px 0 0; }
   .hero-name { font-size: 2.8rem; }
   .post-item-tag { display: none; }
   footer { flex-direction: column; align-items: flex-start; }
+  .nf-ascii { display: none; }
+  .nf-inner { padding: 16px 20px; }
 }
 </style>
 </head>
@@ -529,6 +587,47 @@ footer {
       <a href="fedora-setup.html" class="btn btn-secondary">⚡ Fedora × Omakub Guide</a>
     </div>
   </header>
+
+  <!-- Neofetch block -->
+  <div class="nf-card">
+    <div class="nf-inner">
+      <pre class="nf-ascii">          /:-------------:\
+       :-------------------::
+     :-----------/shhOHbmp---:\
+   /-----------omMMMNNNMMD  ---:
+  :-----------sMMMMNMNMP.    ---:
+ :-----------:MMMdP-------    ---\
+,------------:MMMd--------    ---:
+:------------:MMMd-------    .---:
+:----    oNMMMMMMMMMNho     .----:
+:--     .+shhhMMMmhhy++   .------/
+:-    -------:MMMd--------------:
+:-   --------/MMMd-------------;
+:-    ------/hMMMy------------:
+:-- :dMNdhhdNMMNo------------;
+:---:sdNMMMMNds:------------:
+:------:://:-------------::
+:---------------------://</pre>
+      <div class="nf-info">
+        <div class="nf-head"><span class="nf-user">swf</span><span class="nf-at">@</span><span class="nf-host">swf.wtf</span></div>
+        <div class="nf-divider">-------------------</div>
+        <div class="nf-line"><span class="nf-key">OS</span><span class="nf-colon">: </span>Fedora Linux 43</div>
+        <div class="nf-line"><span class="nf-key">Shell</span><span class="nf-colon">: </span>zsh</div>
+        <div class="nf-line"><span class="nf-key">WM</span><span class="nf-colon">: </span>GNOME</div>
+        <div class="nf-line"><span class="nf-key">Multiplexer</span><span class="nf-colon">: </span>Zellij</div>
+        <div class="nf-line"><span class="nf-key">Editor</span><span class="nf-colon">: </span>Neovim</div>
+        <div class="nf-line"><span class="nf-key">Theme</span><span class="nf-colon">: </span>dark (obviously)</div>
+        <div class="nf-line"><span class="nf-key">Blog</span><span class="nf-colon">: </span>swf.wtf</div>
+        <div class="nf-line"><span class="nf-key">Posts</span><span class="nf-colon">: </span>4</div>
+        <div class="nf-swatches">
+          <span class="nf-swatch"></span>
+          <span class="nf-swatch"></span>
+          <span class="nf-swatch"></span>
+          <span class="nf-swatch"></span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Ticker -->
   <div class="ticker">
