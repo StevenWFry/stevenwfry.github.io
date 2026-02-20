@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How I set up swf.wtf in one morning — swf.wtf</title>
+<meta name="description" content="A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+:root {
+  --bg: #080b0f;
+  --surface: #0e1318;
+  --surface2: #141a22;
+  --border: #1e2a36;
+  --accent: #00ff9d;
+  --accent2: #ff4d6d;
+  --accent3: #ffd60a;
+  --text: #d4e0ec;
+  --muted: #5a7a94;
+  --dim: #2a3f52;
+  --font-mono: 'Martian Mono', monospace;
+  --font-body: 'Lora', Georgia, serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  cursor: none;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
+  );
+  pointer-events: none;
+  z-index: 997;
+}
+
+.cursor {
+  position: fixed;
+  width: 12px; height: 20px;
+  background: var(--accent);
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  animation: blink 1.1s step-end infinite;
+  mix-blend-mode: screen;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* NAV */
+nav {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+}
+
+nav .inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--muted);
+  transition: color 0.2s;
+  cursor: none;
+}
+
+nav a:hover { color: var(--accent); }
+nav .logo { color: var(--accent) !important; font-weight: 600; }
+
+/* ARTICLE */
+article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+}
+
+.post-header {
+  margin-bottom: 48px;
+  animation: fadeIn 0.5s ease both;
+}
+
+.post-meta {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 2px 9px;
+  border-radius: 99px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(255,214,10,0.08);
+  color: var(--accent3);
+  border: 1px solid rgba(255,214,10,0.15);
+}
+
+h1 {
+  font-family: var(--font-body);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
+
+/* Body copy */
+.post-body p {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #b8cdd e;
+  margin-bottom: 24px;
+  color: #c2d4e0;
+}
+
+.post-body p:last-child { margin-bottom: 0; }
+
+.post-body h2 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 48px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-body h2::before {
+  content: '##';
+  color: var(--dim);
+}
+
+.post-body strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.post-body em {
+  color: var(--muted);
+}
+
+.post-body a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,255,157,0.3);
+  transition: border-color 0.2s;
+  cursor: none;
+}
+
+.post-body a:hover { border-color: var(--accent); }
+
+/* Code blocks */
+.post-body code {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--accent3);
+}
+
+.post-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 24px 0;
+  overflow-x: auto;
+}
+
+.post-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--accent);
+  line-height: 1.7;
+}
+
+/* Callout box */
+.callout {
+  background: rgba(0,255,157,0.04);
+  border: 1px solid rgba(0,255,157,0.15);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin: 28px 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.callout strong { color: var(--accent); font-style: normal; }
+
+/* Footer */
+.post-footer {
+  margin-top: 72px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.post-footer-sig {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--dim);
+}
+
+.back-link {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: color 0.2s;
+  cursor: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-link:hover { color: var(--accent); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.post-body p, .post-body h2 {
+  animation: fadeIn 0.4s ease both;
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="index.html" class="logo">swf.wtf</a>
+    <a href="index.html">← all posts</a>
+  </div>
+</nav>
+
+<article>
+  <header class="post-header">
+    <div class="post-meta">
+      <span>Feb 20, 2026</span>
+      <span>·</span>
+      <span>6 min read</span>
+      <span class="tag">meta</span>
+      <span class="tag">linux</span>
+      <span class="tag">web</span>
+    </div>
+    <h1>How I set up swf.wtf in one morning</h1>
+    <p class="subtitle">A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch.</p>
+  </header>
+
+  <hr class="divider">
+
+  <div class="post-body">
+
+    <p>I want to be upfront about something: I have owned <code>stevenfry.ca</code> for years and done absolutely nothing with it. Not a single post. Not a landing page. Not even a tasteful "under construction" GIF from 1997. It just sat there, silently judging me, auto-renewing every year like a gym membership I was too guilty to cancel.</p>
+
+    <p>So naturally, my solution was to buy a second domain.</p>
+
+    <h2>The Domain</h2>
+
+    <p>My initials are SWF. If you were born before 2010 you'll recognise that as the file extension for Adobe Flash — that beautiful, chaotic, now-dead technology that gave us browser games, skip intros, and at least 40% of our collective early internet trauma. I did not plan this. The universe simply provided.</p>
+
+    <p><strong>swf.wtf</strong> was available. Of course it was. I bought it immediately before I could talk myself out of it. Seven dollars well spent. The <code>.wtf</code> TLD is doing a lot of heavy lifting here — it's playful, it's self-aware, and it perfectly captures my general relationship with technology: enthusiastic confusion.</p>
+
+    <h2>The Website</h2>
+
+    <p>I wanted something dark, terminal-flavoured, and fast — basically what my Fedora desktop looks like after an Omakub-style makeover. No frameworks, no build steps, no <code>node_modules</code> folder large enough to collapse into a black hole. Just HTML and CSS.</p>
+
+    <p>The whole thing is static files hosted on <strong>GitHub Pages</strong>, which is free and takes about four minutes to set up if you already have a GitHub account. Push your files to a repo, flip a switch in Settings, and you're live. It's embarrassingly easy and I'm annoyed it took me this long to do it.</p>
+
+    <p>The homepage has a blinking block cursor that follows your mouse around, which I am disproportionately proud of. It's about twelve lines of JavaScript and it makes the whole thing feel like a terminal. Sometimes the smallest details are the most satisfying.</p>
+
+    <div class="callout">
+      <strong>Side note:</strong> there's also a Konami code easter egg on the homepage. ↑↑↓↓←→←→BA. I'm not going to tell you what it does. Go find out.
+    </div>
+
+    <h2>Connecting the Domain</h2>
+
+    <p>This is the part where I confidently typed things into DNS records and then anxiously refreshed for twenty minutes to see if anything broke. The short version: you add four A records pointing at GitHub's servers, a CNAME record pointing <code>www</code> at your GitHub Pages URL, and a <code>CNAME</code> file in your repo telling GitHub which domain to expect. Then you wait.</p>
+
+    <p>I was on GoDaddy, which has a DNS interface that looks like it was designed by someone who has heard of user experience but disagrees with it philosophically. There was an existing <code>www</code> CNAME pointing at the wrong place, a "Parked" A record doing nothing useful, and approximately one too many things to delete before it all worked. But it did work. Within the hour, <code>swf.wtf</code> was resolving to my GitHub Pages site with HTTPS and everything. Very professional. Very me.</p>
+
+    <h2>The Email</h2>
+
+    <p>Look, <code>steven@swf.wtf</code> is objectively a great email address and I wasn't going to let it go to waste. The challenge: I did not want to pay for a full mailbox or learn how email servers work at any meaningful depth.</p>
+
+    <p>Enter <strong>ImprovMX</strong> — a free email forwarding service that takes about five minutes to configure. You add two MX records to your DNS, tell ImprovMX where to forward emails, and suddenly anything sent to your fancy domain lands in your regular inbox. It's like call forwarding but for your identity.</p>
+
+    <p>I also set up Gmail's "Send mail as" feature so I can reply <em>from</em> <code>steven@swf.wtf</code> without leaving Gmail. This required generating an App Password in Google, which is the kind of thing that sounds scary but is actually just a slightly longer password that you copy-paste once and never think about again. Total setup time: about ten minutes, including the two minutes I spent reading instructions I didn't need.</p>
+
+    <h2>The Setup Guide</h2>
+
+    <p>The whole reason this website exists is that I'd been tinkering with Fedora 43, trying to get it looking and feeling like <strong>Omakub</strong> — DHH's opinionated Ubuntu setup that I'm mildly obsessed with. Omakub doesn't run on Fedora, so I spent a while reverse-engineering what it does and finding Fedora-native equivalents for everything.</p>
+
+    <p>The result is an <a href="fedora-setup.html">interactive checklist</a> covering terminal setup, GNOME theming, app installations, and dotfiles. Every item has the relevant command you can copy straight to your terminal. It's the guide I wish had existed when I started. It's also, somewhat accidentally, the first real piece of content on this website.</p>
+
+    <h2>Total Time: One Morning</h2>
+
+    <p>Start to finish — domain purchase, site build, DNS configuration, email forwarding, Gmail alias — about three hours. A significant chunk of that was me second-guessing the domain name, then buying it anyway.</p>
+
+    <p>The moral of the story, if there is one, is that the activation energy for "personal website with a cool domain and a working email address" is genuinely quite low in 2026. Lower than I expected. Lower than the years of inertia suggested. <code>stevenfry.ca</code> sat untouched for ages not because it was hard, but because I kept waiting until I had something worth saying.</p>
+
+    <p>Turns out "I set up a website this morning" is something worth saying. It's not much, but it's a start. More posts to come — probably about Linux, definitely about terminals, occasionally about things I've broken and then fixed by reading the Arch Wiki even though I'm not on Arch.</p>
+
+    <p><em>Welcome to swf.wtf.</em></p>
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-footer-sig">// Steven William Fry — Feb 20, 2026</div>
+    <a href="index.html" class="back-link">← back to all posts</a>
+  </footer>
+</article>
+
+<script>
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 2}px, ${e.clientY}px)`;
+});
+</script>
+
+</body>
+</html>
