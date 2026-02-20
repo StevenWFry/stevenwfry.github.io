@@ -358,6 +358,19 @@
     letter-spacing: 0.04em;
   }
 
+  .home-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    display: inline-block;
+    margin-bottom: 14px;
+    transition: color 0.2s;
+  }
+
+  .home-link:hover { color: var(--accent); }
+
   .reset-btn:hover {
     border-color: var(--accent3);
     color: var(--accent3);
@@ -390,6 +403,7 @@
 
 <header>
   <div class="header-left">
+    <a href="index.html" class="home-link">← swf.wtf</a>
     <h1><span>Fedora 43</span> × <em>Omakub</em> Style</h1>
     <div class="subtitle">// Manual setup checklist — inspired by DHH's opinionated Ubuntu workflow</div>
   </div>
