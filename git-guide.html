@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git for Beginners // swf.wtf style</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --bg2: #141414;
+      --bg3: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #d4d4d4;
+      --muted: #666;
+      --accent: #00ff88;
+      --accent2: #ff6b35;
+      --accent3: #4fc3f7;
+      --heading: #f0f0f0;
+      --code-bg: #111;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 0;
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .site-name {
+      color: var(--accent);
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: -0.03em;
+    }
+    .site-name span { color: var(--muted); }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      margin-left: 1.5rem;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* MAIN */
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+    }
+
+    /* META */
+    .post-meta {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .tag {
+      border: 1px solid var(--border);
+      padding: 0.1rem 0.5rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .tag.green { border-color: var(--accent); color: var(--accent); }
+
+    /* TITLE */
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      color: var(--heading);
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+    h1 .dim { color: var(--muted); font-weight: 400; }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    /* DIVIDER */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* PROSE */
+    p {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+
+    h2 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 3rem 0 1rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2::before {
+      content: '##';
+      color: var(--border);
+    }
+
+    h3 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--heading);
+      margin: 2rem 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    h3::before {
+      content: '> ';
+      color: var(--accent2);
+    }
+
+    /* CODE BLOCKS */
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 1.25rem 1.5rem;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      position: relative;
+    }
+    .code-block .label {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.75rem;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .code-block pre {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .code-block .cmd { color: var(--accent3); }
+    .code-block .cmt { color: var(--muted); font-style: italic; }
+    .code-block .str { color: var(--accent); }
+    .code-block .kw  { color: var(--accent2); }
+
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.1rem 0.35rem;
+      color: var(--accent3);
+    }
+
+    /* CALLOUT */
+    .callout {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.88rem;
+    }
+    .callout .callout-title {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--accent2);
+      font-size: 0.75rem;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* CONCEPT TABLE */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+    .concept-cell {
+      background: var(--bg2);
+      padding: 1rem;
+    }
+    .concept-cell .term {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--accent3);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    .concept-cell .def {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* FLOW DIAGRAM */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .flow-step {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      font-size: 0.78rem;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .flow-step .step-label {
+      color: var(--muted);
+      font-size: 0.65rem;
+      display: block;
+      margin-bottom: 0.15rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .flow-step .step-name {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .flow-arrow {
+      color: var(--accent2);
+      padding: 0 0.5rem;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* TOC */
+    .toc {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0 2.5rem;
+    }
+    .toc-title {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .toc a {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.82rem;
+      padding: 0.15rem 0;
+      transition: color 0.15s;
+    }
+    .toc a:hover { color: var(--accent); }
+    .toc a::before { content: '→ '; color: var(--muted); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* TERMINAL INTRO */
+    .terminal-intro {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+      line-height: 2;
+    }
+    .terminal-intro .prompt { color: var(--accent); }
+    .terminal-intro .cmd-text { color: var(--text); }
+    .terminal-intro .output { color: var(--muted); padding-left: 1rem; }
+
+    @media (max-width: 540px) {
+      .concept-grid { grid-template-columns: 1fr; }
+      .flow { flex-direction: column; align-items: flex-start; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="#">swf<span>.wtf</span></a>
+    <nav>
+      <a href="#">writing</a>
+      <a href="#">guides</a>
+      <a href="#">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <div class="post-meta">
+    <span>Feb 21, 2026</span>
+    <span class="tag green">guide</span>
+    <span class="tag">git</span>
+    <span class="tag">linux</span>
+    <span class="tag">beginner</span>
+  </div>
+
+  <h1>Git from Zero.<br /><span class="dim">// no fluff, just commits.</span></h1>
+  <p class="subtitle">Everything you actually need to start using Git — from install to your first push.</p>
+
+  <div class="terminal-intro">
+    <div><span class="prompt">$</span> <span class="cmd-text">git status</span></div>
+    <div class="output">On branch main</div>
+    <div class="output">Your branch is up to date with 'origin/main'.</div>
+    <div class="output">nothing to commit, working tree clean</div>
+    <div><span class="prompt">$</span> <span class="cmd-text">git log --oneline -3</span></div>
+    <div class="output">4a2f1bc feat: add dark mode toggle</div>
+    <div class="output">9e0d3aa fix: correct typo in README</div>
+    <div class="output">1c8b77e init: first commit</div>
+    <div><span class="prompt">$</span> <span class="cmd-text">_</span></div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">// contents</div>
+    <a href="#what">What is Git?</a>
+    <a href="#install">Install &amp; configure</a>
+    <a href="#concepts">Core concepts</a>
+    <a href="#workflow">The daily workflow</a>
+    <a href="#branches">Branches</a>
+    <a href="#remote">Working with remotes</a>
+    <a href="#cheatsheet">Cheat sheet</a>
+  </div>
+
+  <hr />
+
+  <!-- WHAT IS GIT -->
+  <h2 id="what">What is Git?</h2>
+  <p>Git is a version control system. It tracks changes to your files over time so you can see what changed, when it changed, who changed it, and roll anything back if you break something. Think of it as a time machine for your code.</p>
+  <p>It was created by Linus Torvalds in 2005 — the same person who started Linux — because he needed something fast and distributed to manage the Linux kernel. It stuck.</p>
+
+  <div class="callout">
+    <div class="callout-title">// key distinction</div>
+    <strong>Git</strong> is the version control tool. <strong>GitHub / GitLab / Codeberg</strong> are websites that host Git repositories online. Git works perfectly fine without any of them — but they make collaboration easy.
+  </div>
+
+  <hr />
+
+  <!-- INSTALL -->
+  <h2 id="install">Install &amp; configure</h2>
+
+  <h3>Install Git</h3>
+
+  <div class="code-block">
+    <span class="label">pop!_os / ubuntu / debian</span>
+    <pre><span class="cmd">sudo apt install git -y</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">fedora</span>
+    <pre><span class="cmd">sudo dnf install git -y</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">arch</span>
+    <pre><span class="cmd">sudo pacman -S git</span></pre>
+  </div>
+
+  <h3>Set your identity</h3>
+  <p>Before you make any commits, tell Git who you are. This gets embedded into every commit you make.</p>
+
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># Set globally (all repos on this machine)</span>
+<span class="cmd">git config --global user.name</span> <span class="str">"Your Name"</span>
+<span class="cmd">git config --global user.email</span> <span class="str">"you@example.com"</span>
+
+<span class="cmt"># Set for just the current repo (overrides global)</span>
+<span class="cmd">git config user.name</span> <span class="str">"Your Name"</span>
+<span class="cmd">git config user.email</span> <span class="str">"you@example.com"</span>
+
+<span class="cmt"># Verify everything</span>
+<span class="cmd">git config --global --list</span></pre>
+  </div>
+
+  <h3>Set your default editor (optional but recommended)</h3>
+
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># Use neovim (good choice)</span>
+<span class="cmd">git config --global core.editor</span> <span class="str">"nvim"</span>
+
+<span class="cmt"># Or nano if you're not a masochist yet</span>
+<span class="cmd">git config --global core.editor</span> <span class="str">"nano"</span></pre>
+  </div>
+
+  <h3>Default branch name</h3>
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># Use 'main' instead of 'master'</span>
+<span class="cmd">git config --global init.defaultBranch main</span></pre>
+  </div>
+
+  <hr />
+
+  <!-- CONCEPTS -->
+  <h2 id="concepts">Core concepts</h2>
+  <p>You need to understand five things. Everything else is built on top of these.</p>
+
+  <div class="concept-grid">
+    <div class="concept-cell">
+      <div class="term">repository (repo)</div>
+      <div class="def">A folder tracked by Git. Contains your files + the entire history of every change ever made.</div>
+    </div>
+    <div class="concept-cell">
+      <div class="term">commit</div>
+      <div class="def">A snapshot of your files at a point in time. Like a save point. Has a unique ID and a message.</div>
+    </div>
+    <div class="concept-cell">
+      <div class="term">staging area</div>
+      <div class="def">A holding zone. You add files here before committing. Lets you choose exactly what goes into a commit.</div>
+    </div>
+    <div class="concept-cell">
+      <div class="term">branch</div>
+      <div class="def">A parallel version of your code. Work on features in isolation without breaking the main codebase.</div>
+    </div>
+    <div class="concept-cell">
+      <div class="term">remote</div>
+      <div class="def">A copy of your repo on another machine or server (like GitHub). Push your commits there to share them.</div>
+    </div>
+    <div class="concept-cell">
+      <div class="term">HEAD</div>
+      <div class="def">A pointer to your current location. Usually points to the latest commit on your current branch.</div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- WORKFLOW -->
+  <h2 id="workflow">The daily workflow</h2>
+  <p>This is the loop you'll repeat a thousand times. Burn it into your muscle memory.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <span class="step-label">1</span>
+      <span class="step-name">edit files</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <span class="step-label">2</span>
+      <span class="step-name">git add</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <span class="step-label">3</span>
+      <span class="step-name">git commit</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <span class="step-label">4</span>
+      <span class="step-name">git push</span>
+    </div>
+  </div>
+
+  <h3>Start a new repo</h3>
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># Create a new repo in the current folder</span>
+<span class="cmd">git init</span>
+
+<span class="cmt"># Or clone an existing one from GitHub</span>
+<span class="cmd">git clone</span> <span class="str">https://github.com/user/repo.git</span></pre>
+  </div>
+
+  <h3>Check what's going on</h3>
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># See what's changed, staged, untracked</span>
+<span class="cmd">git status</span>
+
+<span class="cmt"># See a diff of unstaged changes</span>
+<span class="cmd">git diff</span>
+
+<span class="cmt"># See commit history</span>
+<span class="cmd">git log --oneline</span></pre>
+  </div>
+
+  <h3>Stage your changes</h3>
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># Stage a specific file</span>
+<span class="cmd">git add</span> <span class="str">filename.txt</span>
+
+<span class="cmt"># Stage everything changed in the current directory</span>
+<span class="cmd">git add .</span>
+
+<span class="cmt"># Stage parts of a file interactively</span>
+<span class="cmd">git add -p</span></pre>
+  </div>
+
+  <h3>Commit</h3>
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># Commit with a message inline</span>
+<span class="cmd">git commit -m</span> <span class="str">"feat: add login form"</span>
+
+<span class="cmt"># Stage all tracked files and commit in one step</span>
+<span class="cmd">git commit -am</span> <span class="str">"fix: correct typo in header"</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// good commit messages</div>
+    Write commit messages in the imperative: <strong>"add feature"</strong> not <strong>"added feature"</strong>. Keep it under 72 characters. A common prefix convention: <code>feat:</code> <code>fix:</code> <code>docs:</code> <code>refactor:</code> <code>chore:</code>
+  </div>
+
+  <hr />
+
+  <!-- BRANCHES -->
+  <h2 id="branches">Branches</h2>
+  <p>Branches let you work on things in isolation. Always branch off of main before starting new features. Merge back when done.</p>
+
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># List all branches</span>
+<span class="cmd">git branch</span>
+
+<span class="cmt"># Create a new branch and switch to it</span>
+<span class="cmd">git switch -c feature/dark-mode</span>
+
+<span class="cmt"># Switch to an existing branch</span>
+<span class="cmd">git switch main</span>
+
+<span class="cmt"># Merge a branch into current branch</span>
+<span class="cmd">git merge feature/dark-mode</span>
+
+<span class="cmt"># Delete a branch after merging</span>
+<span class="cmd">git branch -d feature/dark-mode</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// merge conflicts</div>
+    When two branches change the same lines, Git can't decide which to keep — that's a conflict. Git will mark the conflicting sections in your file with <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> / <code>=======</code> / <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>. Edit the file to keep what you want, then <code>git add</code> and <code>git commit</code> to finish the merge.
+  </div>
+
+  <hr />
+
+  <!-- REMOTE -->
+  <h2 id="remote">Working with remotes</h2>
+  <p>A remote is just your repo on another server. <code>origin</code> is the conventional name for your primary remote.</p>
+
+  <div class="code-block">
+    <span class="label">bash</span>
+    <pre><span class="cmt"># Add a remote (after creating a repo on GitHub)</span>
+<span class="cmd">git remote add origin</span> <span class="str">https://github.com/user/repo.git</span>
+
+<span class="cmt"># See your remotes</span>
+<span class="cmd">git remote -v</span>
+
+<span class="cmt"># Push your commits to remote for the first time</span>
+<span class="cmd">git push -u origin main</span>
+
+<span class="cmt"># Subsequent pushes — just this</span>
+<span class="cmd">git push</span>
+
+<span class="cmt"># Pull latest changes from remote</span>
+<span class="cmd">git pull</span>
+
+<span class="cmt"># Fetch without merging (see what's changed)</span>
+<span class="cmd">git fetch</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// use SSH, not HTTPS</div>
+    Set up an SSH key so you never have to type your password. Generate one with <code>ssh-keygen -t ed25519 -C "you@example.com"</code>, add it to GitHub, and use the SSH clone URL. Way smoother.
+  </div>
+
+  <hr />
+
+  <!-- CHEAT SHEET -->
+  <h2 id="cheatsheet">Cheat sheet</h2>
+
+  <div class="code-block">
+    <span class="label">// the commands you actually use</span>
+    <pre><span class="cmd">git init</span>                   <span class="cmt"># start a new repo</span>
+<span class="cmd">git clone &lt;url&gt;</span>            <span class="cmt"># copy a remote repo locally</span>
+<span class="cmd">git status</span>                 <span class="cmt"># see what's changed</span>
+<span class="cmd">git add .</span>                  <span class="cmt"># stage everything</span>
+<span class="cmd">git add &lt;file&gt;</span>             <span class="cmt"># stage one file</span>
+<span class="cmd">git commit -m "msg"</span>        <span class="cmt"># commit staged changes</span>
+<span class="cmd">git push</span>                   <span class="cmt"># push to remote</span>
+<span class="cmd">git pull</span>                   <span class="cmt"># pull from remote</span>
+<span class="cmd">git log --oneline</span>          <span class="cmt"># pretty history</span>
+<span class="cmd">git diff</span>                   <span class="cmt"># see unstaged changes</span>
+<span class="cmd">git switch -c &lt;branch&gt;</span>    <span class="cmt"># new branch + switch</span>
+<span class="cmd">git switch &lt;branch&gt;</span>       <span class="cmt"># switch branch</span>
+<span class="cmd">git merge &lt;branch&gt;</span>        <span class="cmt"># merge into current</span>
+<span class="cmd">git stash</span>                  <span class="cmt"># shelve changes temporarily</span>
+<span class="cmd">git stash pop</span>              <span class="cmt"># bring them back</span>
+<span class="cmd">git restore &lt;file&gt;</span>        <span class="cmt"># discard unstaged changes</span>
+<span class="cmd">git reset --soft HEAD~1</span>   <span class="cmt"># undo last commit, keep changes</span>
+<span class="cmd">git config --global -l</span>    <span class="cmt"># list global config</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// .gitignore</div>
+    Create a <code>.gitignore</code> file in your repo root to tell Git what to ignore — <code>node_modules/</code>, <code>.env</code>, build artifacts, etc. GitHub has templates for most languages at <code>github.com/github/gitignore</code>.
+  </div>
+
+</main>
+
+<footer>
+  <span>// swf.wtf — git guide</span>
+  <span>powered by curiosity</span>
+</footer>
+
+</body>
+</html>
