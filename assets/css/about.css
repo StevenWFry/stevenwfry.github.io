@@ -1,0 +1,336 @@
+:root {
+  --font-body: 'IBM Plex Mono', monospace;
+  --scanline-alpha: 0.06;
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 998;
+  opacity: 0.4;
+}
+
+/* ── TERMINAL BAR ── */
+.terminal-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+}
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+
+.terminal-title {
+  flex: 1;
+  text-align: center;
+  color: var(--dim);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+}
+
+.terminal-cmd {
+  color: var(--dim);
+  font-size: 0.68rem;
+}
+
+.terminal-back {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.68rem;
+  transition: color 0.2s;
+  cursor: none;
+}
+
+.terminal-back:hover { color: var(--accent); }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ── MAN PAGE WRAPPER ── */
+.manpage {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 4rem 6rem;
+  animation: fadeIn 0.3s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── MAN PAGE HEADER ── */
+.man-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.man-header-left,
+.man-header-right {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.man-header-center {
+  font-size: 0.78rem;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+}
+
+/* ── SECTION HEADERS ── */
+.section {
+  margin: 2.5rem 0 0.8rem;
+}
+
+.section-title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent3);
+  margin-bottom: 0.8rem;
+}
+
+/* ── SYNOPSIS ── */
+.synopsis {
+  padding-left: 2rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.synopsis .cmd { font-weight: 700; color: var(--accent); }
+.synopsis .arg { font-style: italic; color: var(--muted); }
+.synopsis .opt { color: var(--muted); }
+
+/* ── BODY TEXT ── */
+.man-body {
+  padding-left: 2rem;
+}
+
+.man-body p {
+  margin-bottom: 1rem;
+  text-align: justify;
+  hyphens: auto;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+/* ── DEFINITION LIST ── */
+.def-list {
+  padding-left: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.def-item {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  align-items: start;
+}
+
+.def-term {
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+  padding-top: 0.05rem;
+}
+
+.def-term .flag {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.def-desc {
+  font-size: 0.87rem;
+  line-height: 1.7;
+  color: var(--muted);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── RETURN VALUE ── */
+.return-block {
+  padding-left: 2rem;
+}
+
+.return-item {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.return-code {
+  font-weight: 700;
+  color: var(--accent2);
+  font-family: var(--font-mono);
+}
+
+.return-desc { color: var(--muted); }
+
+/* ── INLINE CODE ── */
+code {
+  font-family: var(--font-body);
+  font-weight: 500;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 0.05em 0.35em;
+  font-size: 0.9em;
+}
+
+strong { font-weight: 700; color: var(--text); }
+em { font-style: italic; }
+
+/* ── SUPERSCRIPTS ── */
+sup {
+  color: var(--accent2);
+  font-size: 0.65rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* ── NOTE BLOCK ── */
+.note-block {
+  margin: 1rem 0 1rem 2rem;
+  border-left: 3px solid var(--accent);
+  padding: 0.8rem 1.2rem;
+  background: rgba(0,255,157,0.04);
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: var(--muted);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.note-label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--accent);
+}
+
+/* ── SEE ALSO ── */
+.see-also {
+  padding-left: 2rem;
+  font-size: 0.88rem;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+.see-also a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--dim);
+  transition: color 0.2s;
+  cursor: none;
+}
+
+.see-also a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+
+/* ── FOOTNOTES ── */
+.footnotes-section {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.footnote {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: var(--dim);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.fn-num {
+  color: var(--accent2);
+  font-weight: 700;
+  padding-top: 0.05rem;
+  font-family: var(--font-mono);
+}
+
+/* ── MAN PAGE FOOTER ── */
+.man-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 3.5rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  .manpage { padding: 2rem 1.2rem 4rem; }
+  .def-item { grid-template-columns: 1fr; gap: 0.2rem; }
+  .man-header-center { display: none; }
+  .footnote { grid-template-columns: 30px 1fr; }
+}

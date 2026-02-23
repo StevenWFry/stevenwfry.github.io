@@ -1,19 +1,23 @@
-# My Profile Website
+# swf.wtf
 
-This project is a personal profile website that showcases my skills, projects, and contact information.
+Static personal website hosted on GitHub Pages.
 
 ## Project Structure
 
-- `index.html`: The main HTML document containing the structure and content of the website.
-- `css/styles.css`: Contains styles for the website, defining layout, colors, fonts, and overall appearance.
-- `js/scripts.js`: JavaScript code for interactivity, including functions for handling user interactions and dynamic content updates.
+- `*.html`: Top-level pages (home, posts, guides, about).
+- `assets/css/site.css`: Shared base styles and theme tokens for the main site pages.
+- `assets/css/*.css`: Page styles extracted from inline `<style>` blocks.
+- `assets/js/site.js`: Shared client-side behavior (cursor, Konami, common helpers).
+- `assets/js/*.js`: Page scripts extracted from inline `<script>` blocks.
+- `pirate-copilot/`: Separate experimental mini-site with its own assets.
+- `CNAME`: Custom domain configuration for GitHub Pages.
 
-## Setup Instructions
+## Local Preview
 
-1. Clone the repository to your local machine.
-2. Open `index.html` in your web browser to view the website.
-3. Customize the content in `index.html`, `css/styles.css`, and `js/scripts.js` as needed to reflect your personal profile.
+1. Clone the repository.
+2. Open any top-level HTML file (for example, `index.html`) in your browser.
 
-## Contributing
+## Maintenance Notes
 
-Feel free to fork the repository and submit pull requests for any improvements or suggestions.
+- Keep shared behavior and styling external in `assets/` rather than inline in HTML.
+- If you add a new page, prefer creating `assets/css/<page>.css` and `assets/js/<page>.js`.
