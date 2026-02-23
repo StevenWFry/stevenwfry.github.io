@@ -20,3 +20,10 @@ const [s, w, f] = swfNames[Math.floor(Date.now() / 86400000) % swfNames.length];
 document.getElementById('swf-s').textContent = s;
 document.getElementById('swf-w').textContent = w;
 document.getElementById('swf-f').textContent = f;
+
+const postCountEl = document.getElementById('post-count');
+if (postCountEl) {
+  const featuredPosts = document.querySelectorAll('#writing .post-featured[href]:not(.post-item--soon)').length;
+  const listedPosts = document.querySelectorAll('#writing .post-list .post-item[href]:not(.post-item--soon)').length;
+  postCountEl.textContent = String(featuredPosts + listedPosts);
+}
