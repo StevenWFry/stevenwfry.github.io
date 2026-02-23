@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 19 – Controlling User Access (in which you discover you are **not** the database god you thought you were) - SQL Guide - swf.wtf</title>
+<meta name="description" content="Welcome to the glamorous world of database security, where your dreams of unlimited power go to die under the watchful eye of the DBA.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 19 – Controlling User Access (in which you discover you are **not** the database god you thought you were)</h1>
+    <p>Welcome to the glamorous world of database security, where your dreams of unlimited power go to die under the watchful eye of the DBA.</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>Welcome to the glamorous world of database security, where your dreams of unlimited power go to die under the watchful eye of the DBA.</p>
+    <p>In this lesson you will:</p>
+    <ul>
+    <li>Tell system privileges and object privileges apart without panicking.</li>
+    <li>Grant privileges on tables without accidentally giving Karen in Accounting the power to drop the database.</li>
+    <li>Use roles so you’re not copy‑pasting the same GRANT statement 37 times.</li>
+    <li>Understand why “WITH GRANT OPTION” is both amazing and mildly terrifying.</li>
+    </ul>
+    <hr>
+    <h2>1. System Privileges: Keys to the Kingdom (sort of)</h2>
+    <p>The <strong>DBA (Database Administrator)</strong> is the bouncer, the keymaster, and occasionally the petty tyrant of your database.</p>
+    <ul>
+    <li>The DBA creates <strong>users</strong>, sets their <strong>initial passwords</strong>, and decides who gets which <strong>privileges</strong>.</li>
+    <li>A <strong>schema</strong> is just a fancy word for “all the objects that belong to a user” (tables, views, sequences, etc.). By default, schema name = username.</li>
+    </ul>
+    <p>System privileges let you do things <em>to the database itself</em>, such as:</p>
+    <ul>
+    <li><code>CREATE SESSION</code> – permission to even <em>log in</em>. No session, no party.</li>
+    <li><code>CREATE TABLE</code> – build your own tables.</li>
+    <li><code>CREATE SEQUENCE</code>, <code>CREATE VIEW</code>, <code>CREATE PROCEDURE</code> – developer starter pack.</li>
+    </ul>
+    <p>Creating a user (normally done by the DBA):</p>
+    <pre><code class="language-sql">CREATE USER demo IDENTIFIED BY demo_pwd;</code></pre>
+    <p>Giving that user basic system privileges:</p>
+    <pre><code class="language-sql">GRANT
+      CREATE SESSION,
+      CREATE TABLE,
+      CREATE SEQUENCE,
+      CREATE VIEW
+    TO demo;</code></pre>
+    <p>No <code>CREATE SESSION</code> = no connection. You can type your password all day; Oracle will still ghost you.</p>
+    <hr>
+    <h2>2. Roles: Because Granting 200 Privileges by Hand Is Madness</h2>
+    <p>There are <strong>200+ system privileges</strong>. Granting them one by one to many users is like mailing individual paperclips to everyone in the company.</p>
+    <p>Enter <strong>roles</strong>: named bundles of privileges.</p>
+    <ul>
+    <li>You grant <strong>privileges to the role</strong>.</li>
+    <li>Then you grant <strong>the role to users</strong>.</li>
+    <li>Later, you tweak the role once, and <em>everyone</em> using it changes automatically. Like group chat, but for power.</li>
+    </ul>
+    <p>Create a role:</p>
+    <pre><code class="language-sql">CREATE ROLE manager;</code></pre>
+    <p>Grant privileges to the role:</p>
+    <pre><code class="language-sql">GRANT
+      CREATE TABLE,
+      CREATE VIEW
+    TO manager;</code></pre>
+    <p>Grant the role to a user:</p>
+    <pre><code class="language-sql">GRANT manager TO alice;</code></pre>
+    <p>You can even grant <strong>roles to other roles</strong>, which is how you accidentally create a tiny medieval feudal system inside your database.</p>
+    <hr>
+    <h2>3. Changing Passwords: Because “welcome123” Shouldn’t Be Forever</h2>
+    <p>The DBA can:</p>
+    <ul>
+    <li>Create your account.</li>
+    <li>Set an <strong>initial password</strong>.</li>
+    <li>Mark it as <strong>expired</strong>, forcing you to change it on first login.</li>
+    </ul>
+    <p>You change your own password with:</p>
+    <pre><code class="language-sql">ALTER USER demo IDENTIFIED BY new_password;</code></pre>
+    <p>Congratulations, you are now slightly less of a security risk.</p>
+    <hr>
+    <h2>4. Object Privileges: Access to the Actual Data</h2>
+    <p>System privileges affect the <strong>database environment</strong>. <strong>Object privileges</strong> affect <strong>specific objects</strong> like tables, views, and sequences.</p>
+    <p>Examples:</p>
+    <ul>
+    <li><strong>Sequences:</strong> <code>SELECT</code>, <code>ALTER</code></li>
+    <li><strong>Views:</strong> <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></li>
+    <li><strong>Tables:</strong> <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>ALTER</code>, <code>REFERENCES</code>, <code>INDEX</code></li>
+    </ul>
+    <p>If you <strong>own</strong> an object, you automatically have all privileges on it. You are the landlord. You can then grant selectively to others.</p>
+    <p>Granting <code>SELECT</code> on a table:</p>
+    <pre><code class="language-sql">GRANT SELECT ON employees TO demo;</code></pre>
+    <p>Granting <strong>column‑level</strong> privileges (because you don’t trust people with everything):</p>
+    <pre><code class="language-sql">GRANT UPDATE (department_name, location_id)
+    ON departments
+    TO demo, manager;</code></pre>
+    <p>Here, users and roles can update only those two columns—no “accidental” salary adjustments.</p>
+    <hr>
+    <h2>5. WITH GRANT OPTION: Power That Spreads… and Bites Back</h2>
+    <p>Sometimes you don’t just want someone to use your object—you want them to <strong>pass that privilege on</strong>.</p>
+    <p>That’s what <code>WITH GRANT OPTION</code> does:</p>
+    <pre><code class="language-sql">GRANT SELECT, INSERT
+    ON departments
+    TO demo
+    WITH GRANT OPTION;</code></pre>
+    <ul>
+    <li><code>demo</code> can now grant <code>SELECT</code> and <code>INSERT</code> on <code>departments</code> to other users.</li>
+    <li>They can even grant <code>SELECT</code> to <strong>PUBLIC</strong>, meaning <em>everyone</em> who can log in. Bold choice.</li>
+    </ul>
+    <p>But here’s the catch:</p>
+    <ul>
+    <li>If <strong>you</strong> granted the privilege with <code>WITH GRANT OPTION</code> and <code>demo</code> passes it on to <code>alex</code>,</li>
+    <li><strong>You cannot revoke it directly from <code>alex</code></strong>.</li>
+    <li>You must revoke it from <strong><code>demo</code></strong>, which then yanks it away from everyone they granted it to.</li>
+    </ul>
+    <p>It’s like giving someone your Netflix password and then needing to change it for <em>everyone</em> when your ex is still logged in.</p>
+    <hr>
+    <h2>6. Seeing Who Can Do What: Data Dictionary Views</h2>
+    <p>Oracle gives you <strong>data dictionary views</strong> so you can find out:</p>
+    <ul>
+    <li>Which system privileges roles have.</li>
+    <li>Which privileges users have.</li>
+    <li>Which privileges have been granted <em>on your objects</em>.</li>
+    <li>Which privileges exist at the <strong>column</strong> level.</li>
+    </ul>
+    <p>Some of the useful views include (names vary by scope, but the pattern is clear):</p>
+    <ul>
+    <li><code>USER_TAB_PRIVS_MADE</code> – object privileges <strong>you granted</strong> to others.</li>
+    <li><code>USER_TAB_PRIVS_RECD</code> – object privileges <strong>you received</strong>.</li>
+    <li>Column‑level versions show who can do what on specific columns.</li>
+    </ul>
+    <p>Example: seeing what you’ve handed out:</p>
+    <pre><code class="language-sql">SELECT grantee, privilege, table_name
+    FROM   user_tab_privs_made;</code></pre>
+    <p>This is the “who did I arm with what?” report.</p>
+    <hr>
+    <h2>7. Revoking Privileges: Taking the Toys Back</h2>
+    <p>When something has gone horribly, predictably wrong, you can <strong>revoke</strong> privileges:</p>
+    <p>Generic syntax:</p>
+    <pre><code class="language-sql">REVOKE privilege_list
+    ON object_name
+    FROM user_or_role;</code></pre>
+    <p>Example:</p>
+    <pre><code class="language-sql">REVOKE SELECT, INSERT
+    ON departments
+    FROM demo;</code></pre>
+    <p>Important point:</p>
+    <ul>
+    <li>You <strong>cannot revoke</strong> a privilege <em>from someone you did not grant it to</em>.</li>
+    <li>If <code>ORA21</code> gave <code>SELECT</code> to <code>ORA22</code>, and <code>ORA22</code> gave it to <code>DEMO</code>,</li>
+    <li><code>ORA21</code> can’t revoke directly from <code>DEMO</code>.</li>
+    <li><code>ORA21</code> revokes from <code>ORA22</code>, and both <code>ORA22</code> and <code>DEMO</code> lose the privilege.</li>
+    </ul>
+    <p>After revocation, trying to use the privilege typically gives:</p>
+    <ul>
+    <li>“table or view does not exist” or</li>
+    <li>“insufficient privileges”</li>
+    </ul>
+    <p>Either way, the fun is over.</p>
+    <hr>
+    <h2>8. A Tiny Drama in Three Users</h2>
+    <p>Here’s the mini‑soap opera from the demo:</p>
+    <ol>
+    <li><code>demo</code> is created but has <strong>no <code>CREATE SESSION</code></strong>, so they cannot connect.</li>
+    <li>As <code>SYSDBA</code>, the DBA grants <code>CREATE SESSION</code> to <code>demo</code>. Now demo can log in.</li>
+    <li>User <code>ORA21</code> owns table <code>employees</code> and does:</li>
+    </ol>
+    <pre><code class="language-sql">   GRANT SELECT, UPDATE
+       ON employees
+       TO ora22
+       WITH GRANT OPTION;</code></pre>
+    <ol>
+    <li><code>ORA22</code> then does:</li>
+    </ol>
+    <pre><code class="language-sql">   GRANT SELECT
+       ON ora21.employees
+       TO demo;</code></pre>
+    <p>Now <code>demo</code> can query <code>ora21.employees</code>.</p>
+    <ol>
+    <li><code>ORA21</code> checks <code>USER_TAB_PRIVS_MADE</code> and sees:</li>
+    </ol>
+    <ul>
+    <li>Grants from <code>ORA21</code> to <code>ORA22</code>.</li>
+    <li>Grants from <code>ORA22</code> to <code>DEMO</code>.</li>
+    </ul>
+    <ol>
+    <li><code>ORA21</code> tries to revoke from <code>DEMO</code> directly and fails:<br>“cannot revoke privileges that you did not grant.”</li>
+    <li><code>ORA21</code> revokes from <code>ORA22</code> instead:</li>
+    </ol>
+    <pre><code class="language-sql">   REVOKE SELECT
+       ON employees
+       FROM ora22;</code></pre>
+    <p>Result: both <code>ORA22</code> <strong>and</strong> <code>DEMO</code> lose access.</p>
+    <p>Moral: with <code>WITH GRANT OPTION</code>, privileges form a little family tree, and you prune at the branch, not at the leaves.</p>
+    <hr>
+    <h2>9. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li><strong>Differentiate</strong> system privileges and object privileges without mixing them up.</li>
+    <li><strong>Grant</strong> system privileges and object privileges to users and roles.</li>
+    <li><strong>Create and use roles</strong> to simplify privilege management.</li>
+    <li><strong>Use and respect</strong> <code>WITH GRANT OPTION</code>, knowing how it spreads power and how revocation works.</li>
+    <li><strong>Inspect and clean up</strong> privileges using data dictionary views and <code>REVOKE</code>.</li>
+    </ul>
+    <p>And if all of that still feels like a lot, remember: it’s better than discovering that “PUBLIC” can drop your tables. Because nothing says “Monday” like that.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="17_Manipulating_Data_by_Using_Subqueries.html">&larr; previous</a>
+    <a href="18_Controlling_User_Access.md">view source markdown</a>
+    <a href="19_Manipulating_Data_Using_Advanced_Queries.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

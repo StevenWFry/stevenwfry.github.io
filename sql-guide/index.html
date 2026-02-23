@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Guide - swf.wtf</title>
+<meta name="description" content="Oracle 19c and MySQL SQL study notes, converted to web chapters.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="../index.html">&larr; home</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">Study Notes</div>
+    <h1>SQL Guide</h1>
+    <p>Structured notes from my Oracle 19c SQL workshop study pass. Same site aesthetic, less context switching, and no hunting through filenames at midnight.</p>
+    <div class="sql-meta">
+      <span class="sql-pill">22 chapters</span>
+      <span class="sql-pill">oracle + mysql</span>
+      <span class="sql-pill">markdown-backed</span>
+    </div>
+  </header>
+
+  <hr class="sql-divider">
+
+  <section class="lesson-grid">
+    <a href="01_Course_Introduction.html" class="lesson-card">
+      <div class="lesson-tag">01</div>
+      <div class="lesson-title">01 - Course Introduction</div>
+      <div class="lesson-summary">And look, when someone says “course objectives” your brain usually leaves the room. But this introduction actually matters, because it tells you what kind of power you’r...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="02_Retrieving_Data_Using_the_SQL_SELECT_Statement.html" class="lesson-card">
+      <div class="lesson-tag">02</div>
+      <div class="lesson-title">02 - Retrieving Data Using the SQL SELECT Statement</div>
+      <div class="lesson-summary">And look, the SELECT statement is the thing you thought SQL was: “show me stuff from a table.” But it also hides a surprising number of ways to confuse yourself with ali...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="03_Restricting_and_Sorting_Data.html" class="lesson-card">
+      <div class="lesson-tag">03</div>
+      <div class="lesson-title">03 - Restricting and Sorting Data</div>
+      <div class="lesson-summary">And look, a SELECT that returns every row in a table is technically correct, but it’s also the database equivalent of shouting “EVERYBODY IN HERE” and being surprised wh...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="04_Using_Single-Row_Functions_to_Customize_Output.html" class="lesson-card">
+      <div class="lesson-tag">04</div>
+      <div class="lesson-title">04 - Using Single-Row Functions to Customize Output</div>
+      <div class="lesson-summary">And look, raw table data is honest, but it’s also aggressively unhelpful. Sometimes you want names capitalized nicely, salaries rounded, dates massaged into something re...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="05_Using_Conversion_Functions_and_Conditional_Expressions.html" class="lesson-card">
+      <div class="lesson-tag">05</div>
+      <div class="lesson-title">05 - Using Conversion Functions and Conditional Expressions</div>
+      <div class="lesson-summary">And look, databases are pedantic. They care deeply about whether something is a number, a string, a date, or now even JSON, and they will absolutely throw an error if yo...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="06_Reporting_Aggregated_Data_Using_Group_Functions.html" class="lesson-card">
+      <div class="lesson-tag">06</div>
+      <div class="lesson-title">06 - Reporting Aggregated Data Using Group Functions</div>
+      <div class="lesson-summary">And look, at some point “one row per employee” stops cutting it. HR doesn’t want every salary; they want average salary by department, or total pay for sales reps, or “h...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="07_Displaying_Data_from_Multiple_Tables_Using_Joins.html" class="lesson-card">
+      <div class="lesson-tag">07</div>
+      <div class="lesson-title">07 - Displaying Data from Multiple Tables Using Joins</div>
+      <div class="lesson-summary">And look, normalized databases are great for design and terrible for reporting. All the interesting information is split across five different tables—employees here, dep...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="08_Using_Subqueries_to_Solve_Queries.html" class="lesson-card">
+      <div class="lesson-tag">08</div>
+      <div class="lesson-title">08 - Using Subqueries to Solve Queries</div>
+      <div class="lesson-summary">And look, sometimes your WHERE clause doesn’t know enough to do its job. You want “everyone hired after Davies”, but you don’t actually know when Davies was hired. You c...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="09_Using_Set_Operators.html" class="lesson-card">
+      <div class="lesson-tag">09</div>
+      <div class="lesson-title">09 - Using Set Operators</div>
+      <div class="lesson-summary">And look, sometimes one query is not the problem—the problem is that you have two (or more) queries and HR wants “everything from both, but without duplicates, except wh...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="10A_Managing_Tables_Using_DML_Statements_in_Oracle.html" class="lesson-card">
+      <div class="lesson-tag">10A</div>
+      <div class="lesson-title">10A - Managing Tables Using DML Statements in Oracle</div>
+      <div class="lesson-summary">And look, reading data is safe. It’s like browsing a store: you can stare at products all day and nothing changes. DML is when you start rearranging shelves, throwing th...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="10B_Managing_Tables_Using_DML_Statements_in_MySQL.html" class="lesson-card">
+      <div class="lesson-tag">10B</div>
+      <div class="lesson-title">10B - Managing Tables Using DML Statements in MySQL</div>
+      <div class="lesson-summary">And look, reading from a MySQL database is harmless. Writing to it is where lawyers and auditors start to pay attention. When you INSERT, UPDATE, or DELETE, you’re chang...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="11A_Introduction_to_Data_Definition_Language_in_Oracle.html" class="lesson-card">
+      <div class="lesson-tag">11A</div>
+      <div class="lesson-title">11A - Introduction to Data Definition Language in Oracle</div>
+      <div class="lesson-summary">And look, all the querying, joining, and updating in the world doesn’t help if the tables themselves are wrong—missing columns, bad data types, or no constraints so peop...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="11B_Introduction_to_Data_Definition_Language_in_MySQL.html" class="lesson-card">
+      <div class="lesson-tag">11B</div>
+      <div class="lesson-title">11B - Introduction to Data Definition Language in MySQL</div>
+      <div class="lesson-summary">And look, you can write the world’s fanciest queries, but if your tables are mis‑shapen nightmares—with missing columns, wrong types, and no constraints—your database is...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="12_Introduction_to_Data_Dictionary_Views.html" class="lesson-card">
+      <div class="lesson-tag">12</div>
+      <div class="lesson-title">12 - Introduction to Data Dictionary Views</div>
+      <div class="lesson-summary">And look, your schema knows things about itself that you have absolutely no idea about: who created which table, what constraints lurk on which columns, and why that one...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="13_Creating_Sequences_Synonyms_and_Indexes.html" class="lesson-card">
+      <div class="lesson-tag">13</div>
+      <div class="lesson-title">13 - Creating Sequences, Synonyms, and Indexes</div>
+      <div class="lesson-summary">And look, your tables are lovely, but on their own they’re a bit slow, slightly inconvenient, and prone to “who assigned this ID twice?” disasters. This is where sequenc...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="14_Creating_Views.html" class="lesson-card">
+      <div class="lesson-tag">14</div>
+      <div class="lesson-title">14 - Creating Views</div>
+      <div class="lesson-summary">And look, sometimes you want people to see some of a table, but not all of it. Or you’re tired of rewriting the same five‑table join every time you need a report. This i...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="15_Managing_Schema_Objects.html" class="lesson-card">
+      <div class="lesson-tag">15</div>
+      <div class="lesson-title">15 - Managing Schema Objects</div>
+      <div class="lesson-summary">And look, once your database has been alive for more than about five minutes, people start saying things like “we just need one tiny schema change,” which is how you end...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="16_Retrieving_Data_by_Using_Subqueries.html" class="lesson-card">
+      <div class="lesson-tag">16</div>
+      <div class="lesson-title">16 - Retrieving Data by Using Subqueries</div>
+      <div class="lesson-summary">And look, plain single‑table queries are fine… if your data model was designed by a golden retriever. For actual systems, you’re going to need subqueries talking to othe...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="17_Manipulating_Data_by_Using_Subqueries.html" class="lesson-card">
+      <div class="lesson-tag">17</div>
+      <div class="lesson-title">17 - Manipulating Data by Using Subqueries</div>
+      <div class="lesson-summary">And look, selecting with subqueries is all very nice, but at some point someone will say, “Can we actually change the data based on that logic?” This is where we stop ju...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="18_Controlling_User_Access.html" class="lesson-card">
+      <div class="lesson-tag">18</div>
+      <div class="lesson-title">18 - Controlling User Access</div>
+      <div class="lesson-summary">Welcome to the glamorous world of database security, where your dreams of unlimited power go to die under the watchful eye of the DBA.</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="19_Manipulating_Data_Using_Advanced_Queries.html" class="lesson-card">
+      <div class="lesson-tag">19</div>
+      <div class="lesson-title">19 - Manipulating Data Using Advanced Queries</div>
+      <div class="lesson-summary">And look, basic INSERT, UPDATE, and DELETE are cute. They’re the training wheels of SQL. But at some point you stop gently adding rows and start doing things like loadin...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+    <a href="20_Managing_Data_in_Different_Time_Zones.html" class="lesson-card">
+      <div class="lesson-tag">20</div>
+      <div class="lesson-title">20 - Managing Data in Different Time Zones</div>
+      <div class="lesson-summary">And look, storing dates without time zones is like scheduling a global meeting and only writing “9 AM” in the invite. Whose 9 AM? Where? On which planet? This lesson is...</div>
+      <div class="lesson-cta">Open chapter &rarr;</div>
+    </a>
+  </section>
+
+  <div class="sql-links">
+    <a href="00_TABLE_OF_CONTENTS.md">Table of contents (.md)</a>
+    <a href="01_Course_Introduction.md">Raw notes folder</a>
+  </div>
+
+  <div class="sql-footer">// generated by scripts/build_sql_guide.py</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4 – Using Single-Row Functions to Customize Output (or: teaching your data a few party tricks) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, raw table data is honest, but it’s also aggressively unhelpful. Sometimes you want names capitalized nicely, salaries rounded, dates massaged in...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 4 – Using Single-Row Functions to Customize Output (or: teaching your data a few party tricks)</h1>
+    <p>And look, raw table data is honest, but it’s also aggressively unhelpful. Sometimes you want names capitalized nicely, salaries rounded, dates massaged into something readable, or strings glued together so they actually...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, raw table data is honest, but it’s also aggressively unhelpful. Sometimes you want names capitalized nicely, salaries rounded, dates massaged into something readable, or strings glued together so they actually tell a story.</p>
+    <p>This is where <strong>single-row functions</strong> show up and say: “What if we made this look less like a spreadsheet export and more like something a human can read?”</p>
+    <p>In this lesson you will learn to:</p>
+    <ul>
+    <li>Describe the main categories of SQL functions.</li>
+    <li>Use <strong>character</strong>, <strong>number</strong>, and <strong>date</strong> functions in <code>SELECT</code> statements.</li>
+    <li>Nest functions to transform data in multiple ways at once.</li>
+    <li>Understand key differences between Oracle and MySQL for these functions.</li>
+    </ul>
+    <hr>
+    <h2>1. Single-Row vs Multi-Row Functions</h2>
+    <p>SQL functions take <strong>inputs</strong> (arguments) and return <strong>outputs</strong> (values):</p>
+    <ul>
+    <li>Some accept <strong>multiple arguments</strong>.</li>
+    <li>A few accept <strong>no arguments</strong> at all (e.g., <code>SYSDATE</code> in Oracle, <code>CURDATE()</code> in MySQL).</li>
+    <li>All of them <strong>return a value</strong>.</li>
+    </ul>
+    <p>Two big families:</p>
+    <ul>
+    <li><strong>Single-row functions</strong> – operate on each row <strong>individually</strong> and return <strong>one result per row</strong>.</li>
+    <li>Example: <code>UPPER(last_name)</code> for every employee.</li>
+    <li><strong>Multiple-row (aggregate) functions</strong> – operate on <strong>groups of rows</strong> and return <strong>one result per group</strong>.</li>
+    <li>Example: <code>AVG(salary)</code> across all employees in China.</li>
+    </ul>
+    <p>This lesson is about the first group – single-row functions – the ones you use to customize how individual rows look.</p>
+    <p>Single-row functions can:</p>
+    <ul>
+    <li>Modify data values (strings, numbers, dates).</li>
+    <li>Possibly change the <strong>data type</strong> of the result.</li>
+    <li>Be <strong>nested</strong> (function inside function).</li>
+    <li>Accept arguments that are columns, constants, or expressions.</li>
+    </ul>
+    <p>Main categories:</p>
+    <ul>
+    <li>Character functions</li>
+    <li>Number functions</li>
+    <li>Date functions</li>
+    <li>Conversion functions</li>
+    <li>General functions</li>
+    </ul>
+    <p>We’ll focus on the first three.</p>
+    <hr>
+    <h2>2. Character Functions – Fixing Your Strings</h2>
+    <p>Character functions manipulate text. Some change <strong>case</strong>; others slice, pad, or search strings.</p>
+    <h3>2.1 Case-conversion: LOWER, UPPER, INITCAP</h3>
+    <ul>
+    <li><code>LOWER</code> – converts text to lowercase.</li>
+    <li><code>UPPER</code> – converts text to uppercase.</li>
+    <li><code>INITCAP</code> (Oracle) – capitalizes the first letter of each word.</li>
+    </ul>
+    <p>Examples (Oracle &amp; MySQL):</p>
+    <pre><code class="language-sql">SELECT LOWER(&#x27;Hello World&#x27;)  AS all_lower,
+           UPPER(&#x27;Hello World&#x27;)  AS all_upper
+    FROM   dual;        -- Oracle</code></pre>
+    <pre><code class="language-sql">SELECT LOWER(&#x27;Hello World&#x27;) AS all_lower,
+           UPPER(&#x27;Hello World&#x27;) AS all_upper;
+    -- MySQL (no need for dual)</code></pre>
+    <p>Oracle-only INITCAP:</p>
+    <pre><code class="language-sql">SELECT INITCAP(&#x27;hello world&#x27;) AS nice_title
+    FROM   dual;
+    -- Result: &#x27;Hello World&#x27;</code></pre>
+    <p>These are especially handy for <strong>case-insensitive searches</strong>:</p>
+    <pre><code class="language-sql">SELECT employee_id, last_name
+    FROM   employees
+    WHERE  UPPER(last_name) = UPPER(&#x27;whalen&#x27;);</code></pre>
+    <p>On Oracle, this forces both sides to uppercase so you stop losing rows to picky capitalization.</p>
+    <p>&gt; Note: MySQL is often case-insensitive by default for string comparisons, depending on collation, so this is less critical there.</p>
+    <hr>
+    <h3>2.2 CONCAT, SUBSTR/SUBSTRING, LENGTH, INSTR/INSTRING, LPAD, RPAD, TRIM, REPLACE</h3>
+    <p>These are the Swiss Army knives of string manipulation.</p>
+    <h4>CONCAT</h4>
+    <p>Oracle:</p>
+    <ul>
+    <li><code>CONCAT</code> takes <strong>exactly two arguments</strong>.</li>
+    <li>To join more than two pieces, you <strong>nest</strong> it, or just use <code>||</code> instead.</li>
+    </ul>
+    <pre><code class="language-sql">SELECT CONCAT(&#x27;Hello&#x27;, &#x27; World&#x27;) AS greeting
+    FROM   dual;
+    
+    -- Nesting
+    SELECT CONCAT(CONCAT(&#x27;Hello&#x27;, &#x27; &#x27;), &#x27;World&#x27;) AS greeting
+    FROM   dual;</code></pre>
+    <p>In Oracle, <code>first_name || &#x27; &#x27; || last_name</code> is usually easier.</p>
+    <p>MySQL:</p>
+    <ul>
+    <li><code>CONCAT</code> can take <strong>many arguments</strong>:</li>
+    </ul>
+    <pre><code class="language-sql">SELECT CONCAT(first_name, &#x27; &#x27;, last_name, &#x27; is a &#x27;, job_id) AS description
+    FROM   employees;</code></pre>
+    <h4>SUBSTR / SUBSTRING</h4>
+    <p>In Oracle: <code>SUBSTR(string, start_position [, length])</code></p>
+    <pre><code class="language-sql">-- First five characters
+    SELECT SUBSTR(&#x27;Hello World&#x27;, 1, 5) AS first_part FROM dual;  -- &#x27;Hello&#x27;
+    
+    -- Start at 7th character, 5 characters long
+    SELECT SUBSTR(&#x27;Hello World&#x27;, 7, 5) AS second_part FROM dual; -- &#x27;World&#x27;
+    
+    -- Start at 7th character, everything after
+    SELECT SUBSTR(&#x27;Hello World&#x27;, 7) AS rest FROM dual;           -- &#x27;World&#x27;
+    
+    -- Last character (negative start counts from the right)
+    SELECT SUBSTR(&#x27;Hello World&#x27;, -1, 1) AS last_char FROM dual;  -- &#x27;d&#x27;</code></pre>
+    <p>MySQL uses <code>SUBSTRING</code> with similar arguments.</p>
+    <h4>LENGTH</h4>
+    <p>Returns the number of characters:</p>
+    <pre><code class="language-sql">SELECT LENGTH(&#x27;Hello World&#x27;) AS len FROM dual;  -- 11</code></pre>
+    <p>(5 letters + space + 5 letters.)</p>
+    <h4>INSTR (Oracle) / INSTR/LOCATE (MySQL)</h4>
+    <p>Finds the <strong>position</strong> of a substring.</p>
+    <p>Oracle: <code>INSTR(string, substring [, start_position [, occurrence]])</code></p>
+    <pre><code class="language-sql">-- First occurrence of &#x27;l&#x27;
+    SELECT INSTR(&#x27;Hello World&#x27;, &#x27;l&#x27;) AS first_l FROM dual;        -- 3
+    
+    -- Second occurrence of &#x27;l&#x27;
+    SELECT INSTR(&#x27;Hello World&#x27;, &#x27;l&#x27;, 1, 2) AS second_l FROM dual; -- 4
+    
+    -- Third occurrence of &#x27;l&#x27;
+    SELECT INSTR(&#x27;Hello World&#x27;, &#x27;l&#x27;, 1, 3) AS third_l FROM dual;  -- 10
+    
+    -- Search from the right (negative start)
+    SELECT INSTR(&#x27;Hello World&#x27;, &#x27;l&#x27;, -1, 1) FROM dual;           -- 10</code></pre>
+    <p>MySQL’s <code>INSTR</code> and <code>LOCATE</code> provide similar behavior (with slightly different parameter ordering).</p>
+    <h4>LPAD and RPAD</h4>
+    <p>Pad a string to a certain length with a fill character.</p>
+    <pre><code class="language-sql">SELECT LPAD(&#x27;Hello World&#x27;, 15, &#x27;*&#x27;) AS left_padded,
+           RPAD(&#x27;Hello World&#x27;, 15, &#x27;*&#x27;) AS right_padded
+    FROM   dual;
+    
+    -- Result examples:
+    -- left_padded:  &#x27;****Hello World&#x27;
+    -- right_padded: &#x27;Hello World****&#x27;</code></pre>
+    <h4>TRIM</h4>
+    <p>Trim unwanted characters from the start and/or end.</p>
+    <p>Oracle default (both sides):</p>
+    <pre><code class="language-sql">SELECT TRIM(&#x27;d&#x27; FROM &#x27;ddolly Worldd&#x27;) AS trimmed FROM dual;
+    -- &#x27;olly World&#x27;</code></pre>
+    <p>You can also specify <code>LEADING</code> or <code>TRAILING</code>:</p>
+    <pre><code class="language-sql">SELECT TRIM(LEADING &#x27;d&#x27; FROM &#x27;ddolly Worldd&#x27;)   FROM dual; -- &#x27;olly Worldd&#x27;
+    SELECT TRIM(TRAILING &#x27;d&#x27; FROM &#x27;ddolly Worldd&#x27;)  FROM dual; -- &#x27;ddolly World&#x27;</code></pre>
+    <p>By default, without parameters, <code>TRIM</code> removes whitespace.</p>
+    <h4>REPLACE</h4>
+    <p>Replace all occurrences of a substring.</p>
+    <pre><code class="language-sql">SELECT REPLACE(&#x27;Jack and Jill&#x27;, &#x27;J&#x27;, &#x27;Z&#x27;) AS new_text
+    FROM   dual;
+    -- &#x27;Zack and Zill&#x27;</code></pre>
+    <p>Put all of these together and, suddenly, your text columns look like they came from a UI designer instead of a log file.</p>
+    <hr>
+    <h3>2.3 Nesting Character Functions</h3>
+    <p>You can stack functions to get multiple transformations in one expression.</p>
+    <p>Example:</p>
+    <pre><code class="language-sql">SELECT UPPER(SUBSTR(last_name, 1, 8) || &#x27;_US&#x27;) AS tag
+    FROM   employees;</code></pre>
+    <p>Order of evaluation is from <strong>innermost</strong> to <strong>outermost</strong>:</p>
+    <ol>
+    <li><code>SUBSTR(last_name, 1, 8)</code> – first 8 characters.</li>
+    <li><code>|| &#x27;_US&#x27;</code> – append <code>&#x27;_US&#x27;</code>.</li>
+    <li><code>UPPER(...)</code> – convert everything to uppercase.</li>
+    </ol>
+    <p>It’s like a tiny factory pipeline for each value.</p>
+    <hr>
+    <h2>3. Number Functions – Taming Your Decimals</h2>
+    <p>Number functions manipulate numeric data. Common ones:</p>
+    <ul>
+    <li><code>ROUND</code> – rounds a number.</li>
+    <li><code>TRUNC</code> (Oracle) / <code>TRUNCATE</code> (MySQL) – cuts off digits without rounding.</li>
+    <li><code>CEIL</code> / <code>CEILING</code> – smallest integer <strong>greater than or equal to</strong> a value.</li>
+    <li><code>FLOOR</code> – largest integer <strong>less than or equal to</strong> a value.</li>
+    <li><code>MOD</code> – remainder of division.</li>
+    </ul>
+    <h3>3.1 ROUND and TRUNC</h3>
+    <p>Syntax (Oracle): <code>ROUND(number [, decimal_places])</code>, <code>TRUNC(number [, decimal_places])</code>.</p>
+    <p>Examples:</p>
+    <pre><code class="language-sql">SELECT ROUND(45.926, 2) AS rounded_2,   -- 45.93
+           TRUNC(45.926, 2) AS truncated_2  -- 45.92
+    FROM   dual;
+    
+    SELECT ROUND(45.926, 0) AS rounded_0,   -- 46
+           TRUNC(45.926, 0) AS truncated_0  -- 45
+    FROM   dual;
+    
+    SELECT ROUND(45.926, -1) AS round_tens, -- 50
+           TRUNC(45.926, -1) AS trunc_tens  -- 40
+    FROM   dual;</code></pre>
+    <p>If you omit the second argument, both default to 0 (round/truncate at the decimal point).</p>
+    <p>MySQL:</p>
+    <ul>
+    <li>Uses <code>TRUNCATE(number, decimal_places)</code> instead of <code>TRUNC</code>.</li>
+    </ul>
+    <h3>3.2 CEIL / FLOOR / MOD</h3>
+    <pre><code class="language-sql">SELECT CEIL(45.1)   AS ceil_val,   -- 46
+           FLOOR(45.9)  AS floor_val,  -- 45
+           MOD(1600,300) AS remainder   -- 100
+    FROM   dual;</code></pre>
+    <p>Example – find employees with even <code>employee_id</code> values:</p>
+    <pre><code class="language-sql">SELECT employee_id,
+           last_name
+    FROM   employees
+    WHERE  MOD(employee_id, 2) = 0;</code></pre>
+    <p>If the remainder when dividing by 2 is 0, the number is even.</p>
+    <hr>
+    <h2>4. Date Fundamentals – Oracle vs MySQL</h2>
+    <p>Dates in databases are not just strings; they include time information too.</p>
+    <h3>4.1 Oracle date storage and display</h3>
+    <p>Oracle stores dates as:</p>
+    <ul>
+    <li>Century, year, month, day</li>
+    <li>Hours, minutes, seconds</li>
+    </ul>
+    <p>Default display format:</p>
+    <ul>
+    <li><code>DD-MON-RR</code> (e.g., <code>29-JUN-22</code>).</li>
+    </ul>
+    <p>The <code>RR</code> year format performs “rounded century” logic so that two-digit years are mapped intelligently into previous/next century based on the current year. It’s… clever. And occasionally confusing.</p>
+    <p>Key takeaway: dates <strong>include time</strong>, even if you don’t see it.</p>
+    <h3>4.2 Getting the current date and time (Oracle)</h3>
+    <ul>
+    <li><code>SYSDATE</code> – date &amp; time from the <strong>database server</strong>.</li>
+    <li><code>CURRENT_DATE</code> – date &amp; time from the <strong>session time zone</strong>.</li>
+    <li><code>CURRENT_TIMESTAMP</code> – date, time, and fractional seconds from the session.</li>
+    </ul>
+    <p>If your database server is in New York and you’re in California, <code>SYSDATE</code> and <code>CURRENT_DATE</code> can differ by a few hours.</p>
+    <h3>4.3 MySQL date functions</h3>
+    <p>In MySQL, default date format is <code>YYYY-MM-DD</code>.</p>
+    <p>Common functions:</p>
+    <ul>
+    <li><code>CURDATE()</code> – current date.</li>
+    <li><code>CURRENT_DATE</code> / <code>CURRENT_DATE()</code> – synonyms for <code>CURDATE()</code>.</li>
+    <li><code>NOW()</code> – current date and time.</li>
+    <li><code>CURRENT_TIMESTAMP</code> – synonym for <code>NOW()</code>.</li>
+    <li><code>SYSDATE()</code> – server’s current date and time.</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">SELECT CURDATE()      AS today,
+           NOW()          AS now_dt,
+           CURRENT_DATE() AS today2;</code></pre>
+    <hr>
+    <h2>5. Arithmetic with Dates</h2>
+    <p>You can perform arithmetic on dates, but the rules differ slightly between Oracle and MySQL.</p>
+    <h3>5.1 Oracle date arithmetic</h3>
+    <ul>
+    <li><code>date + n</code> → <code>n</code> days after <code>date</code>.</li>
+    <li><code>date - n</code> → <code>n</code> days before <code>date</code>.</li>
+    <li><code>date1 - date2</code> → number of days between two dates.</li>
+    <li>For hours: add <code>hours / 24</code>.</li>
+    </ul>
+    <p>Example – weeks employed:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date,
+           (SYSDATE - hire_date) / 7 AS weeks_employed
+    FROM   employees;</code></pre>
+    <h3>5.2 MySQL date arithmetic</h3>
+    <p>Use <code>DATE_ADD</code> and <code>DATE_SUB</code> with <strong>intervals</strong>:</p>
+    <pre><code class="language-sql">SELECT hire_date,
+           DATE_ADD(hire_date, INTERVAL 6 MONTH) AS six_months_later,
+           DATEDIFF(CURDATE(), hire_date)        AS days_employed
+    FROM   employees
+    WHERE  hire_date &gt;= DATE_SUB(CURDATE(), INTERVAL 4 YEAR);</code></pre>
+    <p>Other helpful functions:</p>
+    <ul>
+    <li><code>LAST_DAY(date)</code> – last day of the month.</li>
+    <li><code>MONTH(date)</code> – month number.</li>
+    <li><code>YEAR(date)</code> – year number.</li>
+    </ul>
+    <hr>
+    <h2>6. Date Functions in Oracle – MONTHS_BETWEEN, ADD_MONTHS, NEXT_DAY, LAST_DAY, ROUND, TRUNC</h2>
+    <p>These help you reason about months and calendar boundaries.</p>
+    <h3>6.1 MONTHS_BETWEEN and ADD_MONTHS</h3>
+    <pre><code class="language-sql">SELECT MONTHS_BETWEEN(DATE &#x27;2016-08-01&#x27;, DATE &#x27;2015-01-15&#x27;) AS months_diff
+    FROM   dual;
+    -- ~19.67 months
+    
+    SELECT ADD_MONTHS(DATE &#x27;2016-01-31&#x27;, 1) AS plus_one_month
+    FROM   dual;
+    -- 29-FEB-16 (handles leap year)</code></pre>
+    <p>If you reverse the argument order in <code>MONTHS_BETWEEN</code>, you’ll get a negative result.</p>
+    <h3>6.2 NEXT_DAY and LAST_DAY</h3>
+    <pre><code class="language-sql">SELECT NEXT_DAY(DATE &#x27;2016-06-01&#x27;, &#x27;FRIDAY&#x27;) AS next_friday
+    FROM   dual;
+    -- 03-JUN-16 or 10-JUN-16 depending on NLS settings
+    
+    SELECT LAST_DAY(DATE &#x27;2016-04-01&#x27;) AS last_of_month
+    FROM   dual;
+    -- 30-APR-16</code></pre>
+    <h3>6.3 ROUND and TRUNC with dates</h3>
+    <p>Assume <code>SYSDATE</code> is 29-JUN-2018 in these examples.</p>
+    <pre><code class="language-sql">-- Round to nearest month
+    SELECT ROUND(SYSDATE, &#x27;MONTH&#x27;) AS rounded_month
+    FROM   dual;
+    -- 01-JUL-2018 (past the middle of June)
+    
+    -- Round to nearest year
+    SELECT ROUND(SYSDATE, &#x27;YEAR&#x27;) AS rounded_year
+    FROM   dual;
+    -- 01-JAN-2018 (not yet halfway through the year)
+    
+    -- Truncate to start of month
+    SELECT TRUNC(SYSDATE, &#x27;MONTH&#x27;) AS month_start
+    FROM   dual;
+    -- 01-JUN-2018
+    
+    -- Truncate to start of year
+    SELECT TRUNC(SYSDATE, &#x27;YEAR&#x27;) AS year_start
+    FROM   dual;
+    -- 01-JAN-2018</code></pre>
+    <p><code>ROUND</code> pays attention to how far into the month/year you are; <code>TRUNC</code> does not—it just snaps to the beginning.</p>
+    <hr>
+    <h2>7. Putting It Together – Typical Use Cases</h2>
+    <p>A few realistic queries that use these functions together:</p>
+    <h3>7.1 Clean, nicely formatted names and job titles</h3>
+    <pre><code class="language-sql">SELECT INITCAP(first_name || &#x27; &#x27; || last_name) AS full_name,
+           LOWER(job_id)                           AS job_code
+    FROM   employees;</code></pre>
+    <h3>7.2 Years and months of service</h3>
+    <p>Oracle example:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date,
+           TRUNC(MONTHS_BETWEEN(SYSDATE, hire_date) / 12) AS years_service,
+           MOD(TRUNC(MONTHS_BETWEEN(SYSDATE, hire_date)), 12) AS months_service
+    FROM   employees;</code></pre>
+    <p>MySQL example (approximate, using years only):</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date,
+           YEAR(CURDATE()) - YEAR(hire_date) AS years_service
+    FROM   employees;</code></pre>
+    <h3>7.3 Filtering with case-insensitive patterns</h3>
+    <pre><code class="language-sql">SELECT last_name,
+           email
+    FROM   employees
+    WHERE  UPPER(last_name) LIKE &#x27;%A%&#x27;
+    AND    UPPER(last_name) LIKE &#x27;%E%&#x27;;</code></pre>
+    <p>This finds employees whose last names contain both A and E, regardless of case.</p>
+    <hr>
+    <h2>8. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Explain the difference between <strong>single-row</strong> and <strong>multi-row (aggregate)</strong> functions.</li>
+    <li>Use <strong>character functions</strong> (<code>LOWER</code>, <code>UPPER</code>, <code>INITCAP</code>, <code>CONCAT</code>, <code>SUBSTR</code>, <code>LENGTH</code>, <code>INSTR</code>, <code>LPAD</code>, <code>RPAD</code>, <code>TRIM</code>, <code>REPLACE</code>) to reshape text.</li>
+    <li>Use <strong>number functions</strong> (<code>ROUND</code>, <code>TRUNC</code>/<code>TRUNCATE</code>, <code>CEIL</code>/<code>FLOOR</code>, <code>MOD</code>) to control numeric formatting.</li>
+    <li>Use <strong>date functions</strong> in Oracle (<code>SYSDATE</code>, <code>MONTHS_BETWEEN</code>, <code>ADD_MONTHS</code>, <code>NEXT_DAY</code>, <code>LAST_DAY</code>, <code>ROUND</code>, <code>TRUNC</code>) and MySQL (<code>CURDATE()</code>, <code>NOW()</code>, <code>DATE_ADD</code>, <code>DATE_SUB</code>, <code>DATEDIFF</code>, <code>LAST_DAY</code>, <code>MONTH</code>, <code>YEAR</code>).</li>
+    <li>Perform arithmetic with dates to compute differences and future/past dates.</li>
+    <li>Nest functions to perform several transformations in a single expression.</li>
+    </ul>
+    <p>In short, your <code>SELECT</code> statements no longer just regurgitate table contents—they <strong>massage</strong>, <strong>clean</strong>, and <strong>reformat</strong> data into something your HR reports might actually be proud of.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="03_Restricting_and_Sorting_Data.html">&larr; previous</a>
+    <a href="04_Using_Single-Row_Functions_to_Customize_Output.md">view source markdown</a>
+    <a href="05_Using_Conversion_Functions_and_Conditional_Expressions.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

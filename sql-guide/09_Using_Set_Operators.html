@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 9 – Using Set Operators (or: when one result set just isn’t enough) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, sometimes one query is not the problem—the problem is that you have two (or more) queries and HR wants “everything from both, but without duplic...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 9 – Using Set Operators (or: when one result set just isn’t enough)</h1>
+    <p>And look, sometimes one query is not the problem—the problem is that you have two (or more) queries and HR wants “everything from both, but without duplicates, except when they do want duplicates, and also what’s common...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, sometimes one query is not the problem—the problem is that you have <strong>two</strong> (or more) queries and HR wants “everything from both, but without duplicates, except when they do want duplicates, and also what’s common between them, and by the way who’s missing?”. That entire mood is handled by <strong>set operators</strong>.</p>
+    <p>This lesson is about treating query results like sets and doing union/intersect/minus operations on them.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Describe the main SQL set operators.</li>
+    <li>Combine multiple <code>SELECT</code> queries into a single result set.</li>
+    <li>Understand when duplicates are removed vs preserved.</li>
+    <li>Control ordering of the combined result.</li>
+    </ul>
+    <hr>
+    <h2>1. Set Operator Types</h2>
+    <p>The ANSI/Oracle set operators:</p>
+    <ul>
+    <li><code>UNION</code> – combine results, <strong>remove duplicates</strong>.</li>
+    <li><code>UNION ALL</code> – combine results, <strong>keep duplicates</strong>.</li>
+    <li><code>INTERSECT</code> – rows common to <strong>both</strong> queries.</li>
+    <li><code>MINUS</code> (Oracle) / <code>EXCEPT</code> (ANSI) – rows in <strong>first</strong> query that are <strong>not</strong> in the second.</li>
+    </ul>
+    <p>They operate on the <strong>results</strong> of <code>SELECT</code> statements, not on tables directly.</p>
+    <h3>1.1 Rules and guidelines</h3>
+    <p>When using set operators:</p>
+    <ul>
+    <li>Each component <code>SELECT</code> must return the <strong>same number of columns</strong>.</li>
+    <li>Corresponding columns must have <strong>compatible data types</strong> and are matched <strong>positionally</strong>.</li>
+    <li>Column names in the final result come from the <strong>first</strong> <code>SELECT</code>.</li>
+    <li>By default, Oracle sorts the combined result in ascending order by the <strong>first column</strong> for <code>UNION</code>, <code>INTERSECT</code>, and <code>MINUS</code>.</li>
+    <li><code>UNION ALL</code> does <strong>not</strong> sort by default.</li>
+    <li>An <code>ORDER BY</code> clause may appear <strong>only once</strong>, at the very end of the compound query.</li>
+    <li><code>ORDER BY</code> can use column names or positions <strong>from the first SELECT only</strong>.</li>
+    </ul>
+    <p>Parentheses can be used when you have more than two <code>SELECT</code>s to control evaluation order—but most of the time, it’s simply left‑to‑right.</p>
+    <hr>
+    <h2>2. UNION vs UNION ALL</h2>
+    <h3>2.1 Simple numeric example</h3>
+    <pre><code class="language-sql">-- UNION
+    SELECT 2 AS val FROM dual
+    UNION
+    SELECT 1 FROM dual;
+    -- Result: 1, 2 (sorted, distinct)
+    
+    -- UNION (duplicates)
+    SELECT 2 AS val FROM dual
+    UNION
+    SELECT 2 FROM dual;
+    -- Result: 2 (duplicates removed)
+    
+    -- UNION ALL
+    SELECT 2 AS val FROM dual
+    UNION ALL
+    SELECT 2 FROM dual;
+    -- Result: 2, 2 (duplicates preserved)</code></pre>
+    <p>So:</p>
+    <ul>
+    <li><code>UNION</code> = set union, distinct values, sorted.</li>
+    <li><code>UNION ALL</code> = multiset union, all rows, unsorted unless you add <code>ORDER BY</code>.</li>
+    </ul>
+    <h3>2.2 Combining real tables: current and retired employees</h3>
+    <p>Imagine two tables:</p>
+    <ul>
+    <li><code>employees</code> – current employees</li>
+    <li><code>retired_employees</code> – past employees</li>
+    </ul>
+    <p>To list <strong>all distinct jobs</strong> ever held:</p>
+    <pre><code class="language-sql">SELECT job_id
+    FROM   employees
+    UNION
+    SELECT job_id
+    FROM   retired_employees;</code></pre>
+    <ul>
+    <li>If <code>SA_REP</code> exists in both tables, it appears <strong>once</strong>.</li>
+    </ul>
+    <p>To list <strong>all occurrences</strong> of job/department pairs, including duplicates:</p>
+    <pre><code class="language-sql">SELECT job_id, department_id
+    FROM   employees
+    UNION ALL
+    SELECT job_id, department_id
+    FROM   retired_employees;</code></pre>
+    <ul>
+    <li>Here, if both tables have a <code>SA_REP</code> in department 80, both rows appear.</li>
+    </ul>
+    <hr>
+    <h2>3. INTERSECT – Only What’s in Both Sets</h2>
+    <p><code>INTERSECT</code> returns rows that appear in <strong>both</strong> query results.</p>
+    <p>Example – managers who appear in both current and retired data:</p>
+    <pre><code class="language-sql">SELECT manager_id,
+           department_id
+    FROM   employees
+    INTERSECT
+    SELECT manager_id,
+           department_id
+    FROM   retired_employees;</code></pre>
+    <p>This might reveal, for example, that manager <code>149</code> has managed department <code>80</code> in both the current and retired datasets.</p>
+    <p>Another nice use case: employees who currently hold a job they <strong>used</strong> to have (using <code>job_history</code>):</p>
+    <pre><code class="language-sql">SELECT employee_id,
+           job_id
+    FROM   employees
+    INTERSECT
+    SELECT employee_id,
+           job_id
+    FROM   job_history;</code></pre>
+    <ul>
+    <li>If an employee’s <code>(employee_id, job_id)</code> pair appears in both, it means they’re currently in a job they previously held.</li>
+    </ul>
+    <p>From there you can drill into <code>job_history</code> to see when they held those jobs before.</p>
+    <hr>
+    <h2>4. MINUS – First Minus Second (Oracle)</h2>
+    <p><code>MINUS</code> returns all distinct rows from the <strong>first</strong> query that are <strong>not</strong> returned by the second.</p>
+    <p>Example – employees who have <strong>never</strong> changed jobs:</p>
+    <ul>
+    <li><code>job_history</code> contains employees who <strong>have</strong> changed jobs.</li>
+    </ul>
+    <pre><code class="language-sql">SELECT employee_id
+    FROM   employees
+    MINUS
+    SELECT employee_id
+    FROM   job_history;</code></pre>
+    <ul>
+    <li>The result is the set of <code>employee_id</code>s that appear in <code>employees</code> but not in <code>job_history</code>.</li>
+    <li>Those employees have never had a job change recorded.</li>
+    </ul>
+    <p>Another example – managers who have <strong>never</strong> managed retired sales employees:</p>
+    <pre><code class="language-sql">-- Current managers in sales (dept 80)
+    SELECT DISTINCT manager_id
+    FROM   employees
+    WHERE  department_id = 80
+    
+    MINUS
+    
+    -- Managers of retired sales staff
+    SELECT DISTINCT manager_id
+    FROM   retired_employees
+    WHERE  department_id = 80;</code></pre>
+    <p><code>MINUS</code> removes the second set from the first, leaving only “never managed retired sales people” managers.</p>
+    <p>&gt; Note: Standard ANSI uses <code>EXCEPT</code> where Oracle uses <code>MINUS</code>.</p>
+    <hr>
+    <h2>5. Matching SELECT Statements: Columns and Types</h2>
+    <p>Set operators are picky about the <strong>shape</strong> of the queries they combine.</p>
+    <h3>5.1 Same number of columns</h3>
+    <p>This will fail:</p>
+    <pre><code class="language-sql">SELECT last_name, salary
+    FROM   employees
+    UNION
+    SELECT department_name
+    FROM   departments;
+    -- ERROR: different number of columns</code></pre>
+    <p>You must match the column count:</p>
+    <pre><code class="language-sql">SELECT last_name, salary
+    FROM   employees
+    UNION
+    SELECT department_name, department_id
+    FROM   departments;</code></pre>
+    <h3>5.2 Compatible data types and positions</h3>
+    <p>Columns are matched <strong>by position</strong>, not by name.</p>
+    <p>If you write:</p>
+    <pre><code class="language-sql">SELECT last_name, salary
+    FROM   employees
+    UNION
+    SELECT department_id, department_name
+    FROM   departments;</code></pre>
+    <p>You are trying to union <code>last_name</code> (character) with <code>department_id</code> (number) in position 1, and <code>salary</code> (number) with <code>department_name</code> (character) in position 2—type mismatch.</p>
+    <p>One fix is to reorder and convert as needed, e.g.:</p>
+    <pre><code class="language-sql">SELECT last_name,       TO_CHAR(salary) AS val
+    FROM   employees
+    UNION
+    SELECT department_name, TO_CHAR(department_id) AS val
+    FROM   departments;</code></pre>
+    <p>Standard tricks:</p>
+    <ul>
+    <li>Use <code>TO_CHAR(NULL)</code> or <code>TO_DATE(NULL)</code> to create placeholder columns when a table is missing a column.</li>
+    <li>In MySQL, use <code>CAST(NULL AS CHAR(n))</code>, etc.</li>
+    </ul>
+    <p>Example – combining department and location data:</p>
+    <pre><code class="language-sql">SELECT location_id,
+           department_name,
+           TO_CHAR(NULL) AS warehouse_location
+    FROM   departments
+    
+    UNION
+    
+    SELECT location_id,
+           TO_CHAR(NULL) AS department_name,
+           state_province AS warehouse_location
+    FROM   locations;</code></pre>
+    <p>Result columns:</p>
+    <ul>
+    <li><code>location_id</code> (from first query)</li>
+    <li><code>department_name</code> (placeholder or actual)</li>
+    <li><code>warehouse_location</code> (department or state/province)</li>
+    </ul>
+    <hr>
+    <h2>6. ORDER BY with Set Operators</h2>
+    <p>Key rules for ordering compound queries:</p>
+    <ul>
+    <li><code>ORDER BY</code> appears <strong>once</strong>, at the <strong>end</strong> of the entire compound statement.</li>
+    <li>It can only reference columns (or aliases) from the <strong>first SELECT</strong>.</li>
+    <li>You can use <strong>position numbers</strong> (e.g., <code>ORDER BY 2</code>).</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">SELECT employee_id,
+           job_id
+    FROM   employees
+    
+    UNION
+    
+    SELECT employee_id,
+           job_id
+    FROM   retired_employees
+    
+    ORDER  BY 2;   -- sort by job_id</code></pre>
+    <p>In MySQL, the same pattern applies: one <code>ORDER BY</code> at the end; it orders the overall union.</p>
+    <p>Remember:</p>
+    <ul>
+    <li><code>UNION</code>, <code>INTERSECT</code>, and <code>MINUS</code> will by default return results ordered by the first column even <strong>without</strong> an <code>ORDER BY</code> in Oracle.</li>
+    <li><code>UNION ALL</code> preserves the natural order of its component queries unless you explicitly sort.</li>
+    </ul>
+    <p>If you need a specific cross‑query order that doesn’t match the default, use a final <code>ORDER BY</code> and, if necessary, synthetic sort columns (e.g., constants 1, 2, 3 in each branch) to control group ordering.</p>
+    <hr>
+    <h2>7. MySQL Notes</h2>
+    <p>In MySQL:</p>
+    <ul>
+    <li><code>UNION</code> and <code>UNION ALL</code> behave as in Oracle (distinct vs all rows).</li>
+    <li>MySQL uses <code>INTERSECT</code> / <code>EXCEPT</code> only in newer versions; historically you used <code>INNER JOIN</code> or <code>NOT IN</code>/<code>NOT EXISTS</code> patterns instead.</li>
+    <li>Type matching rules still apply—use <code>CAST</code> to align types when necessary.</li>
+    </ul>
+    <p>Example type alignment with <code>CAST</code>:</p>
+    <pre><code class="language-sql">SELECT location_id,
+           department_name,
+           CAST(NULL AS CHAR(30)) AS warehouse_location
+    FROM   departments
+    
+    UNION
+    
+    SELECT location_id,
+           CAST(NULL AS CHAR(30)) AS department_name,
+           state_province         AS warehouse_location
+    FROM   locations;</code></pre>
+    <hr>
+    <h2>8. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Use <code>UNION</code> to combine query results and eliminate duplicates.</li>
+    <li>Use <code>UNION ALL</code> when you want every row, including duplicates.</li>
+    <li>Use <code>INTERSECT</code> to find rows common to multiple datasets.</li>
+    <li>Use <code>MINUS</code> (or <code>EXCEPT</code>) to find rows present in the first result but not the second.</li>
+    <li>Ensure matching column counts and compatible data types across all component queries.</li>
+    <li>Apply <code>ORDER BY</code> correctly at the end of the compound statement to control final row order.</li>
+    </ul>
+    <p>You can now answer questions like “who’s ever had this job, past or present?”, “who still has a job they used to have?”, and “who has never changed jobs?”—which is exactly the kind of information HR loves and employees do not.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="08_Using_Subqueries_to_Solve_Queries.html">&larr; previous</a>
+    <a href="09_Using_Set_Operators.md">view source markdown</a>
+    <a href="10A_Managing_Tables_Using_DML_Statements_in_Oracle.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 5 – Using Conversion Functions and Conditional Expressions (or: when your data insists on being the wrong type) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, databases are pedantic. They care deeply about whether something is a number, a string, a date, or now even JSON, and they will absolutely throw...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 5 – Using Conversion Functions and Conditional Expressions (or: when your data insists on being the wrong type)</h1>
+    <p>And look, databases are pedantic. They care deeply about whether something is a number, a string, a date, or now even JSON, and they will absolutely throw an error if you try to compare &#x27;01-JAN-22&#x27; (a string) to a real...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, databases are pedantic. They care deeply about whether something is a <strong>number</strong>, a <strong>string</strong>, a <strong>date</strong>, or now even <strong>JSON</strong>, and they will absolutely throw an error if you try to compare <code>&#x27;01-JAN-22&#x27;</code> (a string) to a real date like <code>DATE &#x27;2022-01-01&#x27;</code> without converting it.</p>
+    <p>This lesson is about making the database a little less fussy by using <strong>conversion</strong> and <strong>conditional</strong> functions.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Describe implicit vs explicit data type conversion.</li>
+    <li>Use <code>TO_CHAR</code>, <code>TO_NUMBER</code>, and <code>TO_DATE</code> (Oracle) and <code>CAST</code>/<code>CONVERT</code> in MySQL.</li>
+    <li>Control how numbers and dates are formatted with <strong>format models</strong>.</li>
+    <li>Use general/conditional functions such as <code>NVL</code>, <code>NVL2</code>, <code>NULLIF</code>, <code>COALESCE</code>, <code>IFNULL</code>.</li>
+    <li>Use <code>CASE</code>, searched <code>CASE</code>, and <code>DECODE</code> for IF‑THEN‑ELSE logic.</li>
+    <li>Recognize basic SQL/JSON functions like <code>JSON_QUERY</code> and <code>JSON_TABLE</code>.</li>
+    </ul>
+    <hr>
+    <h2>1. Implicit vs Explicit Conversion</h2>
+    <p>SQL is strongly typed but occasionally “helpful”. It will sometimes convert data types <strong>for you</strong> (implicit conversion), and other times it will fail loudly and dramatically.</p>
+    <h3>1.1 Implicit conversion (Oracle)</h3>
+    <p>Oracle will automatically convert between strings and numbers/dates <strong>when it thinks it can</strong>.</p>
+    <p><strong>Strings → numbers</strong></p>
+    <pre><code class="language-sql">SELECT employee_id,
+           department_id
+    FROM   employees
+    WHERE  department_id = CONCAT(&#x27;9&#x27;, &#x27;0&#x27;);  -- implicitly becomes 90</code></pre>
+    <ul>
+    <li><code>&#x27;9&#x27;</code> and <code>&#x27;0&#x27;</code> are character values.</li>
+    <li><code>CONCAT(&#x27;9&#x27;, &#x27;0&#x27;)</code> → <code>&#x27;90&#x27;</code> (still a string).</li>
+    <li>Oracle implicitly converts <code>&#x27;90&#x27;</code> into number <code>90</code> to compare with numeric <code>department_id</code>.</li>
+    </ul>
+    <p><strong>Numbers → strings</strong></p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  INSTR(salary, &#x27;5&#x27;) &gt; 0;</code></pre>
+    <ul>
+    <li><code>salary</code> is numeric.</li>
+    <li><code>INSTR</code> expects a string, so Oracle implicitly converts <code>salary</code> to text and searches for <code>&#x27;5&#x27;</code>.</li>
+    </ul>
+    <p>This is convenient, right up to the moment a NLS setting changes and your “helpful” conversion starts behaving differently. Which is why the grown‑up way is <strong>explicit conversion</strong>.</p>
+    <h3>1.2 Explicit conversion</h3>
+    <p>You take control and tell Oracle <strong>exactly</strong> how to interpret a value:</p>
+    <ul>
+    <li><code>TO_CHAR</code> – convert date/number → string.</li>
+    <li><code>TO_NUMBER</code> – convert string → number.</li>
+    <li><code>TO_DATE</code> – convert string → date.</li>
+    <li><code>CAST</code> – generic conversion between data types.</li>
+    </ul>
+    <p>MySQL uses <code>CAST</code> / <code>CONVERT</code> for similar purposes.</p>
+    <hr>
+    <h2>2. TO_CHAR (Dates and Numbers) – Because Output Should Look Nice</h2>
+    <p><code>TO_CHAR</code> is how you turn dates and numbers into <strong>formatted strings</strong>.</p>
+    <h3>2.1 TO_CHAR with dates (Oracle)</h3>
+    <p>Basic usage:</p>
+    <pre><code class="language-sql">SELECT SYSDATE,
+           TO_CHAR(SYSDATE, &#x27;DD-MON-RR&#x27;) AS default_like
+    FROM   dual;</code></pre>
+    <p>The <strong>format model</strong> (the second argument) tells Oracle how to render the date. Common elements:</p>
+    <ul>
+    <li><code>YYYY</code> – 4‑digit year (e.g., <code>2022</code>).</li>
+    <li><code>YEAR</code> – year spelled out (e.g., <code>TWENTY TWENTY-TWO</code>).</li>
+    <li><code>MON</code> – abbreviated month (e.g., <code>FEB</code>).</li>
+    <li><code>MONTH</code> – full month name (e.g., <code>FEBRUARY</code>).</li>
+    <li><code>DD</code> – day of month.</li>
+    <li><code>D</code> – day of week (1–7).</li>
+    <li><code>DY</code> – abbreviated day name (e.g., <code>MON</code>).</li>
+    <li><code>DDTH</code> – day of month with ordinal (e.g., <code>7TH</code>).</li>
+    <li><code>DDSPTH</code> – day spelled out with ordinal (e.g., <code>SEVENTH</code>).</li>
+    <li><code>HH:MI:SS</code> – hour, minute, second (12‑hour clock).</li>
+    <li><code>HH24</code> – 24‑hour hour.</li>
+    <li><code>AM</code> / <code>PM</code> – meridian indicator.</li>
+    <li><code>&quot;literal&quot;</code> – literal text in the format.</li>
+    <li><code>FM</code> – “fill mode” (suppresses leading zeros and spaces).</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">-- Year spelled out
+    SELECT TO_CHAR(SYSDATE, &#x27;YYYY&#x27;)    AS year_4,
+           TO_CHAR(SYSDATE, &#x27;Year&#x27;)    AS year_name
+    FROM   dual;
+    
+    -- Day and month, with literal text
+    SELECT TO_CHAR(SYSDATE, &#x27;DDth &quot;of&quot; Month&#x27;) AS pretty_date
+    FROM   dual;
+    -- e.g., &#x27;7th of February&#x27;
+    
+    -- Include time
+    SELECT TO_CHAR(SYSDATE, &#x27;DD-MON-YYYY HH24:MI:SS&#x27;) AS full_stamp
+    FROM   dual;
+    
+    -- Use FM to remove padding and leading zeros
+    SELECT TO_CHAR(SYSDATE, &#x27;FMDD Month YYYY&#x27;) AS nice_date
+    FROM   dual;</code></pre>
+    <p>Without <code>FM</code>, Oracle reserves space for the <strong>longest</strong> month name and for leading zeros; with <code>FM</code>, output becomes more compact.</p>
+    <h3>2.2 TO_CHAR with numbers (Oracle)</h3>
+    <p><code>TO_CHAR</code> can also format numbers with currency symbols, commas, and zero padding.</p>
+    <p>Common format elements:</p>
+    <ul>
+    <li><code>9</code> – digit placeholder (optional position).</li>
+    <li><code>0</code> – digit placeholder that <strong>forces</strong> a zero if there’s no digit.</li>
+    <li><code>$</code> – floating dollar sign.</li>
+    <li><code>L</code> – floating local currency symbol.</li>
+    <li><code>.</code> – decimal point.</li>
+    <li><code>,</code> – thousands separator.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">SELECT salary,
+           TO_CHAR(salary, &#x27;$99,999.00&#x27;) AS formatted,
+           TO_CHAR(salary, &#x27;L99999&#x27;)     AS local_currency,
+           TO_CHAR(salary, &#x27;000000&#x27;)     AS zero_padded
+    FROM   employees
+    WHERE  employee_id = 100;  -- e.g., Ernst</code></pre>
+    <p>If your format isn’t wide enough, you’ll get <code>########</code> instead of a number, which is the database’s way of saying “you didn’t think this through.”</p>
+    <hr>
+    <h2>3. TO_DATE and TO_NUMBER – Turning Strings Back Into Something Useful</h2>
+    <h3>3.1 TO_DATE (Oracle)</h3>
+    <p>Use <code>TO_DATE</code> when you have a <strong>string</strong> and want a real date.</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date,
+           TO_CHAR(hire_date, &#x27;DD-MON-RR&#x27;) AS hire_char
+    FROM   employees
+    WHERE  hire_date &lt; TO_DATE(&#x27;01-JAN-10&#x27;, &#x27;DD-MON-RR&#x27;);</code></pre>
+    <ul>
+    <li><code>&#x27;01-JAN-10&#x27;</code> is a string.</li>
+    <li><code>TO_DATE</code> with format <code>&#x27;DD-MON-RR&#x27;</code> converts it into a <strong>date</strong>.</li>
+    <li>Oracle can then compare <code>hire_date</code> with it correctly.</li>
+    </ul>
+    <p>The <code>RR</code> year format performs “rounded century” logic so that two‑digit years behave sensibly as time marches toward 2049.</p>
+    <h3>3.2 TO_NUMBER (Oracle)</h3>
+    <p><code>TO_NUMBER</code> converts a string to a number, using an optional format model.</p>
+    <pre><code class="language-sql">SELECT TO_NUMBER(&#x27;12,345.67&#x27;, &#x27;99,999.99&#x27;) AS val
+    FROM   dual;</code></pre>
+    <p>You’ll typically use this when ingesting data as strings but needing to do math on it.</p>
+    <hr>
+    <h2>4. CAST in Oracle and MySQL</h2>
+    <p><code>CAST</code> is the ANSI‑standard way to convert between types.</p>
+    <p>Oracle examples:</p>
+    <pre><code class="language-sql">-- Concatenate &#x27;9&#x27; and &#x27;0&#x27;, cast to decimal, compare to numeric department_id
+    SELECT first_name,
+           last_name,
+           department_id
+    FROM   employees
+    WHERE  department_id &lt; CAST(CONCAT(&#x27;9&#x27;, &#x27;0&#x27;) AS DECIMAL(2,0));
+    
+    -- Cast salary to a string so INSTR can search it
+    SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  INSTR(CAST(salary AS VARCHAR2(30)), &#x27;5&#x27;) &gt; 0;</code></pre>
+    <p>MySQL examples:</p>
+    <pre><code class="language-sql">SELECT first_name,
+           last_name,
+           department_id
+    FROM   employees
+    WHERE  department_id &lt; CAST(CONCAT(&#x27;9&#x27;,&#x27;0&#x27;) AS DECIMAL(2,0));
+    
+    SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  INSTR(CAST(salary AS CHAR(30)), &#x27;5&#x27;) &gt; 0;</code></pre>
+    <p><code>CAST</code> is explicit, portable, and makes your intent clear—three things implicit conversion is not.</p>
+    <hr>
+    <h2>5. Dealing with NULLs: NVL, NVL2, IFNULL, NULLIF, COALESCE</h2>
+    <p>NULLs are what you get when the database shrugs. These functions let you decide what to do about it.</p>
+    <h3>5.1 NVL (Oracle) and IFNULL (MySQL)</h3>
+    <p><code>NVL(expr, replacement)</code> – if <code>expr</code> is <code>NULL</code>, return <code>replacement</code>; otherwise return <code>expr</code>.</p>
+    <p>MySQL’s <code>IFNULL(expr, replacement)</code> behaves similarly.</p>
+    <p>Important: <strong>data types must be compatible</strong>. Oracle may try to implicitly convert one to match the other, but that can go badly.</p>
+    <p><strong>Classic example – annual salary including commission:</strong></p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           commission_pct,
+           salary * 12
+             + salary * 12 * NVL(commission_pct, 0) AS annual_salary
+    FROM   employees;</code></pre>
+    <ul>
+    <li>Without <code>NVL</code>, if <code>commission_pct</code> is <code>NULL</code>, the entire expression becomes <code>NULL</code>.</li>
+    <li>With <code>NVL(commission_pct, 0)</code>, non‑sales employees are treated as having 0 commission, so their annual salary is just <code>salary * 12</code>.</li>
+    </ul>
+    <p>To see the effect directly:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           NVL(commission_pct, 0) AS comm_or_zero
+    FROM   employees;</code></pre>
+    <p>MySQL version:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           IFNULL(commission_pct, 0) AS comm_or_zero
+    FROM   employees;</code></pre>
+    <h3>5.2 NVL2 (Oracle)</h3>
+    <p><code>NVL2(expr, value_if_not_null, value_if_null)</code>:</p>
+    <ul>
+    <li>If <code>expr</code> is <strong>NOT NULL</strong>, return <code>value_if_not_null</code>.</li>
+    <li>If <code>expr</code> <strong>is NULL</strong>, return <code>value_if_null</code>.</li>
+    </ul>
+    <p>Example – describe how someone’s pay is determined:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           commission_pct,
+           NVL2(commission_pct,
+                 &#x27;Salary + Commission&#x27;,
+                 &#x27;Salary only&#x27;) AS salary_basis
+    FROM   employees;</code></pre>
+    <ul>
+    <li>If <code>commission_pct</code> is not null → <code>&#x27;Salary + Commission&#x27;</code>.</li>
+    <li>If <code>commission_pct</code> is null → <code>&#x27;Salary only&#x27;</code>.</li>
+    </ul>
+    <p><code>value_if_not_null</code> and <code>value_if_null</code> should be the <strong>same data type</strong>, or Oracle will attempt a conversion.</p>
+    <h3>5.3 NULLIF</h3>
+    <p><code>NULLIF(expr1, expr2)</code> returns:</p>
+    <ul>
+    <li><code>NULL</code> if <code>expr1 = expr2</code>.</li>
+    <li><code>expr1</code> if they are different.</li>
+    </ul>
+    <p>Example – compare lengths of first and last names:</p>
+    <pre><code class="language-sql">SELECT first_name,
+           last_name,
+           LENGTH(first_name) AS len_first,
+           LENGTH(last_name)  AS len_last,
+           NULLIF(LENGTH(first_name), LENGTH(last_name)) AS length_diff
+    FROM   employees;</code></pre>
+    <ul>
+    <li>If lengths are equal, <code>NULLIF</code> returns <code>NULL</code> (meaning “no difference”).</li>
+    <li>If different, it returns the length of <code>first_name</code>.</li>
+    </ul>
+    <h3>5.4 COALESCE – Multiple Fallbacks</h3>
+    <p><code>COALESCE(expr1, expr2, ..., exprN)</code> returns the <strong>first non‑NULL</strong> expression in the list.</p>
+    <p>This is its main advantage over <code>NVL</code>/<code>IFNULL</code>, which only offer <strong>one</strong> fallback.</p>
+    <p>Simple example:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           COALESCE(phone_number, mobile_phone, &#x27;No phone&#x27;) AS contact_phone
+    FROM   employees;</code></pre>
+    <ul>
+    <li>Try <code>phone_number</code>.</li>
+    <li>If <code>NULL</code>, try <code>mobile_phone</code>.</li>
+    <li>If still <code>NULL</code>, return <code>&#x27;No phone&#x27;</code>.</li>
+    </ul>
+    <p>More complex example matching the lesson demo:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           commission_pct,
+           manager_id,
+           department_id,
+           COALESCE(commission_pct,
+                    manager_id,
+                    department_id) AS numeric_fallback
+    FROM   employees;</code></pre>
+    <ul>
+    <li>If an employee has a commission → returns <code>commission_pct</code>.</li>
+    <li>Else if they have a manager → returns <code>manager_id</code>.</li>
+    <li>Else → returns <code>department_id</code>.</li>
+    </ul>
+    <p>You can also mix in text by converting everything to character:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           COALESCE(TO_CHAR(commission_pct),
+                    TO_CHAR(manager_id),
+                    TO_CHAR(department_id),
+                    &#x27;No commission or manager&#x27;) AS info
+    FROM   employees;</code></pre>
+    <p>All arguments must ultimately be compatible data types, or you must explicitly convert them as shown.</p>
+    <h3>5.5 COALESCE and IFNULL (MySQL)</h3>
+    <p>MySQL supports both <code>IFNULL(expr, replacement)</code> and <code>COALESCE(expr1, expr2, ...)</code> with the same semantics as in Oracle.</p>
+    <hr>
+    <h2>6. Conditional Expressions: CASE, Searched CASE, DECODE</h2>
+    <p>Sometimes you want IF‑THEN‑ELSE logic <strong>inside</strong> a SQL statement. That’s what conditional expressions are for.</p>
+    <h3>6.1 Simple CASE expression</h3>
+    <p>A simple <code>CASE</code> compares one expression (a <strong>selector</strong>) against several possible values.</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           job_id,
+           CASE job_id
+             WHEN &#x27;IT_PROG&#x27; THEN salary * 1.25
+             WHEN &#x27;AD_VP&#x27;   THEN salary * 1.50
+             WHEN &#x27;AD_PRES&#x27; THEN salary * 2
+             ELSE               salary * 0.90
+           END AS raise_or_not
+    FROM   employees;</code></pre>
+    <ul>
+    <li><code>CASE job_id</code> is the selector.</li>
+    <li>Each <code>WHEN</code> compares <code>job_id</code> to a constant.</li>
+    <li>The <code>ELSE</code> clause gives everyone else a 10% pay cut (rude, but valid).</li>
+    </ul>
+    <p>Do not forget the <code>END</code> keyword; the parser will not forgive you.</p>
+    <h3>6.2 Searched CASE expression</h3>
+    <p>A searched <code>CASE</code> lets each <code>WHEN</code> have its <strong>own condition</strong>, not just equality tests.</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           job_id,
+           CASE
+             WHEN job_id = &#x27;IT_PROG&#x27; THEN salary * 1.25
+             WHEN job_id = &#x27;AD_VP&#x27;   AND employee_id = 101 THEN salary * 1.50
+             WHEN job_id = &#x27;AD_PRES&#x27; THEN salary * 2
+             ELSE                         salary * 0.90
+           END AS raise_or_not
+    FROM   employees;</code></pre>
+    <ul>
+    <li>You can check multiple columns per <code>WHEN</code> clause.</li>
+    <li>In this example, only one VP (say, employee 101) gets the raise; the other gets a cut.</li>
+    </ul>
+    <h3>6.3 DECODE (Oracle‑only)</h3>
+    <p><code>DECODE</code> is an Oracle function that behaves like a compact, equality‑based <code>CASE</code>.</p>
+    <p>Syntax:</p>
+    <pre><code class="language-sql">DECODE(expr,
+           search1, result1,
+           search2, result2,
+           ...,
+           default_result)</code></pre>
+    <p>Example equivalent to the simple <code>CASE</code> above:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           job_id,
+           DECODE(job_id,
+                  &#x27;IT_PROG&#x27;, salary * 1.25,
+                  &#x27;AD_VP&#x27;,   salary * 1.50,
+                  &#x27;AD_PRES&#x27;, salary * 2,
+                             salary * 0.90) AS raise_or_not
+    FROM   employees;</code></pre>
+    <p>Another example from the book: determine tax rates based on scaled salary in department 80:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           department_id,
+           salary,
+           DECODE(TRUNC(salary / 2000),
+                  0,  0.00,
+                  1,  0.09,
+                  2,  0.20,
+                  3,  0.30,
+                  4,  0.40,
+                      0.45) AS tax_rate
+    FROM   employees
+    WHERE  department_id = 80;</code></pre>
+    <p>MySQL does <strong>not</strong> have <code>DECODE</code>, but fully supports <code>CASE</code> and searched <code>CASE</code>.</p>
+    <hr>
+    <h2>7. SQL/JSON Functions (JSON_QUERY and JSON_TABLE)</h2>
+    <p>Because of course your relational database also has to store JSON now.</p>
+    <p>Oracle’s SQL/JSON functions help you treat JSON data in a relational way:</p>
+    <ul>
+    <li><code>JSON_QUERY</code> – extract JSON values as a JSON‑formatted string.</li>
+    <li><code>JSON_TABLE</code> – project JSON data into a <strong>relational</strong> result set (virtual table).</li>
+    </ul>
+    <p>Example – <code>JSON_QUERY</code> (simplified):</p>
+    <pre><code class="language-sql">SELECT JSON_QUERY(json_column, &#x27;$.employees[*].name&#x27;) AS employee_names
+    FROM   some_table;</code></pre>
+    <ul>
+    <li>Takes JSON stored in <code>json_column</code>.</li>
+    <li>Finds values matching the JSON path (<code>$.employees[*].name</code>).</li>
+    <li>Returns them as a character string containing JSON.</li>
+    </ul>
+    <p>Example – <code>JSON_TABLE</code> (very high level):</p>
+    <pre><code class="language-sql">SELECT jt.name,
+           jt.salary
+    FROM   some_table t,
+           JSON_TABLE(t.json_column,
+                      &#x27;$.employees[*]&#x27;
+                      COLUMNS (
+                        name   VARCHAR2(50) PATH &#x27;$.name&#x27;,
+                        salary NUMBER       PATH &#x27;$.salary&#x27;
+                      )) jt;</code></pre>
+    <ul>
+    <li><code>JSON_TABLE</code> turns JSON array elements into rows (<code>jt</code>).</li>
+    <li>You can then use them like a regular relational table.</li>
+    </ul>
+    <p>You don’t need to master these for basic SQL, but you should recognize the names when they appear.</p>
+    <hr>
+    <h2>8. MySQL Conversion Recap</h2>
+    <p>For MySQL specifically:</p>
+    <ul>
+    <li>Use <code>CAST(expr AS type)</code> or <code>CONVERT(expr, type)</code> to explicitly change types.</li>
+    <li>Common types: <code>DECIMAL(p,s)</code>, <code>SIGNED</code>, <code>UNSIGNED</code>, <code>CHAR(n)</code>, <code>DATE</code>, <code>DATETIME</code>.</li>
+    <li>Use <code>IFNULL(expr, replacement)</code> or <code>COALESCE(expr1, expr2, ...)</code> for null handling.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">-- String to decimal
+    SELECT CAST(&#x27;123.45&#x27; AS DECIMAL(5,2));
+    
+    -- Salary as text for pattern search
+    SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  INSTR(CAST(salary AS CHAR(20)), &#x27;5&#x27;) &gt; 0;</code></pre>
+    <hr>
+    <h2>9. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Distinguish between <strong>implicit</strong> and <strong>explicit</strong> conversions and know why explicit is safer.</li>
+    <li>Use <code>TO_CHAR</code> with dates and numbers to format output using format models.</li>
+    <li>Use <code>TO_DATE</code> and <code>TO_NUMBER</code> to convert strings into proper date/number values.</li>
+    <li>Use <code>CAST</code> to convert between types in a more portable way.</li>
+    <li>Handle <code>NULL</code> values with <code>NVL</code>, <code>NVL2</code>, <code>IFNULL</code>, <code>NULLIF</code>, and <code>COALESCE</code>.</li>
+    <li>Apply conditional expressions (<code>CASE</code>, searched <code>CASE</code>, <code>DECODE</code>) inside <code>SELECT</code> to categorize or label data.</li>
+    <li>Recognize <code>JSON_QUERY</code> and <code>JSON_TABLE</code> as tools for working with JSON data in SQL.</li>
+    </ul>
+    <p>In short, you can now stop blaming “data type mismatch” errors on the database and start blaming them on whichever developer didn’t bother to convert their strings—or their JSON.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="04_Using_Single-Row_Functions_to_Customize_Output.html">&larr; previous</a>
+    <a href="05_Using_Conversion_Functions_and_Conditional_Expressions.md">view source markdown</a>
+    <a href="06_Reporting_Aggregated_Data_Using_Group_Functions.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

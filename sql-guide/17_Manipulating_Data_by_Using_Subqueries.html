@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17 – Manipulating Data by Using Subqueries (Your DML, But Smarter) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, selecting with subqueries is all very nice, but at some point someone will say, “Can we actually change the data based on that logic?” This is w...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>17 – Manipulating Data by Using Subqueries (Your DML, But Smarter)</h1>
+    <p>And look, selecting with subqueries is all very nice, but at some point someone will say, “Can we actually change the data based on that logic?” This is where we stop just observing the mess and start editing it.</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, selecting with subqueries is all very nice, but at some point someone will say, “Can we actually <em>change</em> the data based on that logic?” This is where we stop just <strong>observing</strong> the mess and start <strong>editing</strong> it.</p>
+    <p>After this lesson you should be able to:</p>
+    <ul>
+    <li>Use subqueries inside DML statements (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>)</li>
+    <li>Insert into inline views with <code>WITH CHECK OPTION</code> so the data can’t escape its own filter</li>
+    <li>Use correlated subqueries to update and delete rows safely</li>
+    </ul>
+    <hr>
+    <h2>1. Using Subqueries to Manipulate Data</h2>
+    <p>Subqueries aren’t just for <code>SELECT</code>:</p>
+    <ul>
+    <li>Use them as <strong>sources</strong> when inserting rows</li>
+    <li>Use correlated subqueries to <strong>update</strong> values based on other tables</li>
+    <li>Use correlated subqueries to <strong>delete</strong> rows that shouldn’t be there</li>
+    </ul>
+    <p>High‑level patterns:</p>
+    <pre><code class="language-sql">INSERT INTO target_table (cols...)
+    SELECT ...
+    FROM   source_table
+    WHERE  ...;
+    
+    UPDATE target_table t
+    SET    col = (
+             SELECT ...
+             FROM   other_table o
+             WHERE  o.key = t.key
+           );
+    
+    DELETE FROM target_table t
+    WHERE  EXISTS (
+             SELECT 1
+             FROM   other_table o
+             WHERE  o.key = t.key
+           );</code></pre>
+    <p>Think of them as DML statements with built‑in lookups, instead of forcing you to write nasty procedural loops.</p>
+    <hr>
+    <h2>2. Inserting Into a Subquery (Yes, Really)</h2>
+    <p>You can insert <strong>through</strong> a subquery / inline view, but only if Oracle can trace each row back to a single base table row. This is where <code>WITH CHECK OPTION</code> becomes the bouncer at the door.</p>
+    <h3>2.1 Basic insert through an inline view</h3>
+    <p>Imagine a view (or inline view) that only shows locations in <strong>Europe</strong>:</p>
+    <pre><code class="language-sql">INSERT INTO (
+      SELECT l.location_id,
+             l.street_address,
+             c.country_id,
+             c.country_name,
+             r.region_name
+      FROM   locations l
+      JOIN   countries c USING (country_id)
+      JOIN   regions   r USING (region_id)
+      WHERE  r.region_name = &#x27;Europe&#x27;
+    )
+    VALUES (3000, &#x27;123 Example St&#x27;, &#x27;DE&#x27;, &#x27;Germany&#x27;, &#x27;Europe&#x27;);</code></pre>
+    <p>This works because:</p>
+    <ul>
+    <li>The inline view is updatable (single base table per column, no weird grouping)</li>
+    <li>The inserted row satisfies the <code>WHERE region_name = &#x27;Europe&#x27;</code> filter</li>
+    </ul>
+    <h3>2.2 Preventing “filter‑breaking” DML with <code>WITH CHECK OPTION</code></h3>
+    <p>Now add a <strong>constraint</strong> to that inline view:</p>
+    <pre><code class="language-sql">INSERT INTO (
+      SELECT l.location_id,
+             l.street_address,
+             c.country_id,
+             c.country_name,
+             r.region_name
+      FROM   locations l
+      JOIN   countries c USING (country_id)
+      JOIN   regions   r USING (region_id)
+      WHERE  r.region_name = &#x27;Europe&#x27;
+      WITH CHECK OPTION
+    )
+    VALUES (3001, &#x27;1 Wall St&#x27;, &#x27;US&#x27;, &#x27;United States&#x27;, &#x27;Americas&#x27;);</code></pre>
+    <p>This fails with:</p>
+    <p>&gt; ORA‑01402: view WITH CHECK OPTION where‑clause violation</p>
+    <p>Why?</p>
+    <ul>
+    <li>You’re trying to insert a row where <code>region_name = &#x27;Americas&#x27;</code></li>
+    <li>That row <strong>would not appear</strong> in this inline view (its filter is <code>region_name = &#x27;Europe&#x27;</code>)</li>
+    <li><code>WITH CHECK OPTION</code> says: “If I can’t see it, you can’t insert or update it through me.”</li>
+    </ul>
+    <p><strong>Key idea:</strong> <code>WITH CHECK OPTION</code> guarantees that any row modified through the view/inline view still satisfies its <code>WHERE</code> clause afterwards.</p>
+    <hr>
+    <h2>3. Correlated Subqueries in <code>UPDATE</code></h2>
+    <p>Sometimes you need to copy data from one table into another without doing a big multi‑table <code>UPDATE</code> with joins. Correlated subqueries are your friend here.</p>
+    <h3>3.1 Add a <code>department_name</code> column and populate it</h3>
+    <p>Suppose you’ve cloned <code>EMPLOYEES</code> into <code>EMPL6</code>, but forgotten <code>DEPARTMENT_NAME</code>. You add it:</p>
+    <pre><code class="language-sql">ALTER TABLE empl6
+      ADD department_name VARCHAR2(30);</code></pre>
+    <p>Now populate it based on the <code>DEPARTMENTS</code> table:</p>
+    <pre><code class="language-sql">UPDATE empl6 e
+    SET    department_name = (
+             SELECT d.department_name
+             FROM   departments d
+             WHERE  d.department_id = e.department_id
+           );</code></pre>
+    <p>How it works:</p>
+    <ul>
+    <li>For each row in <code>EMPL6</code> (outer query), the correlated subquery:</li>
+    <li>Looks up the matching <code>DEPARTMENTS</code> row by <code>department_id</code></li>
+    <li>Returns exactly one <code>department_name</code></li>
+    <li>Assigns it to <code>e.department_name</code></li>
+    </ul>
+    <p>Good news: no cursor loops, no procedural code, just one SQL statement.</p>
+    <hr>
+    <h2>4. Correlated Subqueries in <code>DELETE</code></h2>
+    <p>Deleting rows “that match something somewhere else” is where correlated deletes shine.</p>
+    <h3>4.1 Remove “former employees” from the current list</h3>
+    <p>You have:</p>
+    <ul>
+    <li><code>EMPL6</code> – current employees (supposedly)</li>
+    <li><code>EMP_HISTORY</code> – former employees</li>
+    </ul>
+    <p>You want to delete from <code>EMPL6</code> any rows that also appear in <code>EMP_HISTORY</code> by <code>employee_id</code>.</p>
+    <pre><code class="language-sql">DELETE FROM empl6 e
+    WHERE  EXISTS (
+             SELECT 1
+             FROM   emp_history h
+             WHERE  h.employee_id = e.employee_id
+           );</code></pre>
+    <p>Effect:</p>
+    <ul>
+    <li>For each <code>EMPL6</code> row, Oracle checks whether a matching <code>EMP_HISTORY</code> row exists</li>
+    <li>If so, that <code>EMPL6</code> row is deleted</li>
+    <li>Everyone who looks suspiciously like they’ve already left the company gets removed from the “current” table</li>
+    </ul>
+    <p>You can invert this pattern with <code>NOT EXISTS</code> if you ever want to keep only rows that <strong>don’t</strong> match.</p>
+    <hr>
+    <h2>5. Summary – What You Can Do Now (Besides Terrify Junior Devs)</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Use subqueries <strong>inside DML</strong>, not just in <code>SELECT</code></li>
+    <li>Insert through views/inline views and enforce their filters with <code>WITH CHECK OPTION</code></li>
+    <li>Use <strong>correlated updates</strong> to copy data from reference tables into working tables</li>
+    <li>Use <strong>correlated deletes</strong> to clean up rows based on related tables</li>
+    </ul>
+    <p>Subqueries are no longer just the thing that makes <code>WHERE</code> clauses longer. They’re now the thing that also makes your <code>INSERT</code>, <code>UPDATE</code>, and <code>DELETE</code> statements more powerful – and, if you’re not careful, more destructive. So… be careful.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="16_Retrieving_Data_by_Using_Subqueries.html">&larr; previous</a>
+    <a href="17_Manipulating_Data_by_Using_Subqueries.md">view source markdown</a>
+    <a href="18_Controlling_User_Access.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

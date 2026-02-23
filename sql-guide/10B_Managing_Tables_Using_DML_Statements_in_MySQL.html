@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 10B – Managing Tables Using DML Statements in MySQL (or: changing data on a server you don’t technically own) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, reading from a MySQL database is harmless. Writing to it is where lawyers and auditors start to pay attention. When you INSERT, UPDATE, or DELET...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 10B – Managing Tables Using DML Statements in MySQL (or: changing data on a server you don’t technically own)</h1>
+    <p>And look, reading from a MySQL database is harmless. Writing to it is where lawyers and auditors start to pay attention. When you INSERT, UPDATE, or DELETE, you’re changing data for every application that uses that data...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, reading from a MySQL database is harmless. Writing to it is where lawyers and auditors start to pay attention. When you <code>INSERT</code>, <code>UPDATE</code>, or <code>DELETE</code>, you’re changing data for <strong>every</strong> application that uses that database, so it’s worth knowing exactly how to do it—and how to undo it.</p>
+    <p>This lesson focuses on <strong>MySQL</strong> DML and transactions.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Describe each DML statement: <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>TRUNCATE</code>.</li>
+    <li>Insert new rows (single and multi‑row) safely.</li>
+    <li>Update and delete rows, including using subqueries.</li>
+    <li>Group changes into transactions with <code>START TRANSACTION</code>, <code>COMMIT</code>, <code>ROLLBACK</code>, and <code>SAVEPOINT</code>.</li>
+    <li>Understand how MySQL handles reads and locks with <code>FOR UPDATE</code>.</li>
+    </ul>
+    <hr>
+    <h2>1. DML in MySQL and What a Transaction Is</h2>
+    <p><strong>DML (Data Manipulation Language)</strong> in MySQL:</p>
+    <ul>
+    <li><code>INSERT</code> – add rows.</li>
+    <li><code>UPDATE</code> – change data in existing rows.</li>
+    <li><code>DELETE</code> – remove rows.</li>
+    </ul>
+    <p>Each of these can participate in a <strong>transaction</strong>—a series of statements that should succeed or fail <strong>as a unit</strong>.</p>
+    <p>Examples of single transactions:</p>
+    <ul>
+    <li>Move an employee to a &quot;retired&quot; table, then delete them from <code>employees</code>.</li>
+    <li>Insert a department, then insert its initial employees.</li>
+    </ul>
+    <p>In a healthy world, you either <strong>do all the steps</strong> or <strong>do none of them</strong>.</p>
+    <p>By default, MySQL runs with <strong>autocommit ON</strong>, meaning each successful DML statement is committed immediately as its own transaction. You can turn that off or explicitly start a multi‑statement transaction when you want more control.</p>
+    <hr>
+    <h2>2. INSERT – Adding New Rows</h2>
+    <h3>2.1 Basic multi‑row INSERT with VALUES</h3>
+    <p>MySQL lets you insert one or <strong>many</strong> rows in a single <code>INSERT</code>:</p>
+    <pre><code class="language-sql">INSERT INTO departments (department_id, department_name, manager_id, location_id)
+    VALUES (70,  &#x27;Public Relations&#x27;,    100, 1700),
+           (150, &#x27;Shareholder Services&#x27;, NULL, 1700);</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li>Column list after the table name defines <strong>target columns</strong>.</li>
+    <li>Each parentheses group corresponds to <strong>one row</strong>.</li>
+    <li>Values in each group are <strong>positional</strong>.</li>
+    <li>You must have the <strong>same number of values</strong> as columns listed.</li>
+    <li>Character and date values go in <strong>single quotes</strong>.</li>
+    </ul>
+    <h3>2.2 INSERT without column list</h3>
+    <p>You can omit the column list if you:</p>
+    <ul>
+    <li>Provide <strong>all columns</strong>.</li>
+    <li>Respect the table’s default column order.</li>
+    </ul>
+    <pre><code class="language-sql">INSERT INTO departments
+    VALUES (160, &#x27;HR Shared Services&#x27;, 200, 1700),
+           (170, &#x27;Analytics&#x27;,          201, 1700);</code></pre>
+    <p>This works but is fragile—changes to the table structure can break it. Naming columns is safer.</p>
+    <h3>2.3 Inserting NULL explicitly or implicitly</h3>
+    <p>Two ways to get <code>NULL</code> into a column:</p>
+    <ul>
+    <li><strong>Implicit</strong>: leave the column out of the column list.</li>
+    </ul>
+    <pre><code class="language-sql">  INSERT INTO departments (department_id, department_name)
+      VALUES (200, &#x27;Finance West&#x27;);   -- manager_id and location_id become NULL</code></pre>
+    <ul>
+    <li><strong>Explicit</strong>: use the <code>NULL</code> keyword.</li>
+    </ul>
+    <pre><code class="language-sql">  INSERT INTO departments (department_id, department_name, manager_id, location_id)
+      VALUES (210, &#x27;Finance East&#x27;, NULL, NULL);</code></pre>
+    <p>Make sure the target columns allow <code>NULL</code> values.</p>
+    <h3>2.4 Inserting dates and times in MySQL</h3>
+    <p>MySQL’s default date format is <code>YYYY-MM-DD</code>. You can use:</p>
+    <ul>
+    <li><code>CURDATE()</code> – current date.</li>
+    <li><code>NOW()</code> – current date and time.</li>
+    </ul>
+    <pre><code class="language-sql">INSERT INTO employees (employee_id, last_name, hire_date, salary)
+    VALUES (300, &#x27;Nguyen&#x27;, CURDATE(), 5000.00);</code></pre>
+    <p>If you have a string in a different format, use <code>STR_TO_DATE</code> (or <code>STR_TO_DATE</code>’s cousin <code>STR_TO_DATE</code>—yes, the naming is weird):</p>
+    <pre><code class="language-sql">INSERT INTO employees (employee_id, last_name, hire_date, salary)
+    VALUES (301, &#x27;Lee&#x27;, STR_TO_DATE(&#x27;Feb 3 2016&#x27;, &#x27;%b %e %Y&#x27;), 4500.00);</code></pre>
+    <p>After insertion, selecting from the table will show the canonical MySQL date format.</p>
+    <h3>2.5 INSERT ... SELECT – Bulk insert from another table</h3>
+    <p>You can insert multiple rows returned by a subquery:</p>
+    <pre><code class="language-sql">INSERT INTO copy_emp (employee_id, last_name, salary, department_id)
+    SELECT employee_id,
+           last_name,
+           salary,
+           department_id
+    FROM   employees
+    WHERE  department_id = 80;</code></pre>
+    <p>Notes:</p>
+    <ul>
+    <li>No <code>VALUES</code> clause.</li>
+    <li>The <code>INSERT</code> column list must align positionally and by type with the <code>SELECT</code> list.</li>
+    <li>All rows returned by the <code>SELECT</code> are inserted.</li>
+    </ul>
+    <hr>
+    <h2>3. UPDATE – Changing Existing Data</h2>
+    <p><code>UPDATE</code> lets you modify existing rows. The danger lies mostly in the <code>WHERE</code> clause.</p>
+    <h3>3.1 Basic UPDATE</h3>
+    <pre><code class="language-sql">UPDATE employees
+    SET    department_id = 50
+    WHERE  employee_id   = 113;</code></pre>
+    <ul>
+    <li>Only the row for employee 113 is affected.</li>
+    </ul>
+    <p>If you <strong>omit</strong> <code>WHERE</code>:</p>
+    <pre><code class="language-sql">UPDATE employees
+    SET    department_id = 10;</code></pre>
+    <ul>
+    <li>Every row in <code>employees</code> is updated.</li>
+    <li>This is how accidental mass updates happen.</li>
+    </ul>
+    <h3>3.2 Setting columns to NULL</h3>
+    <pre><code class="language-sql">UPDATE employees
+    SET    manager_id = NULL
+    WHERE  employee_id = 113;</code></pre>
+    <p>Works if <code>manager_id</code> allows <code>NULL</code>.</p>
+    <h3>3.3 Using subqueries in UPDATE</h3>
+    <p>You can use subqueries in <strong>SET</strong>, <strong>WHERE</strong>, or both.</p>
+    <p>Example – update rows based on another row’s data:</p>
+    <pre><code class="language-sql">UPDATE copy_emp
+    SET    department_id = (
+             SELECT department_id
+             FROM   employees
+             WHERE  employee_id = 100
+           )
+    WHERE  job_id = (
+             SELECT job_id
+             FROM   employees
+             WHERE  employee_id = 200
+           );</code></pre>
+    <ul>
+    <li>The quiz answer from the lesson: you can use subqueries in the <strong>SET</strong> clause, the <strong>WHERE</strong> clause, or <strong>both</strong>.</li>
+    </ul>
+    <hr>
+    <h2>4. DELETE and TRUNCATE – Removing Rows</h2>
+    <h3>4.1 DELETE</h3>
+    <p><code>DELETE</code> removes rows that match a condition:</p>
+    <pre><code class="language-sql">DELETE FROM employees
+    WHERE  employee_id = 207;</code></pre>
+    <ul>
+    <li>Only one row is deleted.</li>
+    </ul>
+    <p>Without a <code>WHERE</code> clause:</p>
+    <pre><code class="language-sql">DELETE FROM employees;</code></pre>
+    <ul>
+    <li><strong>All</strong> rows are deleted from <code>employees</code>.</li>
+    <li>This can be rolled back if you’re inside a transaction and haven’t committed.</li>
+    </ul>
+    <p>You can delete rows based on another table using a subquery:</p>
+    <pre><code class="language-sql">DELETE FROM employees
+    WHERE  department_id IN (
+             SELECT department_id
+             FROM   departments
+             WHERE  department_name LIKE &#x27;Public%&#x27;
+           );</code></pre>
+    <p>This removes all employees working in departments whose names start with <code>Public</code>.</p>
+    <h3>4.2 TRUNCATE TABLE</h3>
+    <p><code>TRUNCATE</code> wipes all rows from a table, faster than <code>DELETE</code> and more permanently:</p>
+    <pre><code class="language-sql">TRUNCATE TABLE employees_backup;</code></pre>
+    <ul>
+    <li>All rows are removed; table structure remains.</li>
+    <li>InnoDB treats <code>TRUNCATE</code> as a DDL operation; it <strong>implicitly commits</strong>.</li>
+    <li>You <strong>cannot</strong> roll back a <code>TRUNCATE</code>.</li>
+    </ul>
+    <p>Use it when you truly mean, “this table’s data can disappear forever, right now.”</p>
+    <hr>
+    <h2>5. Transaction Control in MySQL</h2>
+    <p>By default, MySQL runs with <strong>autocommit = 1</strong>:</p>
+    <ul>
+    <li>Every successful <code>INSERT</code>, <code>UPDATE</code>, and <code>DELETE</code> is committed immediately.</li>
+    <li>Each statement is its <strong>own transaction</strong>.</li>
+    </ul>
+    <p>If you want multi‑statement transactions, you either:</p>
+    <ul>
+    <li>Turn off autocommit: <code>SET autocommit = 0;</code>, or</li>
+    <li>Use <code>START TRANSACTION</code> / <code>BEGIN</code> explicitly.</li>
+    </ul>
+    <h3>5.1 START TRANSACTION / BEGIN</h3>
+    <pre><code class="language-sql">START TRANSACTION;   -- or BEGIN;
+    
+    INSERT INTO retired_employees (...)
+    SELECT ... FROM employees WHERE employee_id = 207;
+    
+    DELETE FROM employees
+    WHERE employee_id = 207;
+    
+    COMMIT;</code></pre>
+    <ul>
+    <li>If all statements succeed, <code>COMMIT</code> makes them permanent.</li>
+    <li>If something fails or you change your mind, use <code>ROLLBACK</code> instead of <code>COMMIT</code> and the changes vanish.</li>
+    </ul>
+    <h3>5.2 ROLLBACK</h3>
+    <pre><code class="language-sql">START TRANSACTION;
+    
+    INSERT INTO departments
+    VALUES (500, &#x27;Temporary&#x27;, NULL, NULL);
+    
+    UPDATE employees
+    SET    department_id = 500
+    WHERE  last_name = &#x27;Smith&#x27;;
+    
+    -- Whoops, terrible idea
+    ROLLBACK;</code></pre>
+    <p>After <code>ROLLBACK</code>:</p>
+    <ul>
+    <li>The temporary department and reassignment are undone.</li>
+    <li>The database is back to its pre‑transaction state.</li>
+    </ul>
+    <h3>5.3 SAVEPOINT</h3>
+    <p><code>SAVEPOINT</code> lets you set rollback markers <strong>inside</strong> a transaction.</p>
+    <pre><code class="language-sql">START TRANSACTION;
+    
+    INSERT INTO departments
+    VALUES (600, &#x27;Pilot Dept&#x27;, NULL, NULL);
+    
+    SAVEPOINT after_dept;
+    
+    UPDATE employees
+    SET    department_id = 600
+    WHERE  job_id = &#x27;SA_REP&#x27;;
+    
+    -- Decide that reassignment is too aggressive
+    ROLLBACK TO after_dept;
+    
+    COMMIT;</code></pre>
+    <ul>
+    <li>The new department stays (committed).</li>
+    <li>The mass reassignment is undone.</li>
+    <li>You could also roll back the <strong>entire</strong> transaction instead of to a savepoint.</li>
+    </ul>
+    <p>Multiple savepoints are allowed; rolling back to an earlier one discards any savepoints created after it.</p>
+    <hr>
+    <h2>6. Consistent Reads and Isolation Level</h2>
+    <p>In busy systems, some sessions read while others write.</p>
+    <ul>
+    <li>Reads <strong>do not block</strong> writes.</li>
+    <li>Writes <strong>do not block</strong> reads.</li>
+    <li>A read sees a <strong>snapshot</strong> of data.</li>
+    </ul>
+    <p>This snapshot behavior depends on the <strong>transaction isolation level</strong>. For the MySQL InnoDB storage engine, the default is:</p>
+    <ul>
+    <li><code>REPEATABLE READ</code> – once a row is read in a transaction, repeated reads see the same values, even if other transactions commit changes.</li>
+    </ul>
+    <p>The practical takeaway:</p>
+    <ul>
+    <li>You can query without worrying that someone else’s update will change your results mid‑statement.</li>
+    <li>Writers still need to worry about conflicts with other writers.</li>
+    </ul>
+    <hr>
+    <h2>7. Manual Data Locking: SELECT ... FOR UPDATE (MySQL)</h2>
+    <p>In MySQL/InnoDB, you can lock rows explicitly when you intend to update them.</p>
+    <p>Important:</p>
+    <ul>
+    <li><code>FOR UPDATE</code> only makes sense <strong>inside a transaction</strong> (autocommit off or <code>START TRANSACTION</code>).</li>
+    <li>The lock is released on <code>COMMIT</code> or <code>ROLLBACK</code>.</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">START TRANSACTION;
+    
+    SELECT employee_id,
+           salary
+    FROM   employees
+    WHERE  department_id = 80
+    FOR UPDATE;
+    
+    -- Now update the locked rows
+    UPDATE employees
+    SET    salary = salary * 1.05
+    WHERE  department_id = 80;
+    
+    COMMIT;</code></pre>
+    <p>Notes:</p>
+    <ul>
+    <li><code>FOR UPDATE</code> must be the <strong>last clause</strong> in the <code>SELECT</code> (after <code>WHERE</code>, <code>ORDER BY</code>, etc.).</li>
+    <li>If another transaction already holds a conflicting lock, your <code>SELECT ... FOR UPDATE</code> waits until that lock is released, then returns the rows and acquires the lock.</li>
+    </ul>
+    <p>With joins, you can lock rows from multiple tables:</p>
+    <pre><code class="language-sql">START TRANSACTION;
+    
+    SELECT e.employee_id,
+           e.salary,
+           d.department_name
+    FROM   employees e
+    JOIN   departments d ON e.department_id = d.department_id
+    FOR UPDATE;
+    
+    -- Both employees and departments rows participating in the join may be locked</code></pre>
+    <p>Or you can restrict which table’s rows are locked (engine‑specific syntax; check your MySQL version’s docs) using <code>FOR UPDATE OF table_name</code> in some SQL dialects. In plain MySQL, you typically control locking via which tables are referenced and how the indexes are used.</p>
+    <hr>
+    <h2>8. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Use MySQL <code>INSERT</code> (with single and multiple value lists) to add rows.</li>
+    <li>Use <code>INSERT ... SELECT</code> to bulk‑copy data between tables.</li>
+    <li>Use <code>UPDATE</code> and <code>DELETE</code> (with and without subqueries) to change and remove rows.</li>
+    <li>Use <code>TRUNCATE TABLE</code> when you truly want to empty a table quickly and irreversibly.</li>
+    <li>Control multi‑statement transactions with <code>START TRANSACTION</code>/<code>BEGIN</code>, <code>COMMIT</code>, <code>ROLLBACK</code>, and <code>SAVEPOINT</code>.</li>
+    <li>Understand consistent reads under <code>REPEATABLE READ</code> and use <code>SELECT ... FOR UPDATE</code> when you need explicit locks.</li>
+    </ul>
+    <p>In other words, you now know how to change data in MySQL <strong>deliberately</strong>, not just accidentally—though if you do make a mistake, you’ve at least got the tools to roll it back before anyone notices.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="10A_Managing_Tables_Using_DML_Statements_in_Oracle.html">&larr; previous</a>
+    <a href="10B_Managing_Tables_Using_DML_Statements_in_MySQL.md">view source markdown</a>
+    <a href="11A_Introduction_to_Data_Definition_Language_in_Oracle.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

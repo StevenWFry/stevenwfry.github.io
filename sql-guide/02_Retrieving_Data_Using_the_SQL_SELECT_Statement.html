@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2 – Retrieving Data Using the SQL SELECT Statement (or: how to politely interrogate your database) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, the SELECT statement is the thing you thought SQL was: “show me stuff from a table.” But it also hides a surprising number of ways to confuse yo...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 2 – Retrieving Data Using the SQL SELECT Statement (or: how to politely interrogate your database)</h1>
+    <p>And look, the SELECT statement is the thing you thought SQL was: “show me stuff from a table.” But it also hides a surprising number of ways to confuse yourself with aliases, NULLs, and operator precedence.</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, the <code>SELECT</code> statement is the thing you <em>thought</em> SQL was: “show me stuff from a table.” But it also hides a surprising number of ways to confuse yourself with aliases, NULLs, and operator precedence.</p>
+    <p>In this lesson you will learn to:</p>
+    <ul>
+    <li>List what a <code>SELECT</code> statement can actually do.</li>
+    <li>Execute basic <code>SELECT</code> statements.</li>
+    <li>Return all columns or just the ones you care about.</li>
+    <li>Use column aliases, arithmetic expressions, and concatenation.</li>
+    <li>Handle <code>NULL</code> properly instead of pretending it’s a zero.</li>
+    <li>Use Oracle’s <code>DUAL</code> table, alternative quoting, and the <code>DISTINCT</code> keyword.</li>
+    <li>Describe table structures with <code>DESCRIBE</code> / <code>DESC</code> or GUI tools.</li>
+    </ul>
+    <hr>
+    <h2>1. SELECT Basics (Alex just wants Accounting)</h2>
+    <p>Picture Alex: they want a list of employees in the <strong>Accounting</strong> department. Somewhere there’s an HR app where they choose <code>department = Accounting</code> and click <strong>Go</strong>, and magically a report appears.</p>
+    <p>Behind that magic is a <code>SELECT</code> statement, which:</p>
+    <ul>
+    <li>Chooses <strong>columns</strong> to display (<code>SELECT</code>).</li>
+    <li>Chooses <strong>tables</strong> to read from (<code>FROM</code>).</li>
+    <li>Optionally filters (<code>WHERE</code>), sorts (<code>ORDER BY</code>), and so on.</li>
+    </ul>
+    <p>Syntax basics:</p>
+    <ul>
+    <li>SQL <strong>keywords</strong> (SELECT, FROM, WHERE, etc.) are <strong>not case‑sensitive</strong>.<br><code>select</code>, <code>SeLeCt</code>, <code>SELECT</code> – all the same.</li>
+    <li><strong>Data values</strong> <em>can</em> be case‑sensitive, depending on collation.</li>
+    <li>Statements can span multiple lines.</li>
+    <li>Keywords <strong>cannot</strong> be abbreviated or split across lines.<br><code>SEL</code> is not a thing. <code>SE</code> on one line and <code>LECT</code> on the next is also not a thing.</li>
+    <li>Indentation and line breaks don’t change behavior, but they <strong>do</strong> change whether your coworkers like you.</li>
+    </ul>
+    <p>Example formatting:</p>
+    <pre><code>SELECT last_name,
+           salary,
+           hire_date,
+           manager_id
+    FROM   employees;</code></pre>
+    <p>Most tools (like SQL Developer) have a <strong>Format</strong> command that:</p>
+    <ul>
+    <li>Uppercases keywords.</li>
+    <li>Indents columns and clauses.</li>
+    <li>Makes your query look like it wasn’t written at 2 a.m.</li>
+    </ul>
+    <p>Use it. Frequently.</p>
+    <hr>
+    <h2>2. SELECT and FROM: All Columns vs Specific Columns</h2>
+    <h3>2.1 Selecting all columns</h3>
+    <p>The laziest (and sometimes useful) form:</p>
+    <pre><code>SELECT *
+    FROM   employees;</code></pre>
+    <ul>
+    <li><code>*</code> means “all columns”.</li>
+    <li>Great for quick exploration; terrible as a long‑term habit in production code.</li>
+    </ul>
+    <h3>2.2 Selecting specific columns</h3>
+    <p>When you know what you want, list the columns explicitly:</p>
+    <pre><code>SELECT last_name,
+           job_id,
+           salary
+    FROM   employees;</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li>Separate column names with <strong>commas</strong>.</li>
+    <li>No trailing comma after the last column.</li>
+    </ul>
+    <hr>
+    <h2>3. Running SELECT in Different Tools</h2>
+    <h3>3.1 SQL Developer</h3>
+    <ul>
+    <li>Type your statement in a SQL Worksheet.</li>
+    <li>To run <strong>one</strong> statement: place the cursor in it and click <strong>Execute Statement</strong> (green triangle) or press <code>Ctrl+Enter</code>.</li>
+    <li>To run a <strong>script</strong> (multiple statements): use <strong>Run Script</strong> or <code>F5</code>.</li>
+    </ul>
+    <p>Column heading defaults:</p>
+    <ul>
+    <li>Headings are <strong>uppercase</strong> by default.</li>
+    <li>In SQL Developer, all headings are left‑aligned in the grid.</li>
+    </ul>
+    <h3>3.2 SQL*Plus</h3>
+    <ul>
+    <li>Type the statement, end with a semicolon, press <strong>Enter</strong>.</li>
+    <li>Character and date column headings: left‑aligned.</li>
+    <li>Number column headings: right‑aligned.</li>
+    <li>Headings are uppercase.</li>
+    </ul>
+    <h3>3.3 MySQL Workbench</h3>
+    <ul>
+    <li>Type in the SQL Editor.</li>
+    <li>Execute current statement with <code>Ctrl+Enter</code> or the lightning bolt for “current.”</li>
+    <li>Results appear in the Results Grid.</li>
+    </ul>
+    <h3>3.4 MySQL Command‑Line Client</h3>
+    <ul>
+    <li>Type statements; press Enter to continue on another line.</li>
+    <li>End with <code>;</code> and press Enter to execute.</li>
+    <li>Results appear as a text table, retro‑style.</li>
+    </ul>
+    <hr>
+    <h2>4. The DUAL Table and Constant Expressions</h2>
+    <p>Sometimes you don’t want rows <strong>from a table</strong>; you just want a single calculated value, like today’s date.</p>
+    <p>In Oracle, that’s where the <code>DUAL</code> table comes in:</p>
+    <ul>
+    <li><code>DUAL</code> has exactly <strong>one row</strong> and one column.</li>
+    <li>It’s perfect when you want <strong>one row of output</strong> without relying on a real table.</li>
+    </ul>
+    <p>Example – using <code>SYSDATE</code>:</p>
+    <pre><code>-- This returns today&#x27;s date once for every employee
+    SELECT first_name,
+           SYSDATE
+    FROM   employees;
+    
+    -- This returns today&#x27;s date exactly once
+    SELECT SYSDATE
+    FROM   dual;</code></pre>
+    <p>In <strong>MySQL</strong>:</p>
+    <ul>
+    <li><code>FROM DUAL</code> is accepted but ignored. These are equivalent:</li>
+    <li><code>SELECT SYSDATE();</code></li>
+    <li><code>SELECT SYSDATE() FROM DUAL;</code></li>
+    <li>Don’t put a space between <code>SYSDATE</code> and <code>(</code> unless your server is configured to forgive you.</li>
+    </ul>
+    <hr>
+    <h2>5. Arithmetic Expressions and Operator Precedence</h2>
+    <p>You can use arithmetic operators directly in the <code>SELECT</code> list:</p>
+    <p>Operators:</p>
+    <ul>
+    <li><code>+</code> addition</li>
+    <li><code>-</code> subtraction</li>
+    <li><code>*</code> multiplication</li>
+    <li><code>/</code> division</li>
+    </ul>
+    <p>Example – monthly salary vs annual salary:</p>
+    <pre><code>SELECT last_name,
+           salary,
+           salary * 12    annual_salary
+    FROM   employees;</code></pre>
+    <p>Now suppose you want to give everyone a hypothetical <strong>$100/month raise</strong> and see the new annual salary:</p>
+    <pre><code>SELECT last_name,
+           salary * 12,
+           salary * 12 + 100    wrong_annual,
+           (salary + 100) * 12  corrected_annual
+    FROM   employees;</code></pre>
+    <p>Why two columns?</p>
+    <ul>
+    <li><code>salary * 12 + 100</code> → multiplies first, then adds 100 <strong>once</strong>.</li>
+    <li><code>(salary + 100) * 12</code> → adds 100 to the monthly salary, then multiplies by 12.</li>
+    </ul>
+    <p>Moral: when in doubt about precedence, <strong>use parentheses</strong> instead of trusting your memory.</p>
+    <hr>
+    <h2>6. NULL: The Four‑Meaning Troublemaker</h2>
+    <p><code>NULL</code> in SQL is not 0, not an empty string, and not “we’ll decide later.” It generally means one of:</p>
+    <ul>
+    <li><strong>Unavailable</strong> – we don’t have the value yet.</li>
+    <li><strong>Unassigned</strong> – nobody has set it.</li>
+    <li><strong>Unknown</strong> – we genuinely don’t know.</li>
+    <li><strong>Inapplicable</strong> – doesn’t make sense for this row.</li>
+    </ul>
+    <p>Example:</p>
+    <ul>
+    <li>Salespeople have a <code>commission_pct</code> value.</li>
+    <li>Non‑sales employees have <code>commission_pct = NULL</code> because it <strong>does not apply</strong>.</li>
+    </ul>
+    <p>Critical rule:</p>
+    <ul>
+    <li>Any arithmetic expression involving <code>NULL</code> yields <strong><code>NULL</code></strong>.</li>
+    </ul>
+    <p>Example – annual salary including commission:</p>
+    <pre><code>SELECT last_name,
+           salary,
+           salary * 12
+             + salary * 12 * commission_pct   annual_with_commission
+    FROM   employees;</code></pre>
+    <ul>
+    <li>For employees with a commission: calculation works.</li>
+    <li>For employees whose <code>commission_pct</code> is <code>NULL</code>: the whole expression becomes <code>NULL</code>.</li>
+    </ul>
+    <p>Later, you’ll see functions to substitute default values for <code>NULL</code> (like “treat NULL commission as 0”). For now, just remember: <strong>NULL poisons arithmetic</strong>.</p>
+    <hr>
+    <h2>7. Column Aliases</h2>
+    <p>Column aliases let you rename the column heading in your result set:</p>
+    <ul>
+    <li>They appear <strong>after</strong> the expression.</li>
+    <li><code>AS</code> is optional but makes things clearer.</li>
+    <li>If your alias contains spaces or mixed case, wrap it in <strong>double quotes</strong>.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code>-- Simple alias
+    SELECT last_name AS name,
+           salary    AS monthly_salary
+    FROM   employees;
+    
+    -- Alias without AS (still works)
+    SELECT commission_pct commission
+    FROM   employees;
+    
+    -- Alias with spaces and mixed case (quotes required)
+    SELECT salary * 12 AS &quot;Annual Salary&quot;
+    FROM   employees;</code></pre>
+    <p>Without quotes, aliases default to <strong>uppercase</strong> in most tools. With double quotes, you get <strong>exactly</strong> the casing and spaces you specify.</p>
+    <hr>
+    <h2>8. Concatenation, Literals, and the CONCAT Function</h2>
+    <h3>8.1 The concatenation operator (<code>||</code>)</h3>
+    <p>In Oracle, <code>||</code> combines strings (character expressions):</p>
+    <pre><code>-- First and last name with a space
+    SELECT first_name || &#x27; &#x27; || last_name AS full_name
+    FROM   employees;</code></pre>
+    <p>Notes:</p>
+    <ul>
+    <li>The result is always <strong>character</strong> data.</li>
+    <li>If you concatenate a number, it’s <strong>converted to text</strong>:</li>
+    </ul>
+    <pre><code>SELECT first_name || &#x27; earns &#x27; || salary AS pay_info
+    FROM   employees;</code></pre>
+    <p>You’ll see everything left‑aligned, including the number, because it’s now text.</p>
+    <h3>8.2 CONCAT function (Oracle vs MySQL)</h3>
+    <ul>
+    <li>Oracle’s <code>CONCAT</code> takes <strong>exactly two arguments</strong>.</li>
+    <li>MySQL’s <code>CONCAT</code> happily takes <strong>many</strong>.</li>
+    </ul>
+    <p>MySQL example:</p>
+    <pre><code>SELECT CONCAT(first_name, &#x27; &#x27;, last_name, &#x27; is a &#x27;, job_id)
+    FROM   employees;</code></pre>
+    <p>Oracle equivalent (nesting CONCAT):</p>
+    <pre><code>SELECT CONCAT(CONCAT(first_name, &#x27; &#x27;), last_name) AS full_name
+    FROM   employees;</code></pre>
+    <p>Or, much simpler in Oracle: just use <code>||</code>.</p>
+    <h3>8.3 Literal character strings</h3>
+    <p>A <strong>literal</strong> is a hard‑coded value in your <code>SELECT</code> list, like a word or phrase.</p>
+    <ul>
+    <li>Character and date literals go in <strong>single quotes</strong>.</li>
+    <li>They are repeated <strong>for every row</strong> returned.</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code>SELECT last_name || &#x27; is a &#x27; || job_id AS description
+    FROM   employees;</code></pre>
+    <p>This produces rows like “Abel is a SA_REP”.</p>
+    <hr>
+    <h2>9. Alternative Quote Operator (Oracle) and Escapes (MySQL)</h2>
+    <p>What if your literal includes an apostrophe, like <code>isn&#x27;t</code>? If you write this naively:</p>
+    <pre><code>SELECT &#x27;King isn&#x27;t happy&#x27; AS msg
+    FROM   dual;</code></pre>
+    <p>Oracle sees the <code>&#x27;</code> in <code>isn&#x27;t</code> and panics.</p>
+    <h3>9.1 Oracle’s alternative quote operator</h3>
+    <p>Use <code>q</code> followed by a single quote and a pair of delimiters:</p>
+    <pre><code>SELECT q&#x27;[King isn&#x27;t happy]&#x27; AS msg
+    FROM   dual;</code></pre>
+    <p>Pattern:</p>
+    <ul>
+    <li><code>q&#x27;&lt;text&gt;&#x27;</code></li>
+    <li>You can use brackets, braces, parentheses, or other characters as delimiters:</li>
+    <li><code>q&#x27;[text]&#x27;</code></li>
+    <li><code>q&#x27;{text}&#x27;</code></li>
+    <li><code>q&#x27;(text)&#x27;</code></li>
+    <li><code>q&#x27;&lt;text&gt;&#x27;</code></li>
+    </ul>
+    <p>Just don’t use <code>&amp;</code> as a delimiter – that triggers substitution variables and a whole different adventure.</p>
+    <h3>9.2 MySQL string escapes</h3>
+    <p>In MySQL, you typically escape the single quote:</p>
+    <pre><code>SELECT &#x27;King isn\&#x27;t happy&#x27; AS msg;</code></pre>
+    <p>or depending on configuration:</p>
+    <pre><code>SELECT &#x27;King isn&#x27;&#x27;t happy&#x27; AS msg;</code></pre>
+    <p>Either way: you’re telling the engine “this quote is part of the text, not the end of it.”</p>
+    <hr>
+    <h2>10. DISTINCT: Getting Rid of Duplicates</h2>
+    <p>Sometimes you don’t care about every row – you just want <strong>unique</strong> values.</p>
+    <p>Example:</p>
+    <pre><code>SELECT department_id
+    FROM   employees;</code></pre>
+    <p>You’ll see many repeated department IDs. To shrink it down:</p>
+    <pre><code>SELECT DISTINCT department_id
+    FROM   employees;</code></pre>
+    <ul>
+    <li><code>DISTINCT</code> applies to <strong>all selected columns together</strong>.</li>
+    <li>If you write <code>SELECT DISTINCT department_id, job_id</code>, you’ll get unique <strong>pairs</strong> of <code>(department_id, job_id)</code>.</li>
+    </ul>
+    <hr>
+    <h2>11. DESCRIBE / DESC: Seeing Table Structure</h2>
+    <p>When you’re not sure what’s in a table, <code>DESCRIBE</code> is your friend.</p>
+    <p>In Oracle (SQL*Plus or SQL Developer script output):</p>
+    <pre><code>DESCRIBE employees;
+    -- or shorter
+    DESC employees;</code></pre>
+    <p>You’ll see:</p>
+    <ul>
+    <li>Column names</li>
+    <li>Data types</li>
+    <li>Whether each column can be <code>NULL</code></li>
+    </ul>
+    <p>In SQL Developer’s GUI:</p>
+    <ul>
+    <li>Click the table name (e.g., <code>DEPARTMENTS</code>) in the <strong>Connections</strong> tree.</li>
+    <li>The right‑hand pane shows columns, data types, constraints, and more.</li>
+    </ul>
+    <p>In MySQL Workbench:</p>
+    <ul>
+    <li>Run <code>DESCRIBE table_name;</code> in the SQL editor, <strong>or</strong></li>
+    <li>Right‑click the table → <strong>Table Inspector</strong> → <strong>Columns</strong> tab.</li>
+    </ul>
+    <hr>
+    <h2>12. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Write a <code>SELECT</code> that returns <strong>all</strong> rows and columns from a table.</li>
+    <li>Return only <strong>specific columns</strong> instead of relying on <code>*</code>.</li>
+    <li>Use <strong>column aliases</strong> (with or without <code>AS</code>) to produce readable headings.</li>
+    <li>Use arithmetic expressions and parentheses correctly in the <code>SELECT</code> list.</li>
+    <li>Understand how <code>NULL</code> affects calculations.</li>
+    <li>Concatenate columns and literals, and handle quotes safely.</li>
+    <li>Use <code>DISTINCT</code> to eliminate duplicate rows.</li>
+    <li>Describe the structure of a table using <code>DESCRIBE</code> / <code>DESC</code> or GUI tools.</li>
+    </ul>
+    <p>If that feels like a lot for one lesson, remember: this is still just <strong>reading</strong> data. Writing and changing it comes later, and that’s when things get really exciting—or really broken—depending on how carefully you’ve learned this part.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="01_Course_Introduction.html">&larr; previous</a>
+    <a href="02_Retrieving_Data_Using_the_SQL_SELECT_Statement.md">view source markdown</a>
+    <a href="03_Restricting_and_Sorting_Data.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

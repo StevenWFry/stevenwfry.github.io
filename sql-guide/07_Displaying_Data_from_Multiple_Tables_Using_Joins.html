@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 7 – Displaying Data from Multiple Tables Using JOINs (or: persuading your tables to talk to each other) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, normalized databases are great for design and terrible for reporting. All the interesting information is split across five different tables—empl...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 7 – Displaying Data from Multiple Tables Using JOINs (or: persuading your tables to talk to each other)</h1>
+    <p>And look, normalized databases are great for design and terrible for reporting. All the interesting information is split across five different tables—employees here, departments there, jobs somewhere else—so a simple qu...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, normalized databases are great for design and terrible for reporting. All the interesting information is split across five different tables—employees here, departments there, jobs somewhere else—so a simple question like “who does what, where?” suddenly requires <strong>joins</strong>.</p>
+    <p>This lesson is about teaching your <code>SELECT</code> statements to navigate that mess.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Write <code>SELECT</code> statements that join data from multiple tables.</li>
+    <li>Use <strong>equijoins</strong> and <strong>nonequijoins</strong>.</li>
+    <li>Join a table to itself using a <strong>self‑join</strong>.</li>
+    <li>Use <strong>INNER</strong> and <strong>OUTER</strong> joins (LEFT, RIGHT, FULL).</li>
+    <li>Recognize and (mostly) avoid <strong>Cartesian products</strong> via <code>CROSS JOIN</code>.</li>
+    </ul>
+    <hr>
+    <h2>1. Why JOIN at All?</h2>
+    <p>Because the database is <strong>normalized</strong>:</p>
+    <ul>
+    <li><code>EMPLOYEES</code> has <code>employee_id</code>, <code>last_name</code>, <code>job_id</code>, <code>department_id</code>, <code>manager_id</code>, etc.</li>
+    <li><code>JOBS</code> has <code>job_id</code>, <code>job_title</code>, min/max salary.</li>
+    <li><code>DEPARTMENTS</code> has <code>department_id</code>, <code>department_name</code>, <code>location_id</code>.</li>
+    <li><code>LOCATIONS</code> has <code>location_id</code>, <code>city</code>, <code>country_id</code>.</li>
+    </ul>
+    <p>To answer questions like “list all employees with their job titles and department names”, you must <strong>join tables</strong> on related columns, typically <strong>primary key ↔ foreign key</strong> pairs:</p>
+    <ul>
+    <li><code>employees.job_id</code> ↔ <code>jobs.job_id</code></li>
+    <li><code>employees.department_id</code> ↔ <code>departments.department_id</code></li>
+    </ul>
+    <p>Joins recombine normalized pieces into a single result set.</p>
+    <hr>
+    <h2>2. ANSI JOIN Types Overview</h2>
+    <p>Oracle and MySQL both support ANSI join syntax, including:</p>
+    <ul>
+    <li><code>INNER JOIN</code> – only rows that satisfy the join condition.</li>
+    <li><code>LEFT [OUTER] JOIN</code> – all rows from the left table, plus matches on the right.</li>
+    <li><code>RIGHT [OUTER] JOIN</code> – all rows from the right table, plus matches on the left.</li>
+    <li><code>FULL [OUTER] JOIN</code> (Oracle only) – all rows from both tables (matches and non‑matches).</li>
+    <li><code>CROSS JOIN</code> – Cartesian product (every row with every row).</li>
+    <li><code>NATURAL JOIN</code> – joins on all columns with the same name and type.</li>
+    <li><code>JOIN ... USING (column_list)</code> – join on specific shared column names.</li>
+    <li><code>JOIN ... ON condition</code> – explicitly specify the join condition.</li>
+    </ul>
+    <p>The <strong>ON</strong> and <strong>USING</strong> forms are what you’ll rely on the most; <code>NATURAL JOIN</code> is convenient but can be dangerously magical.</p>
+    <hr>
+    <h2>3. INNER JOIN with ON – The Workhorse</h2>
+    <p>Standard pattern:</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name
+    FROM   employees  e
+    JOIN   departments d
+           ON e.department_id = d.department_id;</code></pre>
+    <p>Key points:</p>
+    <ul>
+    <li>This is an <strong>INNER JOIN</strong>: rows are returned <strong>only</strong> where <code>e.department_id = d.department_id</code>.</li>
+    <li>If an employee’s <code>department_id</code> is <code>NULL</code> or doesn’t match any row in <code>DEPARTMENTS</code>, that employee is <strong>excluded</strong>.</li>
+    </ul>
+    <p>You can include the <code>INNER</code> keyword explicitly:</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name
+    FROM   employees  e
+    INNER JOIN departments d
+            ON e.department_id = d.department_id;</code></pre>
+    <p>Same result, just more explicit.</p>
+    <h3>3.1 Table aliases and ambiguous columns</h3>
+    <p>When both tables have a column with the same name (e.g., <code>department_id</code>), you must <strong>qualify</strong> it:</p>
+    <pre><code class="language-sql">SELECT department_id
+    FROM   employees, departments;
+    -- ERROR: column ambiguously defined</code></pre>
+    <p>Fix with table (or alias) prefixes:</p>
+    <pre><code class="language-sql">SELECT e.department_id,
+           d.department_id
+    FROM   employees  e
+    JOIN   departments d
+           ON e.department_id = d.department_id;</code></pre>
+    <p>Use <strong>meaningful aliases</strong> (<code>e</code>, <code>emp</code>, <code>d</code>, <code>dept</code>) so your future self can understand the join.</p>
+    <p>Note: in Oracle, you may <strong>not</strong> use <code>AS</code> for table aliases:</p>
+    <pre><code class="language-sql">FROM employees AS e   -- invalid in Oracle
+    FROM employees e      -- valid</code></pre>
+    <hr>
+    <h2>4. USING and NATURAL JOIN – Shortcuts with Caveats</h2>
+    <h3>4.1 JOIN ... USING</h3>
+    <p>If both tables have a column with the <strong>same name</strong> and compatible type, you can use <code>USING</code>:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           department_name,
+           department_id
+    FROM   employees  e
+    JOIN   departments d
+           USING (department_id);</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li><code>USING (department_id)</code> is shorthand for <code>ON e.department_id = d.department_id</code>.</li>
+    <li>When selecting <code>department_id</code> in this case:</li>
+    <li>Do <strong>not</strong> qualify it with a table alias: <code>department_id</code> is fine.</li>
+    <li><code>e.department_id</code> or <code>d.department_id</code> in the <code>SELECT</code> will cause:<br><code>ORA-25154: column part of USING clause cannot have qualifier</code>.</li>
+    </ul>
+    <h3>4.2 NATURAL JOIN</h3>
+    <p><code>NATURAL JOIN</code> automatically joins on <strong>all columns</strong> that:</p>
+    <ul>
+    <li>Have the same name in both tables, and</li>
+    <li>Have compatible data types.</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           department_name
+    FROM   employees
+    NATURAL JOIN departments;</code></pre>
+    <p>Behind the scenes, Oracle looks for <strong>all</strong> identically named columns (e.g., <code>department_id</code>, <code>manager_id</code>) and joins on all of them. So if both tables share <code>department_id</code> and <code>manager_id</code>, you’re effectively doing:</p>
+    <pre><code class="language-sql">... JOIN ... USING (department_id, manager_id)</code></pre>
+    <p>This can dramatically reduce the number of rows returned compared to a join on just one column.</p>
+    <p><strong>Caution:</strong> NATURAL JOIN is convenient but fragile:</p>
+    <ul>
+    <li>If someone later adds another identically named column, your join behavior changes.</li>
+    <li>If columns share a name but not type, you get an error.</li>
+    </ul>
+    <p>Use it sparingly and only when you truly control the schema.</p>
+    <hr>
+    <h2>5. Joining More Than Two Tables</h2>
+    <p>You can keep adding joins as long as the relationships make sense.</p>
+    <p>Example – employees, departments, and locations:</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name,
+           l.city
+    FROM   employees  e
+    JOIN   departments d
+           ON e.department_id = d.department_id
+    JOIN   locations  l
+           ON d.location_id = l.location_id;</code></pre>
+    <p>Here:</p>
+    <ul>
+    <li>First join employees ↔ departments by <code>department_id</code>.</li>
+    <li>Then join departments ↔ locations by <code>location_id</code>.</li>
+    </ul>
+    <p>You can keep going for as many tables as your query (and your brain) can handle.</p>
+    <p>Conditions unrelated to the joins can go either in the <code>ON</code> clauses or in a trailing <code>WHERE</code>:</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name
+    FROM   employees  e
+    JOIN   departments d
+           ON e.department_id = d.department_id
+    WHERE  e.manager_id = 149;</code></pre>
+    <p>or:</p>
+    <pre><code class="language-sql">... JOIN departments d
+         ON e.department_id = d.department_id
+        AND e.manager_id = 149;</code></pre>
+    <p>Both are valid; the key is to keep the <strong>join condition</strong> clear and separate from <strong>filter conditions</strong>.</p>
+    <hr>
+    <h2>6. Self-Joins – When a Table Is Its Own Boss</h2>
+    <p>Sometimes the relationship you care about is entirely <strong>inside one table</strong>. Classic example: employees and their managers.</p>
+    <ul>
+    <li><code>EMPLOYEES.employee_id</code> uniquely identifies an employee.</li>
+    <li><code>EMPLOYEES.manager_id</code> references another employee’s <code>employee_id</code>.</li>
+    </ul>
+    <p>To pair each employee with their manager’s last name, you join the table to <strong>itself</strong>:</p>
+    <pre><code class="language-sql">SELECT e.last_name AS emp,
+           m.last_name AS mgr
+    FROM   employees e
+    JOIN   employees m
+           ON e.manager_id = m.employee_id;</code></pre>
+    <ul>
+    <li><code>e</code> = worker alias.</li>
+    <li><code>m</code> = manager alias.</li>
+    <li><code>e.manager_id</code> ↔ <code>m.employee_id</code>.</li>
+    </ul>
+    <p>This is a <strong>self-join</strong>, and it’s how you turn a single table into a hierarchy (or at least an org chart).</p>
+    <hr>
+    <h2>7. Nonequijoins – When the Join Condition Is a Range</h2>
+    <p>Not all relationships are equality-based. Sometimes you have <strong>ranges</strong>.</p>
+    <p>Example: <code>JOB_GRADES</code> table:</p>
+    <pre><code class="language-text">GRADE_LEVEL  LOWEST_SAL  HIGHEST_SAL
+    -----------  ----------  ----------
+    A            1000        2999
+    B            3000        5999
+    C            6000        9999
+    D            10000       14999
+    E            15000       24999</code></pre>
+    <p>You want to assign each employee a grade based on their <code>salary</code>.</p>
+    <p>Nonequijoin:</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           e.salary,
+           g.grade_level
+    FROM   employees   e
+    JOIN   job_grades  g
+           ON e.salary BETWEEN g.lowest_sal AND g.highest_sal;</code></pre>
+    <p>This is called a <strong>nonequijoin</strong> because the join condition uses <code>BETWEEN</code> (a range) instead of <code>=</code>.</p>
+    <hr>
+    <h2>8. OUTER JOINs – Bringing Back the Lonely Rows</h2>
+    <p><code>INNER JOIN</code> only returns rows that have a match on both sides. OUTER JOINs return matched rows <strong>plus</strong> the unmatched rows from one or both tables.</p>
+    <h3>8.1 LEFT OUTER JOIN</h3>
+    <p>All rows from the <strong>left</strong> table, and matching rows from the right; unmatched right‑side columns are <code>NULL</code>.</p>
+    <p>Example – all employees, even those without a department:</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name
+    FROM   employees  e
+    LEFT  JOIN departments d
+           ON e.department_id = d.department_id;</code></pre>
+    <ul>
+    <li>You get <strong>all 107 employees</strong>, including the one with no <code>department_id</code>.</li>
+    <li>For that employee, <code>department_name</code> is <code>NULL</code>.</li>
+    </ul>
+    <h3>8.2 RIGHT OUTER JOIN</h3>
+    <p>All rows from the <strong>right</strong> table, and matching rows from the left.</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name
+    FROM   employees  e
+    RIGHT JOIN departments d
+           ON e.department_id = d.department_id;</code></pre>
+    <ul>
+    <li>You see every department, including those with <strong>no employees</strong>.</li>
+    <li>Employee columns are <code>NULL</code> where there’s no match.</li>
+    </ul>
+    <h3>8.3 FULL OUTER JOIN (Oracle only)</h3>
+    <p>All rows from <strong>both</strong> tables:</p>
+    <ul>
+    <li>Matched pairs.</li>
+    <li>Left‑only rows.</li>
+    <li>Right‑only rows.</li>
+    </ul>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name
+    FROM   employees  e
+    FULL  JOIN departments d
+           ON e.department_id = d.department_id;</code></pre>
+    <p>This shows:</p>
+    <ul>
+    <li>Employees with and without departments.</li>
+    <li>Departments with and without employees.</li>
+    </ul>
+    <p>MySQL does <strong>not</strong> support <code>FULL OUTER JOIN</code> directly; you emulate it with <code>UNION</code> of left and right joins.</p>
+    <hr>
+    <h2>9. CROSS JOIN / Cartesian Product – The “Everything with Everything” Join</h2>
+    <p>A <code>CROSS JOIN</code> (or an <code>INNER JOIN</code> without a condition) produces the <strong>Cartesian product</strong>:</p>
+    <pre><code class="language-sql">SELECT e.last_name,
+           d.department_name
+    FROM   employees  e
+    CROSS JOIN departments d;</code></pre>
+    <p>If there are:</p>
+    <ul>
+    <li>107 employees</li>
+    <li>28 departments</li>
+    </ul>
+    <p>You get 107 × 28 = 2,996 rows.</p>
+    <p>The first 107 rows might show every employee “working” in department 10, the next 107 in department 20, and so on. This is rarely what you actually want, but it’s excellent at stress-testing your client tool.</p>
+    <p>Conceptually, a forgotten join condition with <code>FROM employees e, departments d</code> and a filterless <code>WHERE</code> clause can accidentally create the same cartesian product. Treat that as a smell.</p>
+    <hr>
+    <h2>10. MySQL Notes</h2>
+    <p>All of the ANSI join patterns you’ve seen apply to MySQL too:</p>
+    <ul>
+    <li><code>INNER JOIN</code>, <code>LEFT JOIN</code>, <code>RIGHT JOIN</code>, <code>CROSS JOIN</code>.</li>
+    <li><code>JOIN ... USING(column_list)</code> and <code>JOIN ... ON condition</code>.</li>
+    <li><code>NATURAL JOIN</code> is supported but carries the same “magical join columns you didn’t ask for” risk.</li>
+    </ul>
+    <p>MySQL <strong>does not</strong> support <code>FULL OUTER JOIN</code> directly; use <code>LEFT JOIN ... UNION ... RIGHT JOIN</code> minus the intersection if needed.</p>
+    <hr>
+    <h2>11. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Write <code>SELECT</code> statements that join multiple tables using equijoins (<code>ON</code> / <code>USING</code>).</li>
+    <li>Explain and use <code>NATURAL JOIN</code>, <code>USING</code>, and <code>ON</code> appropriately.</li>
+    <li>Join a table to itself using a self‑join for hierarchical relationships.</li>
+    <li>Use nonequijoins for range‑based relationships like salary grades.</li>
+    <li>Use <code>LEFT</code>, <code>RIGHT</code>, and <code>FULL</code> OUTER JOINs to include unmatched rows.</li>
+    <li>Recognize and intentionally (or very cautiously) generate Cartesian products with <code>CROSS JOIN</code>.</li>
+    </ul>
+    <p>You can now ask questions that span <strong>employees + jobs + departments + locations</strong>, which is exactly the point where people start calling your queries “the reporting layer”.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="06_Reporting_Aggregated_Data_Using_Group_Functions.html">&larr; previous</a>
+    <a href="07_Displaying_Data_from_Multiple_Tables_Using_Joins.md">view source markdown</a>
+    <a href="08_Using_Subqueries_to_Solve_Queries.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 – Managing Schema Objects (Or: Teaching Your Constraints To Chill Out) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, once your database has been alive for more than about five minutes, people start saying things like “we just need one tiny schema change,” which...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>15 – Managing Schema Objects (Or: Teaching Your Constraints To Chill Out)</h1>
+    <p>And look, once your database has been alive for more than about five minutes, people start saying things like “we just need one tiny schema change,” which is how you end up spending your weekend negotiating with constra...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, once your database has been alive for more than about five minutes, people start saying things like “we just need one tiny schema change,” which is how you end up spending your weekend negotiating with constraints, temporary tables, and external files that absolutely <em>weren’t</em> documented.</p>
+    <p>This lesson is about staying in control of that chaos:</p>
+    <ul>
+    <li>Managing and deferring constraints</li>
+    <li>Using temporary tables as socially acceptable scratchpads</li>
+    <li>Pointing tables at files that live outside the database (external tables)</li>
+    </ul>
+    <hr>
+    <h2>1. Managing Constraints Without Losing Your Mind</h2>
+    <p>Constraints are the grumpy hall monitors of your schema: they don’t let bad data through, and they absolutely do not care about your deadline.</p>
+    <p>You need to be able to:</p>
+    <ul>
+    <li>Add or drop constraints</li>
+    <li>Enable or disable them</li>
+    <li>Decide <em>when</em> they complain (immediately vs at commit)</li>
+    </ul>
+    <h3>1.1 Adding constraints with <code>ALTER TABLE</code></h3>
+    <p>For <strong>everything except <code>NOT NULL</code></strong>, you use <code>ALTER TABLE … ADD</code>:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      ADD CONSTRAINT emp2_mgr_fk
+          FOREIGN KEY (manager_id)
+          REFERENCES emp2 (employee_id);</code></pre>
+    <p>Notes:</p>
+    <ul>
+    <li>This is a <strong>table‑level</strong> definition (<code>FOREIGN KEY</code> keyword; column listed inside the constraint).</li>
+    <li>If you skip <code>CONSTRAINT emp2_mgr_fk</code>, Oracle happily invents a name like <code>SYS_C009873</code>.</li>
+    </ul>
+    <p>For a <strong><code>NOT NULL</code></strong> constraint, you must use <code>MODIFY</code> because it lives at the <strong>column</strong> level:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      MODIFY last_name CONSTRAINT emp2_lastname_nn NOT NULL;</code></pre>
+    <h3>1.2 Dropping constraints</h3>
+    <p>When a constraint has outlived its usefulness (or was a terrible idea to begin with):</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      DROP CONSTRAINT emp2_mgr_fk;</code></pre>
+    <p>Dropping a primary key and all its dependent foreign keys in one dramatic gesture:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      DROP PRIMARY KEY CASCADE;</code></pre>
+    <p>Add <code>ONLINE</code> if you want DML to keep flowing while the constraint is being dropped:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      DROP PRIMARY KEY CASCADE ONLINE;</code></pre>
+    <h3>1.3 <code>ON DELETE CASCADE</code> vs <code>ON DELETE SET NULL</code></h3>
+    <p>This is where you decide how much collateral damage is acceptable when parents disappear.</p>
+    <p><strong>Cascade: delete children when the parent goes</strong></p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      ADD CONSTRAINT emp2_dept_fk
+          FOREIGN KEY (department_id)
+          REFERENCES departments (department_id)
+          ON DELETE CASCADE;</code></pre>
+    <ul>
+    <li>Delete a department → all employees in that department vanish too.</li>
+    <li>Great for “test data”, less great for “payroll”.</li>
+    </ul>
+    <p><strong>Set null: orphans keep living, just confused</strong></p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      ADD CONSTRAINT emp2_dept_fk
+          FOREIGN KEY (department_id)
+          REFERENCES departments (department_id)
+          ON DELETE SET NULL;</code></pre>
+    <ul>
+    <li>Delete the department → employees stay, <code>department_id</code> becomes <code>NULL</code>.</li>
+    <li>Perfect when employees outlive org charts, which… they often do.</li>
+    </ul>
+    <h3>1.4 Dropping columns with attached constraints</h3>
+    <p>If a column has PRIMARY/UNIQUE keys or foreign keys pointing at it, dropping it is like removing a Jenga block from the bottom row.</p>
+    <p>Use <code>CASCADE CONSTRAINTS</code> so Oracle also drops any constraints that depend on that column:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      DROP COLUMN employee_id CASCADE CONSTRAINTS;</code></pre>
+    <hr>
+    <h2>2. Enabling, Disabling, and Deferring Constraints</h2>
+    <p>There are days when you want your constraints to back off a bit so you can do a bulk load, data migration, or “creative repair”.</p>
+    <h3>2.1 Basic enable/disable</h3>
+    <p>Temporarily turning constraint checks off:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      DISABLE CONSTRAINT emp2_dept_fk;</code></pre>
+    <p>Re‑arming it later:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      ENABLE CONSTRAINT emp2_dept_fk;</code></pre>
+    <p>Disable <strong>all</strong> foreign keys hanging off a primary key:</p>
+    <pre><code class="language-sql">ALTER TABLE emp2
+      DISABLE PRIMARY KEY CASCADE;</code></pre>
+    <p>When you <code>ENABLE</code> a PRIMARY or UNIQUE key, Oracle automatically (re)creates the supporting <strong>unique index</strong>, because that’s what actually enforces uniqueness.</p>
+    <h3>2.2 Validate vs NOVALIDATE</h3>
+    <p>You get to choose whether enabling a constraint:</p>
+    <ul>
+    <li>Checks existing data (<code>VALIDATE</code>), or</li>
+    <li>Just applies to <em>new</em> data going forward (<code>NOVALIDATE</code>)</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">-- Check all existing rows and future rows
+    ALTER TABLE dept2
+      ENABLE VALIDATE PRIMARY KEY;
+    
+    -- Trust existing data (maybe foolishly), check only new rows
+    ALTER TABLE dept2
+      ENABLE NOVALIDATE PRIMARY KEY;</code></pre>
+    <p>If you know your data is terrible but fixing it will take ages, <code>NOVALIDATE</code> is the “we’ll deal with this later” option.</p>
+    <h3>2.3 Deferrable constraints (complain later, not now)</h3>
+    <p>Deferrable constraints let you say, “yes, I <em>know</em> this looks wrong mid‑transaction, but I promise it’ll be fine by commit.”</p>
+    <p>Define a deferrable primary key:</p>
+    <pre><code class="language-sql">CREATE TABLE demo (
+      id   NUMBER
+           CONSTRAINT demo_pk
+           PRIMARY KEY
+           DEFERRABLE INITIALLY DEFERRED,
+      name VARCHAR2(25)
+    );</code></pre>
+    <p>Behavior:</p>
+    <ul>
+    <li>You can temporarily violate <code>demo_pk</code> within a transaction.</li>
+    <li>The check happens at <code>COMMIT</code> time, not on each <code>INSERT</code>/<code>UPDATE</code>.</li>
+    </ul>
+    <p>Example pattern:</p>
+    <pre><code class="language-sql">-- This may temporarily violate the constraint…
+    INSERT INTO demo VALUES (1, &#x27;First&#x27;);
+    INSERT INTO demo VALUES (1, &#x27;Duplicate&#x27;);  -- allowed for now
+    
+    COMMIT;  -- BOOM: ORA-00001, transaction rolled back</code></pre>
+    <p>You can switch the mode for the whole session:</p>
+    <pre><code class="language-sql">ALTER SESSION SET CONSTRAINTS = IMMEDIATE;  -- behave like normal
+    ALTER SESSION SET CONSTRAINTS = DEFERRED;   -- check at COMMIT</code></pre>
+    <p>Immediate mode: constraint checked per statement. Deferred mode: constraint checked at commit, and a single failure rolls back the whole transaction.</p>
+    <hr>
+    <h2>3. Temporary Tables: Shopping Carts For Data</h2>
+    <p>And look, not every intermediate result deserves a permanent table and a place in the ERD. Sometimes you just need a scratchpad that magically cleans itself up.</p>
+    <p>That’s what temporary tables are for.</p>
+    <p>Key points:</p>
+    <ul>
+    <li>Table <strong>definition</strong> is permanent.</li>
+    <li>Table <strong>data</strong> is temporary and:</li>
+    <li>Private to each session, and</li>
+    <li>Cleared either at commit or at end of session, depending on options.</li>
+    </ul>
+    <h3>3.1 Global temporary tables</h3>
+    <p>Classic pattern:</p>
+    <pre><code class="language-sql">CREATE GLOBAL TEMPORARY TABLE cart_items (
+      session_id  VARCHAR2(30),
+      item_id     NUMBER,
+      qty         NUMBER
+    ) ON COMMIT DELETE ROWS;</code></pre>
+    <p>Options:</p>
+    <ul>
+    <li><code>ON COMMIT DELETE ROWS</code></li>
+    <li>Data disappears when the transaction commits.</li>
+    <li>Good for truly short‑lived staging.</li>
+    <li><code>ON COMMIT PRESERVE ROWS</code></li>
+    <li>Data survives commits but disappears when the <strong>session ends</strong>.</li>
+    <li>Perfect for “shopping cart” behavior in a web app.</li>
+    </ul>
+    <p>Remember:</p>
+    <ul>
+    <li>Everyone shares the <strong>structure</strong>.</li>
+    <li>Each session sees only its own rows.</li>
+    </ul>
+    <h3>3.2 Private temporary tables</h3>
+    <p>Private temp tables are like global temp tables that went into witness protection:</p>
+    <ul>
+    <li>Only the creating session can see the <strong>definition</strong> and the <strong>data</strong>.</li>
+    <li>Names must start with <code>ORA$PTT_</code>.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">-- Transaction-specific private temp table
+    CREATE PRIVATE TEMPORARY TABLE ora$ptt_txn_buffer
+    ON COMMIT DROP DEFINITION AS
+    SELECT * FROM employees WHERE department_id = 10;
+    
+    -- Session-specific private temp table
+    CREATE PRIVATE TEMPORARY TABLE ora$ptt_session_buffer
+    ON COMMIT PRESERVE DEFINITION AS
+    SELECT * FROM employees WHERE department_id = 20;</code></pre>
+    <p>In both cases, once your session ends, the table definition and data are gone. Which is great, unless you forgot to copy out the data you needed, in which case… oops.</p>
+    <hr>
+    <h2>4. External Tables: When Your Data Refuses To Live In The Database</h2>
+    <p>Sometimes data stubbornly exists in files because someone loves CSVs, or there’s an ETL process that insists on spitting out flat files like it’s 1997.</p>
+    <p>External tables let you:</p>
+    <ul>
+    <li>Query file‑based data with <code>SELECT</code></li>
+    <li>Use SQL and joins without actually loading rows into regular tables</li>
+    </ul>
+    <h3>4.1 The moving parts</h3>
+    <ol>
+    <li><strong>Oracle DIRECTORY object</strong> – a pointer to a filesystem path:</li>
+    </ol>
+    <pre><code class="language-sql">   CREATE OR REPLACE DIRECTORY emp_dir AS &#x27;/home/oracle/labs/sql2/emptor&#x27;;
+       GRANT READ ON DIRECTORY emp_dir TO ora21;</code></pre>
+    <ol>
+    <li><strong>External table</strong> – a table definition that describes file layout.</li>
+    </ol>
+    <h3>4.2 External table with <code>ORACLE_LOADER</code></h3>
+    <p>Typical “read a CSV‑ish text file” example:</p>
+    <pre><code class="language-sql">CREATE TABLE ext_books (
+      category_id  NUMBER,
+      book_id      NUMBER,
+      book_price   NUMBER,
+      quantity     NUMBER
+    )
+    ORGANIZATION EXTERNAL (
+      TYPE ORACLE_LOADER
+      DEFAULT DIRECTORY emp_dir
+      ACCESS PARAMETERS (
+        RECORDS DELIMITED BY NEWLINE
+        FIELDS TERMINATED BY &#x27;,&#x27;
+      )
+      LOCATION (&#x27;library_items.dat&#x27;)
+    )
+    REJECT LIMIT UNLIMITED;</code></pre>
+    <p>Now you can:</p>
+    <pre><code class="language-sql">SELECT category_id, book_id, quantity
+    FROM   ext_books
+    WHERE  book_price &gt; 20;</code></pre>
+    <p>Notes:</p>
+    <ul>
+    <li>Data lives in the OS file, <strong>not</strong> in database blocks.</li>
+    <li><code>REJECT LIMIT</code> controls how many bad records Oracle will tolerate before giving up.</li>
+    </ul>
+    <h3>4.3 External table with <code>ORACLE_DATAPUMP</code></h3>
+    <p><code>ORACLE_DATAPUMP</code> writes data into binary dump files for fast unload/reload.</p>
+    <p>Example: create an external table that’s backed by Data Pump files:</p>
+    <pre><code class="language-sql">CREATE TABLE dept_ext
+    ORGANIZATION EXTERNAL (
+      TYPE ORACLE_DATAPUMP
+      DEFAULT DIRECTORY emp_dir
+      LOCATION (&#x27;dept_ext_1.exp&#x27;, &#x27;dept_ext_2.exp&#x27;)
+    ) AS
+    SELECT department_id,
+           department_name,
+           manager_id,
+           location_id
+    FROM   departments;</code></pre>
+    <p>This does two things:</p>
+    <ol>
+    <li>Creates the <code>dept_ext</code> table definition.</li>
+    <li>Writes the query result into the listed <code>.exp</code> files.</li>
+    </ol>
+    <p>Later, you can:</p>
+    <pre><code class="language-sql">SELECT * FROM dept_ext;</code></pre>
+    <p>and read directly from the dump files without touching the original <code>DEPARTMENTS</code> table.</p>
+    <hr>
+    <h2>5. Recycle Bin, PURGE, and “No, Really, Delete It”</h2>
+    <p>By default, when you:</p>
+    <pre><code class="language-sql">DROP TABLE big_table;</code></pre>
+    <p>Oracle doesn’t really delete it. It:</p>
+    <ul>
+    <li>Renames it to a weird <code>BIN$…</code> name</li>
+    <li>Stores it in the <strong>Recycle Bin</strong></li>
+    <li>Keeps using your tablespace quota</li>
+    </ul>
+    <p>Nice for “oops, I didn’t mean to drop that.” Less nice for “why am I out of space?”</p>
+    <p>If you’re sure you don’t need it back:</p>
+    <pre><code class="language-sql">DROP TABLE big_table PURGE;</code></pre>
+    <p>Now it’s gone from the database <em>and</em> the Recycle Bin, and you reclaim the space.</p>
+    <hr>
+    <h2>What You Should Be Able To Do Now</h2>
+    <p>By this point, you should be able to:</p>
+    <ul>
+    <li>Add, drop, enable, disable, and defer constraints (and decide whether they validate existing data)</li>
+    <li>Use <code>ON DELETE CASCADE</code> and <code>ON DELETE SET NULL</code> without accidentally nuking half your schema</li>
+    <li>Use <code>CASCADE CONSTRAINTS</code> when dropping constrained columns</li>
+    <li>Create and use global and private temporary tables for “shopping cart”‑style data</li>
+    <li>Define external tables over text files (<code>ORACLE_LOADER</code>) and Data Pump dumps (<code>ORACLE_DATAPUMP</code>)</li>
+    <li>Decide when to keep dropped objects in the Recycle Bin vs nuking them with <code>PURGE</code></li>
+    </ul>
+    <p>In short: you now have the tools to control your schema objects instead of letting them control you – which, in database terms, is about as close to happiness as it gets.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="14_Creating_Views.html">&larr; previous</a>
+    <a href="15_Managing_Schema_Objects.md">view source markdown</a>
+    <a href="16_Retrieving_Data_by_Using_Subqueries.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>

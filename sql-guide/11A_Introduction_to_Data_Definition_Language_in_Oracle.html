@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 11A – Introduction to Data Definition Language in Oracle (or: how to build the furniture before you sit on it) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, all the querying, joining, and updating in the world doesn’t help if the tables themselves are wrong—missing columns, bad data types, or no cons...">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/sql-guide.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../index.html" class="logo">swf.wtf</a>
+    <a href="index.html">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 11A – Introduction to Data Definition Language in Oracle (or: how to build the furniture before you sit on it)</h1>
+    <p>And look, all the querying, joining, and updating in the world doesn’t help if the tables themselves are wrong—missing columns, bad data types, or no constraints so people can enter “banana” as a salary. DDL is where yo...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, all the querying, joining, and updating in the world doesn’t help if the tables themselves are wrong—missing columns, bad data types, or no constraints so people can enter “banana” as a salary. <strong>DDL</strong> is where you define what the database <em>is</em>, not just what’s inside it.</p>
+    <p>This lesson is about the <strong>structure</strong>: tables, columns, and constraints.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Categorize the main database objects (tables, views, sequences, indexes, synonyms).</li>
+    <li>Review table structure with <code>DESC</code> and data dictionary views.</li>
+    <li>List the common Oracle column data types.</li>
+    <li>Create simple tables with <code>CREATE TABLE</code>.</li>
+    <li>Define constraints (NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK) at creation time.</li>
+    </ul>
+    <hr>
+    <h2>1. Database Objects and Naming Rules</h2>
+    <p>Common Oracle schema objects:</p>
+    <ul>
+    <li><strong>Tables</strong> – primary storage for data, organized into rows and columns.</li>
+    <li><strong>Views</strong> – virtual tables defined by <code>SELECT</code> queries.</li>
+    <li><strong>Sequences</strong> – generators for numeric values (often used for keys).</li>
+    <li><strong>Indexes</strong> – structures that speed up lookups and sorts.</li>
+    <li><strong>Synonyms</strong> – alternative names for objects (shortcuts/abstractions).</li>
+    </ul>
+    <p>Naming rules for tables and columns:</p>
+    <ul>
+    <li>Must begin with a <strong>letter</strong>.</li>
+    <li>Length: <strong>1–30 characters</strong>.</li>
+    <li>Allowed characters: <code>A–Z</code>, <code>a–z</code>, <code>0–9</code>, <code>_</code>, <code>$</code>, <code>#</code>.</li>
+    <li>Must not duplicate another object name owned by the <strong>same user</strong>.</li>
+    <li>Must not be an Oracle <strong>reserved word</strong> (e.g., don’t call a table <code>VARCHAR2</code>).</li>
+    </ul>
+    <p>So <code>employees</code>, <code>dept_80</code>, and <code>job_history</code> are fine. <code>select</code> and <code>table</code> are not.</p>
+    <hr>
+    <h2>2. CREATE TABLE – Defining Structure</h2>
+    <p>To create a table you need:</p>
+    <ul>
+    <li>The <code>CREATE TABLE</code> system privilege.</li>
+    <li>Enough quota on a tablespace (storage area).</li>
+    </ul>
+    <p>Syntax (basic):</p>
+    <pre><code class="language-sql">CREATE TABLE dept (
+      deptno      NUMBER(2),
+      dname       VARCHAR2(14),
+      loc         VARCHAR2(13),
+      create_date DATE DEFAULT SYSDATE
+    );</code></pre>
+    <p>Key points:</p>
+    <ul>
+    <li>Each column definition includes: <strong>name</strong>, <strong>data type</strong>, and often <strong>size</strong>.</li>
+    <li><code>DEFAULT SYSDATE</code> on <code>create_date</code> means:</li>
+    <li>If you insert a row <strong>without</strong> specifying <code>create_date</code>, Oracle fills in the current date.</li>
+    </ul>
+    <p>You can inspect the structure of a table with:</p>
+    <pre><code class="language-sql">DESC dept;</code></pre>
+    <p>…and of course with the SQL Developer UI or <code>USER_TAB_COLUMNS</code> data dictionary view.</p>
+    <hr>
+    <h2>3. Common Oracle Data Types</h2>
+    <p>Character and numeric types:</p>
+    <ul>
+    <li><code>VARCHAR2(size)</code> – variable‑length character data.</li>
+    <li><code>CHAR(size)</code> – fixed‑length character data (padded with spaces).</li>
+    <li><code>NUMBER(p, s)</code> – numeric data with precision <code>p</code> and scale <code>s</code>.</li>
+    <li><code>NUMBER</code> (no arguments) – general numeric type.</li>
+    </ul>
+    <p>Date and time:</p>
+    <ul>
+    <li><code>DATE</code> – date and time (to the second).</li>
+    <li><code>TIMESTAMP[(fractional_seconds)]</code> – date + time + fractional seconds.</li>
+    <li><code>INTERVAL YEAR TO MONTH</code> – spans of years and months.</li>
+    <li><code>INTERVAL DAY TO SECOND</code> – spans of days, hours, minutes, seconds.</li>
+    </ul>
+    <p>Large objects and others (high level):</p>
+    <ul>
+    <li><code>LONG</code> – legacy variable‑length character data (up to 2 GB; generally avoid in new designs).</li>
+    <li><code>CLOB</code> – character large object.</li>
+    <li><code>BLOB</code> – binary large object.</li>
+    <li><code>BFILE</code> – pointer to external binary file.</li>
+    <li><code>RAW</code>, <code>LONG RAW</code> – raw binary data.</li>
+    <li><code>ROWID</code> – encoded physical address of a row.</li>
+    </ul>
+    <p>In most application tables you’ll use <code>NUMBER</code>, <code>VARCHAR2</code>, <code>DATE</code>, and occasionally <code>TIMESTAMP</code> and LOBs.</p>
+    <hr>
+    <h2>4. DEFAULT Values</h2>
+    <p>You can specify a <strong>default</strong> for a column in <code>CREATE TABLE</code>:</p>
+    <pre><code class="language-sql">CREATE TABLE employees_demo (
+      employee_id   NUMBER(6),
+      last_name     VARCHAR2(25) NOT NULL,
+      hire_date     DATE DEFAULT SYSDATE,
+      status        VARCHAR2(10) DEFAULT &#x27;ACTIVE&#x27;
+    );</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li>Defaults can be <strong>literals</strong> or <strong>expressions</strong>/functions like <code>SYSDATE</code>.</li>
+    <li>You <strong>cannot</strong> reference <em>other</em> columns or pseudocolumns in a default.</li>
+    <li>The default’s data type must be <strong>compatible</strong> with the column type.</li>
+    </ul>
+    <p>Default values apply when <strong>no value</strong> is supplied in the <code>INSERT</code> for that column.</p>
+    <hr>
+    <h2>5. Constraints – Enforcing Rules on Data</h2>
+    <p>Constraints enforce <strong>business rules</strong> and maintain <strong>data integrity</strong>.</p>
+    <p>Core types:</p>
+    <ul>
+    <li><code>NOT NULL</code> – column must have a value.</li>
+    <li><code>UNIQUE</code> – column (or combination) must be unique across the table.</li>
+    <li><code>PRIMARY KEY</code> – uniqueness + NOT NULL; main identifier for a row.</li>
+    <li><code>FOREIGN KEY</code> – column references primary/unique key in another table.</li>
+    <li><code>CHECK</code> – arbitrary condition must be satisfied.</li>
+    </ul>
+    <h3>5.1 Where and when you can define constraints</h3>
+    <ul>
+    <li>At <strong>table creation</strong> (<code>CREATE TABLE</code>).</li>
+    <li>After creation using <code>ALTER TABLE</code>.</li>
+    <li>At <strong>column level</strong> or <strong>table level</strong>:</li>
+    <li>Column level: constraint defined <strong>inline</strong> with the column.</li>
+    <li>Table level: constraint defined <strong>after</strong> all column definitions.</li>
+    </ul>
+    <p><code>NOT NULL</code> is always a column‑level constraint.</p>
+    <p>If you don’t name a constraint, Oracle invents one (<code>SYS_C009876</code> etc.), which is how you end up hating yourself when debugging. Naming them is strongly recommended.</p>
+    <h3>5.2 Column‑level constraints</h3>
+    <p>Defined inline with the column:</p>
+    <pre><code class="language-sql">CREATE TABLE employees_demo (
+      employee_id NUMBER(6)
+        CONSTRAINT emp_emp_id_pk PRIMARY KEY,
+      last_name   VARCHAR2(25)  CONSTRAINT emp_lname_nn NOT NULL,
+      email       VARCHAR2(25),
+      salary      NUMBER(8,2)
+    );</code></pre>
+    <ul>
+    <li><code>emp_emp_id_pk</code> is a <strong>PRIMARY KEY</strong> on <code>employee_id</code>.</li>
+    <li><code>emp_lname_nn</code> is a <strong>NOT NULL</strong> on <code>last_name</code>.</li>
+    </ul>
+    <h3>5.3 Table‑level constraints</h3>
+    <p>Defined after all columns; useful for composite keys or when you prefer to group constraints together:</p>
+    <pre><code class="language-sql">CREATE TABLE employees_demo (
+      employee_id NUMBER(6),
+      first_name  VARCHAR2(20),
+      last_name   VARCHAR2(25),
+      email       VARCHAR2(25),
+      salary      NUMBER(8,2),
+    
+      CONSTRAINT emp_pk PRIMARY KEY (employee_id),
+      CONSTRAINT emp_email_uk UNIQUE (email)
+    );</code></pre>
+    <p>For composite primary keys:</p>
+    <pre><code class="language-sql">CONSTRAINT emp_name_pk PRIMARY KEY (employee_id, first_name)</code></pre>
+    <p>Table‑level constraints always reference one or more existing columns by name.</p>
+    <h3>5.4 NOT NULL</h3>
+    <p>Ensures a column <strong>cannot</strong> be <code>NULL</code>.</p>
+    <pre><code class="language-sql">last_name VARCHAR2(25) CONSTRAINT emp_lname_nn NOT NULL</code></pre>
+    <ul>
+    <li>Attempting to insert a row without <code>last_name</code> raises an error.</li>
+    <li><code>NOT NULL</code> is always column‑level.</li>
+    </ul>
+    <h3>5.5 UNIQUE</h3>
+    <p>Ensures each non‑NULL value is unique in the column (or column set).</p>
+    <p>Example – prevent duplicate emails:</p>
+    <pre><code class="language-sql">CONSTRAINT emp_email_uk UNIQUE (email)</code></pre>
+    <ul>
+    <li>First insert of <code>smith@example.com</code> succeeds.</li>
+    <li>Second insert with the same email fails with a unique‑constraint violation.</li>
+    </ul>
+    <h3>5.6 PRIMARY KEY and FOREIGN KEY</h3>
+    <p><strong>PRIMARY KEY</strong>:</p>
+    <ul>
+    <li>Uniquely identifies each row.</li>
+    <li>Implies <code>UNIQUE</code> + <code>NOT NULL</code>.</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">CONSTRAINT dept_pk PRIMARY KEY (department_id)</code></pre>
+    <p><strong>FOREIGN KEY</strong>:</p>
+    <ul>
+    <li>Enforces a relationship to a parent table.</li>
+    <li>Child values must match an existing parent key (or be <code>NULL</code>, unless restricted).</li>
+    </ul>
+    <p>Example – table‑level foreign key:</p>
+    <pre><code class="language-sql">CREATE TABLE employees_demo (
+      employee_id   NUMBER(6) PRIMARY KEY,
+      last_name     VARCHAR2(25) NOT NULL,
+      department_id NUMBER(4),
+    
+      CONSTRAINT emp_dept_fk
+        FOREIGN KEY (department_id)
+        REFERENCES departments (department_id)
+    );</code></pre>
+    <ul>
+    <li><code>department_id</code> in <code>employees_demo</code> must either be <code>NULL</code> or match a <code>department_id</code> in <code>departments</code>.</li>
+    <li>The referenced column must have a <strong>PRIMARY KEY</strong> or <code>UNIQUE</code> constraint defined <strong>first</strong>.</li>
+    </ul>
+    <p>Options:</p>
+    <ul>
+    <li><code>ON DELETE CASCADE</code> – deleting a parent row automatically deletes matching child rows.</li>
+    <li><code>ON DELETE SET NULL</code> – deleting a parent row sets matching child foreign keys to <code>NULL</code>.</li>
+    </ul>
+    <p>Good for enforcing referential integrity; dangerous if you forget you added <code>CASCADE</code>.</p>
+    <h3>5.7 CHECK</h3>
+    <p>Validates that a condition is true for each row. It cannot reference columns in other tables.</p>
+    <p>Example – salary must be &gt; 0:</p>
+    <pre><code class="language-sql">CONSTRAINT emp_salary_chk
+      CHECK (salary &gt; 0)</code></pre>
+    <p>Another example – restrict job_id to a set of codes:</p>
+    <pre><code class="language-sql">CONSTRAINT emp_job_chk
+      CHECK (job_id IN (&#x27;SA_REP&#x27;, &#x27;IT_PROG&#x27;, &#x27;AD_PRES&#x27;))</code></pre>
+    <p>If you violate a constraint, Oracle tells you <strong>which constraint</strong> you violated—another good reason to name them.</p>
+    <hr>
+    <h2>6. Creating Tables with Subqueries (CTAS)</h2>
+    <p>You can create a table <strong>and</strong> populate it at the same time using <code>CREATE TABLE ... AS SELECT</code> (CTAS).</p>
+    <p>Example – create <code>dept80</code> from employees in department 80:</p>
+    <pre><code class="language-sql">CREATE TABLE dept80 AS
+    SELECT employee_id,
+           last_name,
+           salary * 12 AS annsal,
+           hire_date
+    FROM   employees
+    WHERE  department_id = 80;</code></pre>
+    <p>Key points:</p>
+    <ul>
+    <li>Column names and types are derived from the <code>SELECT</code> list.</li>
+    <li>Expressions <strong>must</strong> have aliases that are valid column names (<code>annsal</code> instead of <code>salary*12</code>).</li>
+    <li>Data is copied at creation time.</li>
+    <li>Only <strong>explicit NOT NULL</strong> constraints are carried over; other constraints (PK, FK, UNIQUE, CHECK) are <strong>not</strong> copied and must be redefined with <code>ALTER TABLE</code> later if needed.</li>
+    </ul>
+    <hr>
+    <h2>7. ALTER TABLE – Changing Existing Structure</h2>
+    <p>Use <code>ALTER TABLE</code> to:</p>
+    <ul>
+    <li>Add new columns.</li>
+    <li>Modify column definitions (type, size, default).</li>
+    <li>Add or drop constraints.</li>
+    <li>Drop or mark columns as unused.</li>
+    <li>Set a table to read‑only or back to read/write.</li>
+    </ul>
+    <h3>7.1 ADD columns</h3>
+    <pre><code class="language-sql">ALTER TABLE dept80
+    ADD (job_id VARCHAR2(9));</code></pre>
+    <ul>
+    <li>New columns are added to the <strong>end</strong> of the table.</li>
+    <li>Existing rows get <code>NULL</code> in the new column.</li>
+    </ul>
+    <h3>7.2 MODIFY columns</h3>
+    <pre><code class="language-sql">ALTER TABLE dept80
+    MODIFY (last_name VARCHAR2(30));</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li>You can <strong>increase</strong> the length of a character or number column (if compatible).</li>
+    <li>Decreasing length is only allowed if no existing values violate the new size.</li>
+    <li>Changing data types is restricted if existing data can’t be converted.</li>
+    <li>Changing a default affects only <strong>future inserts</strong>, not existing rows.</li>
+    </ul>
+    <h3>7.3 DROP columns</h3>
+    <pre><code class="language-sql">ALTER TABLE dept80
+    DROP COLUMN job_id;</code></pre>
+    <ul>
+    <li>Permanently removes the column and its data.</li>
+    <li>Can be time‑consuming for large tables and may impact concurrent DML.</li>
+    </ul>
+    <h3>7.4 SET UNUSED and DROP UNUSED COLUMNS</h3>
+    <p>Alternative to <code>DROP COLUMN</code> for large tables:</p>
+    <pre><code class="language-sql">ALTER TABLE dept80 SET UNUSED (job_id);
+    -- Later...
+    ALTER TABLE dept80 DROP UNUSED COLUMNS;</code></pre>
+    <ul>
+    <li><code>SET UNUSED</code> marks columns as logically removed but leaves data physically for now.</li>
+    <li><code>DROP UNUSED COLUMNS</code> removes all unused columns (maybe during a maintenance window).</li>
+    <li><code>ONLINE</code> keyword can allow DML while marking unused (in Enterprise features).</li>
+    </ul>
+    <h3>7.5 READ ONLY / READ WRITE</h3>
+    <p>You can lock a table’s structure and data against change during maintenance:</p>
+    <pre><code class="language-sql">ALTER TABLE employees READ ONLY;
+    -- table can be queried, but not modified or altered
+    
+    -- When done
+    ALTER TABLE employees READ WRITE;</code></pre>
+    <p>Useful when you want to freeze a table while still letting people run reports.</p>
+    <hr>
+    <h2>8. DROP TABLE and the Recycle Bin</h2>
+    <p><code>DROP TABLE</code> removes a table and its data.</p>
+    <pre><code class="language-sql">DROP TABLE dept80;</code></pre>
+    <p>By default (in modern Oracle with Recycle Bin enabled):</p>
+    <ul>
+    <li>The table is moved into the <strong>Recycle Bin</strong>.</li>
+    <li>You can recover it using <code>FLASHBACK TABLE ... TO BEFORE DROP</code>.</li>
+    <li>Dependent objects become invalid and must be recompiled or recreated.</li>
+    <li>Object privileges on the table are removed.</li>
+    </ul>
+    <p>To bypass the Recycle Bin and remove the table permanently:</p>
+    <pre><code class="language-sql">DROP TABLE dept80 PURGE;</code></pre>
+    <ul>
+    <li>No flashback possible; table is gone.</li>
+    </ul>
+    <p>Flashback example:</p>
+    <pre><code class="language-sql">FLASHBACK TABLE dept80 TO BEFORE DROP;</code></pre>
+    <p>After which you can <code>DESC dept80</code> and see the structure again.</p>
+    <hr>
+    <h2>9. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Identify and categorize core database objects like tables, views, sequences, indexes, and synonyms.</li>
+    <li>Review table structures using <code>DESC</code> and related dictionary views.</li>
+    <li>Choose appropriate Oracle data types for columns.</li>
+    <li>Create tables with <code>CREATE TABLE</code>, including default values.</li>
+    <li>Define constraints (NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK) at creation or later with <code>ALTER TABLE</code>.</li>
+    <li>Use <code>CREATE TABLE AS SELECT</code> to clone structure and data.</li>
+    <li>Modify and remove tables with <code>ALTER TABLE</code> and <code>DROP TABLE</code> (with an awareness of the Recycle Bin).</li>
+    </ul>
+    <p>You now have the power not just to query data, but to <strong>shape the schema</strong> itself—which is how you go from “SQL user” to “person everyone blames when a table disappears.”</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="10B_Managing_Tables_Using_DML_Statements_in_MySQL.html">&larr; previous</a>
+    <a href="11A_Introduction_to_Data_Definition_Language_in_Oracle.md">view source markdown</a>
+    <a href="11B_Introduction_to_Data_Definition_Language_in_MySQL.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../assets/js/site.js"></script>
+
+</body>
+</html>
