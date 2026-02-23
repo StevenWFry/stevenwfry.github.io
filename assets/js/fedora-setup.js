@@ -22,6 +22,11 @@ const data = [
       cmd: "sudo dnf install -y alacritty"
     },
     {
+      name: "Install Rust toolchain (cargo)", badge: "dnf",
+      desc: "Required for cargo-based installs used later in this checklist (for example zellij and eza).",
+      cmd: "sudo dnf install -y rust cargo"
+    },
+    {
       name: "Install Zellij (terminal multiplexer)", badge: "manual",
       desc: "Modern tmux alternative. Omakub uses this for multi-pane sessions and tab layout.",
       cmd: "cargo install --locked zellij\n# or: sudo dnf copr enable varlad/zellij && sudo dnf install zellij"
@@ -212,26 +217,28 @@ const sectionColors = [
   '#58a6ff', '#d2a8ff', '#3fb950', '#f78166'
 ];
 
-let state = [];
+let state = {};
 
 function init() {
-  // Load state from localStorage
-  const saved = localStorage.getItem('fedora-omakub-state');
-  
-  let totalCount = 0;
-  data.forEach((section, si) => {
-    section.forEach((item, ii) => {
-      totalCount++;
-    });
-  });
+  // Load state from localStorage with safe parse.
+  const savedRaw = localStorage.getItem('fedora-omakub-state');
+  let savedState = {};
+  if (savedRaw) {
+    try {
+      savedState = JSON.parse(savedRaw) || {};
+    } catch {
+      localStorage.removeItem('fedora-omakub-state');
+    }
+  }
+
+  const totalCount = data.reduce((total, section) => total + section.length, 0);
   document.getElementById('totalCount').textContent = totalCount;
 
   data.forEach((section, si) => {
     const container = document.getElementById(`section-${si}`);
-    if (!state[si]) state[si] = {};
 
     section.forEach((item, ii) => {
-      const isDone = saved ? (JSON.parse(saved)[`${si}-${ii}`] || false) : false;
+      const isDone = Boolean(savedState[`${si}-${ii}`]);
       state[`${si}-${ii}`] = isDone;
       container.appendChild(createItem(item, si, ii, isDone));
     });
@@ -278,8 +285,15 @@ function toggle(si, ii) {
 }
 
 function updateProgress() {
-  const total = Object.keys(state).length;
-  const done = Object.values(state).filter(Boolean).length;
+  let total = 0;
+  let done = 0;
+  data.forEach((section, si) => {
+    section.forEach((_, ii) => {
+      total += 1;
+      if (state[`${si}-${ii}`]) done += 1;
+    });
+  });
+
   document.getElementById('doneCount').textContent = done;
   document.getElementById('progressFill').style.width = total ? `${(done/total)*100}%` : '0%';
 
@@ -314,6 +328,9 @@ function resetAll() {
 function copyCmd(btn) {
   navigator.clipboard.writeText(btn.dataset.cmd).then(() => {
     btn.textContent = 'copied!';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  }).catch(() => {
+    btn.textContent = 'copy failed';
     setTimeout(() => btn.textContent = 'copy', 1500);
   });
 }
