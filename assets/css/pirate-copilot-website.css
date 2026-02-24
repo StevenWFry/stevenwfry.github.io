@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #090b0f;
+  --surface: #10141b;
+  --border: #1f2733;
+  --text: #c9d4e3;
+  --text-dim: #7f91a8;
+  --accent: #00e2c2;
+  --accent-dim: #00e2c21f;
+  --warn: #ff8a3d;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: radial-gradient(circle at 10% 10%, #0f1622 0%, var(--bg) 45%);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 16px;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+#cursor {
+  position: fixed;
+  width: 8px;
+  height: 20px;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transition: opacity 0.1s;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 226, 194, 0.02) 2px,
+    rgba(0, 226, 194, 0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.post-container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+  font-size: 0.85rem;
+}
+
+.post-nav a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.post-nav a:hover { opacity: 0.8; }
+.nav-right { color: var(--text-dim); }
+
+.post-header { margin-bottom: 2rem; }
+
+.post-meta {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.post-meta span::before {
+  content: '//';
+  color: var(--accent);
+  margin-right: 0.4rem;
+}
+
+.post-title {
+  font-family: var(--sans);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+}
+
+.post-subtitle {
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+.post-body h2 {
+  font-family: var(--sans);
+  font-size: 1.35rem;
+  color: #fff;
+  margin: 2.4rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.post-body h2::before {
+  content: '## ';
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 400;
+}
+
+.post-body p { margin-bottom: 1rem; }
+
+.post-body strong {
+  color: #fff;
+  font-weight: 500;
+}
+
+.post-body code {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: var(--accent);
+}
+
+.post-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 1.2rem;
+  margin: 1.4rem 0;
+  overflow-x: auto;
+  border-radius: 4px;
+  position: relative;
+}
+
+.post-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+}
+
+.post-body pre::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0.5rem;
+  right: 0.8rem;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.callout {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 1rem 1.2rem;
+  margin: 1.4rem 0;
+  background: linear-gradient(135deg, var(--accent-dim), transparent 70%), var(--surface);
+  border-radius: 4px;
+}
+
+.callout-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.post-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+  padding-top: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.post-footer-sig {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.back-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.back-link:hover { opacity: 0.8; }
+
+@media (max-width: 640px) {
+  #cursor { display: none; }
+  body { font-size: 15px; }
+}
