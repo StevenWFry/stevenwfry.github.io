@@ -177,13 +177,53 @@
   </div>
 
   <div class="code-block">
-    <span class="label">inside chroot</span>
+    <span class="label">inside chroot: timezone + locale</span>
     <pre><span class="cmd">ln -sf /usr/share/zoneinfo/Region/City /etc/localtime</span>
 <span class="cmd">hwclock --systohc</span>
 
-<span class="cmt"># continue with locale, hostname, network, users, bootloader</span>
-<span class="cmt"># then exit and reboot:</span>
-<span class="cmd">exit</span>
+<span class="cmt"># Uncomment your locale, e.g. en_US.UTF-8 UTF-8</span>
+<span class="cmd">nvim /etc/locale.gen</span>
+<span class="cmd">locale-gen</span>
+
+<span class="cmd">echo \"LANG=en_US.UTF-8\" > /etc/locale.conf</span>
+<span class="cmd">echo \"KEYMAP=us\" > /etc/vconsole.conf</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">inside chroot: hostname</span>
+    <pre><span class="cmd">echo \"archbox\" > /etc/hostname</span>
+<span class="cmd">printf \"127.0.0.1\\tlocalhost\\n::1\\tlocalhost\\n127.0.1.1\\tarchbox.localdomain\\tarchbox\\n\" > /etc/hosts</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">inside chroot: network + users</span>
+    <pre><span class="cmd">pacman -S --needed networkmanager sudo</span>
+<span class="cmd">systemctl enable NetworkManager</span>
+
+<span class="cmt"># Set root password</span>
+<span class="cmd">passwd</span>
+
+<span class="cmt"># Create user (replace steve)</span>
+<span class="cmd">useradd -m -G wheel -s /bin/bash steve</span>
+<span class="cmd">passwd steve</span>
+
+<span class="cmt"># In visudo, uncomment:</span>
+<span class="cmt"># %wheel ALL=(ALL:ALL) ALL</span>
+<span class="cmd">EDITOR=nvim visudo</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">inside chroot: systemd-boot (UEFI)</span>
+    <pre><span class="cmd">bootctl install</span>
+<span class="cmd">ROOT_PARTUUID=$(blkid -s PARTUUID -o value /dev/nvme0n1p3)</span>
+
+<span class="cmd">printf \"default arch.conf\\ntimeout 3\\neditor 0\\n\" > /boot/loader/loader.conf</span>
+<span class="cmd">printf \"title Arch Linux\\nlinux /vmlinuz-linux\\ninitrd /initramfs-linux.img\\noptions root=PARTUUID=%s rw\\n\" \"$ROOT_PARTUUID\" > /boot/loader/entries/arch.conf</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">finish manual install</span>
+    <pre><span class="cmd">exit</span>
 <span class="cmd">umount -R /mnt</span>
 <span class="cmd">reboot</span></pre>
   </div>
