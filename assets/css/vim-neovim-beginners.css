@@ -11,7 +11,7 @@
 }
 
 body {
-  background: radial-gradient(circle at top right, #0f1d2d 0%, var(--vim-bg) 48%);
+  background: var(--bg);
   color: var(--vim-text);
 }
 
