@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vim and Neovim for Beginners - swf.wtf</title>
+<meta name="description" content="A practical Vim and Neovim beginner guide you can keep open as a daily reference: modes, movement, editing, windows, and a minimal init.lua.">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/vim-neovim-beginners.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="/">swf<span>.wtf</span></a>
+    <nav>
+      <a href="/#writing">writing</a>
+      <a href="/guides/">guides</a>
+      <a href="/about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <div class="post-meta">
+    <span>Feb 25, 2026</span>
+    <span class="tag green">guide</span>
+    <span class="tag">vim</span>
+    <span class="tag">neovim</span>
+    <span class="tag">beginner</span>
+  </div>
+
+  <h1>Vim and Neovim for Beginners.<br><span class="dim">// learn it once, reference forever.</span></h1>
+  <p class="subtitle">A practical manual for getting productive quickly. Keep this tab open while you build muscle memory.</p>
+
+  <div class="terminal-intro">
+    <div><span class="prompt">$</span> <span class="cmd-text">nvim notes.md</span></div>
+    <div class="output">-- NORMAL --</div>
+    <div><span class="prompt">(normal)</span> <span class="cmd-text">i</span> -> insert mode</div>
+    <div><span class="prompt">(insert)</span> <span class="cmd-text">Esc</span> -> normal mode</div>
+    <div><span class="prompt">(normal)</span> <span class="cmd-text">:wq</span> -> save and quit</div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">// contents</div>
+    <a href="#model">The 30-second model</a>
+    <a href="#install">Install and launch</a>
+    <a href="#quit">Quit without panic</a>
+    <a href="#movement">Movement and navigation</a>
+    <a href="#editing">Editing and text objects</a>
+    <a href="#search">Search and replace</a>
+    <a href="#layout">Buffers, windows, tabs</a>
+    <a href="#config">Minimal Neovim config</a>
+    <a href="#practice">Practice plan</a>
+    <a href="#cheatsheet">Cheat sheet</a>
+  </div>
+
+  <hr>
+
+  <h2 id="model">The 30-second model</h2>
+  <p>Vim is mode-based editing. You do not type all the time. You switch between modes depending on intent.</p>
+
+  <div class="key-table-wrap">
+    <table class="key-table">
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th>What it does</th>
+          <th>How to enter</th>
+          <th>How to leave</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Normal</td>
+          <td>Navigate and run commands</td>
+          <td><kbd>Esc</kbd></td>
+          <td>Use a mode key</td>
+        </tr>
+        <tr>
+          <td>Insert</td>
+          <td>Type text</td>
+          <td><kbd>i</kbd>, <kbd>a</kbd>, <kbd>o</kbd></td>
+          <td><kbd>Esc</kbd></td>
+        </tr>
+        <tr>
+          <td>Visual</td>
+          <td>Select text</td>
+          <td><kbd>v</kbd>, <kbd>V</kbd>, <kbd>Ctrl-v</kbd></td>
+          <td><kbd>Esc</kbd></td>
+        </tr>
+        <tr>
+          <td>Command line</td>
+          <td>Run ex commands</td>
+          <td><kbd>:</kbd></td>
+          <td><kbd>Enter</kbd> or <kbd>Esc</kbd></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// one rule that fixes most beginner pain</div>
+    If things feel weird, press <kbd>Esc</kbd> a couple of times to return to Normal mode, then continue.
+  </div>
+
+  <hr>
+
+  <h2 id="install">Install and launch</h2>
+
+  <div class="code-block">
+    <span class="label">fedora</span>
+    <pre><span class="cmd">sudo dnf install -y neovim vim</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">ubuntu / debian / mint</span>
+    <pre><span class="cmd">sudo apt install -y neovim vim</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">arch</span>
+    <pre><span class="cmd">sudo pacman -S neovim vim</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">launch</span>
+    <pre><span class="cmd">nvim</span>                 <span class="cmt"># open editor</span>
+<span class="cmd">nvim file.txt</span>        <span class="cmt"># open file</span>
+<span class="cmd">vimtutor</span>             <span class="cmt"># interactive tutorial</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="quit">Quit without panic</h2>
+
+  <div class="code-block">
+    <span class="label">normal mode then :</span>
+    <pre><span class="cmd">:w</span>      <span class="cmt"># save</span>
+<span class="cmd">:q</span>      <span class="cmt"># quit (fails if unsaved changes)</span>
+<span class="cmd">:wq</span>     <span class="cmt"># save and quit</span>
+<span class="cmd">:q!</span>     <span class="cmt"># quit and discard changes</span>
+<span class="cmd">:x</span>      <span class="cmt"># save and quit only if changed</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">// emergency exit pattern</div>
+    <strong>Esc</strong> then <strong>:q!</strong> then <strong>Enter</strong>. Done.
+  </div>
+
+  <hr>
+
+  <h2 id="movement">Movement and navigation</h2>
+  <p>Fast Vim use is mostly movement. Learn this set first.</p>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3>By character and line</h3>
+      <div class="code-block compact">
+        <pre><span class="cmd">h j k l</span>     <span class="cmt">left down up right</span>
+<span class="cmd">0</span>           <span class="cmt">line start</span>
+<span class="cmd">^</span>           <span class="cmt">first non-blank</span>
+<span class="cmd">$</span>           <span class="cmt">line end</span>
+<span class="cmd">gg</span>          <span class="cmt">file top</span>
+<span class="cmd">G</span>           <span class="cmt">file bottom</span>
+<span class="cmd">42G</span>         <span class="cmt">go to line 42</span></pre>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>By word and block</h3>
+      <div class="code-block compact">
+        <pre><span class="cmd">w</span>           <span class="cmt">next word start</span>
+<span class="cmd">b</span>           <span class="cmt">previous word start</span>
+<span class="cmd">e</span>           <span class="cmt">word end</span>
+<span class="cmd">{</span>           <span class="cmt">previous paragraph</span>
+<span class="cmd">}</span>           <span class="cmt">next paragraph</span>
+<span class="cmd">%</span>           <span class="cmt">matching (), {}, []</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// multiplier rule</div>
+    Prefix many motions with a number: <code>5j</code> (down five lines), <code>3w</code> (forward three words), <code>10G</code> (line ten).
+  </div>
+
+  <hr>
+
+  <h2 id="editing">Editing and text objects</h2>
+
+  <div class="code-block">
+    <span class="label">insert</span>
+    <pre><span class="cmd">i</span>   <span class="cmt">insert before cursor</span>
+<span class="cmd">a</span>   <span class="cmt">insert after cursor</span>
+<span class="cmd">I</span>   <span class="cmt">insert at line start</span>
+<span class="cmd">A</span>   <span class="cmt">insert at line end</span>
+<span class="cmd">o</span>   <span class="cmt">new line below</span>
+<span class="cmd">O</span>   <span class="cmt">new line above</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">delete / change / copy</span>
+    <pre><span class="cmd">x</span>        <span class="cmt">delete character</span>
+<span class="cmd">dd</span>       <span class="cmt">delete line</span>
+<span class="cmd">dw</span>       <span class="cmt">delete word forward</span>
+<span class="cmd">d$</span>       <span class="cmt">delete to end of line</span>
+<span class="cmd">cc</span>       <span class="cmt">change whole line</span>
+<span class="cmd">cw</span>       <span class="cmt">change word</span>
+<span class="cmd">yy</span>       <span class="cmt">yank (copy) line</span>
+<span class="cmd">p</span>        <span class="cmt">paste after cursor</span>
+<span class="cmd">P</span>        <span class="cmt">paste before cursor</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">undo / redo / repeat</span>
+    <pre><span class="cmd">u</span>        <span class="cmt">undo</span>
+<span class="cmd">Ctrl-r</span>   <span class="cmt">redo</span>
+<span class="cmd">.</span>        <span class="cmt">repeat last edit command</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// text object pattern</div>
+    Most editing is <code>verb + motion</code>. Examples: <code>daw</code> (delete a word), <code>ci"</code> (change inside quotes), <code>di(</code> (delete inside parentheses).
+  </div>
+
+  <hr>
+
+  <h2 id="search">Search and replace</h2>
+
+  <div class="code-block">
+    <span class="label">search</span>
+    <pre><span class="cmd">/term</span>        <span class="cmt">search forward</span>
+<span class="cmd">?term</span>        <span class="cmt">search backward</span>
+<span class="cmd">n</span>            <span class="cmt">next match</span>
+<span class="cmd">N</span>            <span class="cmt">previous match</span>
+<span class="cmd">*</span>            <span class="cmt">search word under cursor</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">replace</span>
+    <pre><span class="cmd">:%s/old/new/g</span>      <span class="cmt">replace all in file</span>
+<span class="cmd">:%s/old/new/gc</span>     <span class="cmt">replace all with confirm</span>
+<span class="cmd">:10,30s/old/new/g</span>  <span class="cmt">replace in line range</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="layout">Buffers, windows, tabs</h2>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3>Files and buffers</h3>
+      <div class="code-block compact">
+        <pre><span class="cmd">:e file.txt</span>    <span class="cmt">open file</span>
+<span class="cmd">:ls</span>            <span class="cmt">list buffers</span>
+<span class="cmd">:bnext</span>         <span class="cmt">next buffer</span>
+<span class="cmd">:bprev</span>         <span class="cmt">previous buffer</span>
+<span class="cmd">:bd</span>            <span class="cmt">close buffer</span></pre>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Windows and tabs</h3>
+      <div class="code-block compact">
+        <pre><span class="cmd">:split</span>         <span class="cmt">horizontal split</span>
+<span class="cmd">:vsplit</span>        <span class="cmt">vertical split</span>
+<span class="cmd">Ctrl-w h/j/k/l</span> <span class="cmt">move between splits</span>
+<span class="cmd">:tabnew</span>        <span class="cmt">new tab</span>
+<span class="cmd">gt</span>             <span class="cmt">next tab</span>
+<span class="cmd">gT</span>             <span class="cmt">previous tab</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h2 id="config">Minimal Neovim config</h2>
+  <p>If you only do one config pass, do this one.</p>
+
+  <div class="code-block">
+    <span class="label">config location</span>
+    <pre><span class="cmd">mkdir -p ~/.config/nvim</span>
+<span class="cmd">nvim ~/.config/nvim/init.lua</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">~/.config/nvim/init.lua</span>
+    <pre>vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.expandtab = true
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.smartindent = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.clipboard = "unnamedplus"
+
+vim.g.mapleader = " "
+vim.keymap.set("n", "&lt;leader&gt;w", "&lt;cmd&gt;w&lt;CR&gt;")
+vim.keymap.set("n", "&lt;leader&gt;q", "&lt;cmd&gt;q&lt;CR&gt;")
+vim.keymap.set("n", "&lt;leader&gt;h", "&lt;C-w&gt;h")
+vim.keymap.set("n", "&lt;leader&gt;l", "&lt;C-w&gt;l")</pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// keep it boring at first</div>
+    Skip heavy plugin setups until movement and editing feel natural. Core Vim skills compound faster than plugin hunting.
+  </div>
+
+  <hr>
+
+  <h2 id="practice">Practice plan (7 days)</h2>
+  <ul class="practice-list">
+    <li><strong>Day 1:</strong> Only use <kbd>h</kbd> <kbd>j</kbd> <kbd>k</kbd> <kbd>l</kbd>, <kbd>i</kbd>, <kbd>Esc</kbd>, <code>:wq</code>.</li>
+    <li><strong>Day 2:</strong> Add word movement: <kbd>w</kbd>, <kbd>b</kbd>, <kbd>e</kbd>, <kbd>0</kbd>, <kbd>$</kbd>.</li>
+    <li><strong>Day 3:</strong> Add editing: <code>dd</code>, <code>yy</code>, <code>p</code>, <code>cw</code>, <code>u</code>, <code>Ctrl-r</code>.</li>
+    <li><strong>Day 4:</strong> Search and replace with <code>/</code>, <code>n</code>, and <code>:%s/.../.../gc</code>.</li>
+    <li><strong>Day 5:</strong> Practice splits and buffers in a real project.</li>
+    <li><strong>Day 6:</strong> Add 3 keymaps you will use daily.</li>
+    <li><strong>Day 7:</strong> Work for one full session without arrow keys.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="cheatsheet">Cheat sheet</h2>
+
+  <div class="code-block">
+    <span class="label">daily core</span>
+    <pre><span class="cmd">i / a / o</span>          <span class="cmt">enter insert mode</span>
+<span class="cmd">Esc</span>                <span class="cmt">back to normal mode</span>
+<span class="cmd">:wq</span>                <span class="cmt">save and quit</span>
+<span class="cmd">:q!</span>                <span class="cmt">quit without saving</span>
+<span class="cmd">w b e</span>              <span class="cmt">word movement</span>
+<span class="cmd">0 ^ $</span>              <span class="cmt">line movement</span>
+<span class="cmd">gg G</span>               <span class="cmt">top / bottom of file</span>
+<span class="cmd">dd yy p</span>            <span class="cmt">delete, yank, paste</span>
+<span class="cmd">u Ctrl-r .</span>         <span class="cmt">undo, redo, repeat</span>
+<span class="cmd">/term n N</span>          <span class="cmt">search + next/prev</span>
+<span class="cmd">:split :vsplit</span>     <span class="cmt">split windows</span>
+<span class="cmd">Ctrl-w h/j/k/l</span>     <span class="cmt">navigate windows</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// built-in help</div>
+    <code>:help</code> opens docs. Examples: <code>:help motion.txt</code>, <code>:help usr_03.txt</code>, <code>:help :s</code>.
+  </div>
+
+</main>
+
+<footer>
+  <span>// swf.wtf - vim-neovim-beginners</span>
+  <span><a href="/guides/">more guides</a></span>
+</footer>
+
+<script defer src="/assets/js/site.js"></script>
+
+</body>
+</html>
