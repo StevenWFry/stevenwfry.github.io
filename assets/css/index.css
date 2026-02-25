@@ -171,6 +171,17 @@ header {
 
 .ticker-item span { color: var(--accent); margin-right: 8px; }
 
+.ticker-item a {
+  color: var(--dim);
+  text-decoration: none;
+  cursor: none;
+  transition: color 0.2s;
+}
+
+.ticker-item a:hover {
+  color: var(--accent);
+}
+
 /* ── POSTS SECTION ── */
 .section {
   padding: 72px 0;
