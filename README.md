@@ -12,8 +12,8 @@ Static personal website hosted on GitHub Pages.
 - `assets/css/*.css`: Page styles extracted from inline `<style>` blocks.
 - `assets/js/site.js`: Shared client-side behavior (cursor, Konami, common helpers).
 - `assets/js/*.js`: Page scripts extracted from inline `<script>` blocks.
-- `sql-guide/`: SQL study notes (`.md`) plus generated web chapter pages (`.html`).
-- `scripts/build_sql_guide.py`: Markdown-to-HTML generator for `sql-guide/`.
+- `guides/sql-guide/`: SQL study notes (`.md`) plus generated web chapter pages (`.html`).
+- `scripts/build_sql_guide.py`: Markdown-to-HTML generator for `guides/sql-guide/`.
 - `pirate-copilot/`: Separate experimental mini-site with its own assets.
 - `CNAME`: Custom domain configuration for GitHub Pages.
 
@@ -30,3 +30,4 @@ Static personal website hosted on GitHub Pages.
 - Update `sitemap.xml` when adding, moving, or removing indexable pages.
 - Rebuild SQL guide pages after changing SQL markdown notes:
   `python scripts/build_sql_guide.py`
+
