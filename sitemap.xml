@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://swf.wtf/about.html</loc></url>
-  <url><loc>https://swf.wtf/coding-with-ai-agents.html</loc></url>
-  <url><loc>https://swf.wtf/fedora-setup.html</loc></url>
-  <url><loc>https://swf.wtf/git-guide.html</loc></url>
-  <url><loc>https://swf.wtf/github-ssh-linux.html</loc></url>
-  <url><loc>https://swf.wtf/how-i-set-up-swf-wtf.html</loc></url>
+  <url><loc>https://swf.wtf/blog/how-i-set-up-swf-wtf/</loc></url>
+  <url><loc>https://swf.wtf/blog/</loc></url>
+  <url><loc>https://swf.wtf/blog/pirate-copilot-website/</loc></url>
+  <url><loc>https://swf.wtf/guides/coding-with-ai-agents/</loc></url>
+  <url><loc>https://swf.wtf/guides/fedora-setup/</loc></url>
+  <url><loc>https://swf.wtf/guides/git-guide/</loc></url>
+  <url><loc>https://swf.wtf/guides/github-ssh-linux/</loc></url>
+  <url><loc>https://swf.wtf/guides/</loc></url>
+  <url><loc>https://swf.wtf/guides/linux-downloads/</loc></url>
+  <url><loc>https://swf.wtf/guides/virtualbox-guest-additions/</loc></url>
   <url><loc>https://swf.wtf/</loc></url>
-  <url><loc>https://swf.wtf/linux-downloads.html</loc></url>
   <url><loc>https://swf.wtf/now.html</loc></url>
-  <url><loc>https://swf.wtf/pirate-copilot-website.html</loc></url>
   <url><loc>https://swf.wtf/pirate-copilot/</loc></url>
   <url><loc>https://swf.wtf/sql-guide/01_Course_Introduction.html</loc></url>
   <url><loc>https://swf.wtf/sql-guide/02_Retrieving_Data_Using_the_SQL_SELECT_Statement.html</loc></url>
@@ -34,5 +37,4 @@
   <url><loc>https://swf.wtf/sql-guide/19_Manipulating_Data_Using_Advanced_Queries.html</loc></url>
   <url><loc>https://swf.wtf/sql-guide/20_Managing_Data_in_Different_Time_Zones.html</loc></url>
   <url><loc>https://swf.wtf/sql-guide/</loc></url>
-  <url><loc>https://swf.wtf/virtualbox-guest-additions.html</loc></url>
 </urlset>

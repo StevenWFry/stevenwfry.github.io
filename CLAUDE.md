@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal blog/portfolio website for swf.wtf (Steven William Fry), hosted on GitHub Pages. Pure static HTML — no build system, no framework, no package manager. Each page is a self-contained `.html` file.
+Personal blog/portfolio website for swf.wtf (Steven William Fry), hosted on GitHub Pages. Pure static HTML — no build system, no framework, no package manager. Main content uses folder URLs (`<section>/<slug>/index.html`) plus a few top-level pages.
 
 ## Local Development
 
@@ -21,12 +21,14 @@ Then open `http://localhost:8000` in a browser.
 ### Content Structure
 
 - `index.html` — Main landing page with hero, blog post list, and links grid
-- `how-i-set-up-swf-wtf.html`, `fedora-setup.html`, `virtualbox-guest-additions.html` — Standalone blog post pages
+- `guides/<slug>/index.html` — Guide pages
+- `blog/<slug>/index.html` — Blog posts/build logs
+- `guides/index.html`, `blog/index.html` — Section landing pages
 - `pirate-copilot/` — Separate subproject (a GitHub Copilot experiment), has its own CSS/JS
 
 ### Styling Conventions
 
-All pages use the same CSS custom properties defined inline (not a shared stylesheet). The color palette:
+Pages typically include shared styles from `assets/css/site.css` plus page-specific CSS files. The color palette:
 
 ```css
 --bg: #080b0f;
@@ -43,10 +45,11 @@ Aesthetic: dark terminal/hacker vibe with scanline overlays, monospace fonts (Ma
 ### New Blog Posts
 
 When adding a new post:
-1. Create a new `.html` file at the repo root, following the structure of an existing post (e.g., `fedora-setup.html`)
+1. Create a new folder-based page: `blog/<slug>/index.html` or `guides/<slug>/index.html`, following the structure of an existing page in that section
 2. Update `index.html` to add the post to the blog list and update the "latest post" card if applicable
-3. Remove any "coming soon" stub for that topic if one exists in `index.html`
+3. Update `sitemap.xml`
+4. Remove any "coming soon" stub for that topic if one exists in `index.html`
 
 ### JavaScript Patterns
 
-Each page includes a small inline `<script>` with site-specific interactivity (custom cursor, Konami code easter egg, back-to-top button). No external JS dependencies except Google Fonts (CSS) and the ipify.org API for IP display. The `pirate-copilot/` subproject uses THREE.js for 3D rendering.
+Most pages load shared behavior from `assets/js/site.js` plus an optional page-specific script in `assets/js/`. No external JS dependencies except Google Fonts (CSS) and the ipify.org API for IP display. The `pirate-copilot/` subproject uses THREE.js for 3D rendering.
