@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vim and Neovim for Beginners - swf.wtf</title>
-<meta name="description" content="A practical Vim and Neovim beginner guide you can keep open as a daily reference: modes, movement, editing, windows, and a minimal init.lua.">
+<title>Neovim for Beginners - swf.wtf</title>
+<meta name="description" content="A practical Neovim beginner guide you can keep open as a daily reference: modes, movement, editing, windows, and a minimal init.lua.">
 <link rel="stylesheet" href="/assets/css/site.css">
-<link rel="stylesheet" href="/assets/css/vim-neovim-beginners.css">
+<link rel="stylesheet" href="/assets/css/neovim-beginners.css">
 </head>
 <body data-konami="true">
 
@@ -28,13 +28,13 @@
   <div class="post-meta">
     <span>Feb 25, 2026</span>
     <span class="tag green">guide</span>
-    <span class="tag">vim</span>
-    <span class="tag">neovim</span>
+    <span class="tag">nvim</span>
+    <span class="tag">editor</span>
     <span class="tag">beginner</span>
   </div>
 
-  <h1>Vim and Neovim for Beginners.<br><span class="dim">// learn it once, reference forever.</span></h1>
-  <p class="subtitle">A practical manual for getting productive quickly. Keep this tab open while you build muscle memory.</p>
+  <h1>Neovim for Beginners.<br><span class="dim">// learn it once, reference forever.</span></h1>
+  <p class="subtitle">A practical Neovim manual for getting productive quickly. Keep this tab open while you build muscle memory.</p>
 
   <div class="terminal-intro">
     <div><span class="prompt">$</span> <span class="cmd-text">nvim notes.md</span></div>
@@ -61,7 +61,7 @@
   <hr>
 
   <h2 id="model">The 30-second model</h2>
-  <p>Vim is mode-based editing. You do not type all the time. You switch between modes depending on intent.</p>
+  <p>Neovim is mode-based editing. You do not type all the time. You switch between modes depending on intent.</p>
 
   <div class="key-table-wrap">
     <table class="key-table">
@@ -113,24 +113,24 @@
 
   <div class="code-block">
     <span class="label">fedora</span>
-    <pre><span class="cmd">sudo dnf install -y neovim vim</span></pre>
+    <pre><span class="cmd">sudo dnf install -y neovim</span></pre>
   </div>
 
   <div class="code-block">
     <span class="label">ubuntu / debian / mint</span>
-    <pre><span class="cmd">sudo apt install -y neovim vim</span></pre>
+    <pre><span class="cmd">sudo apt install -y neovim</span></pre>
   </div>
 
   <div class="code-block">
     <span class="label">arch</span>
-    <pre><span class="cmd">sudo pacman -S neovim vim</span></pre>
+    <pre><span class="cmd">sudo pacman -S neovim</span></pre>
   </div>
 
   <div class="code-block">
     <span class="label">launch</span>
     <pre><span class="cmd">nvim</span>                 <span class="cmt"># open editor</span>
 <span class="cmd">nvim file.txt</span>        <span class="cmt"># open file</span>
-<span class="cmd">vimtutor</span>             <span class="cmt"># interactive tutorial</span></pre>
+<span class="cmd">nvim +Tutor</span>          <span class="cmt"># interactive tutorial</span></pre>
   </div>
 
   <hr>
@@ -154,7 +154,7 @@
   <hr>
 
   <h2 id="movement">Movement and navigation</h2>
-  <p>Fast Vim use is mostly movement. Learn this set first.</p>
+  <p>Fast Neovim use is mostly movement. Learn this set first.</p>
 
   <div class="grid-2">
     <div class="panel">
@@ -308,7 +308,7 @@ vim.keymap.set("n", "&lt;leader&gt;l", "&lt;C-w&gt;l")</pre>
 
   <div class="callout">
     <div class="callout-title">// keep it boring at first</div>
-    Skip heavy plugin setups until movement and editing feel natural. Core Vim skills compound faster than plugin hunting.
+    Skip heavy plugin setups until movement and editing feel natural. Core Neovim skills compound faster than plugin hunting.
   </div>
 
   <hr>
@@ -352,7 +352,7 @@ vim.keymap.set("n", "&lt;leader&gt;l", "&lt;C-w&gt;l")</pre>
 </main>
 
 <footer>
-  <span>// swf.wtf - vim-neovim-beginners</span>
+  <span>// swf.wtf - neovim-beginners</span>
   <span><a href="/guides/">more guides</a></span>
 </footer>
 
