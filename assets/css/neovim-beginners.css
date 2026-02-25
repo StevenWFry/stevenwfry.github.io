@@ -355,6 +355,48 @@ p {
   color: var(--vim-accent);
 }
 
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0 0.85rem;
+}
+
+.video-card {
+  background: #0d1622;
+  border: 1px solid var(--vim-border);
+  padding: 0.72rem 0.85rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: #0a121d;
+  border: 1px solid var(--vim-border);
+}
+
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-card a {
+  color: var(--vim-accent2);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.video-card a:hover {
+  color: var(--vim-accent);
+}
+
 .inline-link {
   color: var(--vim-accent2);
   text-decoration: none;
@@ -409,6 +451,10 @@ footer a:hover {
   }
 
   .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .video-grid {
     grid-template-columns: 1fr;
   }
 }
