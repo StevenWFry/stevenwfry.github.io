@@ -140,16 +140,31 @@
   <h2 id="manual">Manual path (learning mode)</h2>
   <p>If you want to learn the classic Arch flow, this is the command skeleton from the installation guide sequence.</p>
 
+  <ul class="mini-list">
+    <li><strong>Partition 1:</strong> EFI System Partition (ESP), 512 MiB, FAT32.</li>
+    <li><strong>Partition 2:</strong> Linux swap, example 8 GiB (adjust for your RAM/needs).</li>
+    <li><strong>Partition 3:</strong> Linux filesystem for <code>/</code>, use the rest of the disk.</li>
+  </ul>
+
   <div class="code-block">
-    <span class="label">partition and format (example)</span>
+    <span class="label">partition + format + mount (example)</span>
     <pre><span class="cmd">fdisk -l</span>
 
 <span class="cmt"># example target disk: /dev/nvme0n1</span>
-<span class="cmt"># create EFI + root partitions with fdisk/cfdisk</span>
+<span class="cmt"># create EFI + swap + root partitions with cfdisk</span>
+<span class="cmd">cfdisk /dev/nvme0n1</span>
+
+<span class="cmt"># in cfdisk create:</span>
+<span class="cmt"># /dev/nvme0n1p1  512M   EFI System</span>
+<span class="cmt"># /dev/nvme0n1p2  8G     Linux swap</span>
+<span class="cmt"># /dev/nvme0n1p3  rest   Linux filesystem</span>
+<span class="cmt"># then Write -> yes -> Quit</span>
 
 <span class="cmd">mkfs.fat -F32 /dev/nvme0n1p1</span>
-<span class="cmd">mkfs.ext4 /dev/nvme0n1p2</span>
-<span class="cmd">mount /dev/nvme0n1p2 /mnt</span>
+<span class="cmd">mkswap /dev/nvme0n1p2</span>
+<span class="cmd">swapon /dev/nvme0n1p2</span>
+<span class="cmd">mkfs.ext4 /dev/nvme0n1p3</span>
+<span class="cmd">mount /dev/nvme0n1p3 /mnt</span>
 <span class="cmd">mkdir /mnt/boot</span>
 <span class="cmd">mount /dev/nvme0n1p1 /mnt/boot</span></pre>
   </div>
