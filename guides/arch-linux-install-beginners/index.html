@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arch Linux Install Guide for Beginners - swf.wtf</title>
+<meta name="description" content="Beginner-friendly Arch Linux install guide based on ArchWiki: boot the live ISO, connect network, run archinstall, and understand the core manual install commands.">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/arch-linux-install-beginners.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="/">swf<span>.wtf</span></a>
+    <nav>
+      <a href="/#writing">writing</a>
+      <a href="/guides/">guides</a>
+      <a href="/about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="post-meta">
+    <span>Feb 25, 2026</span>
+    <span class="tag green">guide</span>
+    <span class="tag">arch</span>
+    <span class="tag">linux</span>
+    <span class="tag">beginner</span>
+  </div>
+
+  <h1>Arch Linux Install Guide for Beginners.<br><span class="dim">// based on ArchWiki, zero mystery.</span></h1>
+  <p class="subtitle">This is a beginner-oriented path based on ArchWiki. You get a reliable <code>archinstall</code> route first, plus the manual commands so you understand what is happening.</p>
+
+  <div class="terminal-intro">
+    <div><span class="prompt">#</span> <span class="cmd-text">ip link</span></div>
+    <div class="output">confirm network interface</div>
+    <div><span class="prompt">#</span> <span class="cmd-text">timedatectl</span></div>
+    <div class="output">clock synced</div>
+    <div><span class="prompt">#</span> <span class="cmd-text">archinstall</span></div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">// contents</div>
+    <a href="#before">Before you start</a>
+    <a href="#live">Boot live ISO + network</a>
+    <a href="#archinstall">Beginner path: archinstall</a>
+    <a href="#manual">Manual path (learning mode)</a>
+    <a href="#firstboot">First boot checklist</a>
+    <a href="#troubleshoot">Common issues</a>
+    <a href="#sources">ArchWiki sources</a>
+  </div>
+
+  <hr>
+
+  <h2 id="before">Before you start</h2>
+  <ul class="checklist">
+    <li>Back up anything you care about. Install mistakes are normal at first.</li>
+    <li>Use UEFI mode (recommended by ArchWiki).</li>
+    <li>If Secure Boot is enabled, disable it for first install unless you already know the signed bootloader flow.</li>
+    <li>Have wired internet if possible. Wi-Fi works, but wired removes variables.</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="callout-title">// disk warning</div>
+    Commands like partitioning and formatting are destructive. Double-check device names before pressing Enter.
+  </div>
+
+  <hr>
+
+  <h2 id="live">Boot live ISO + network</h2>
+
+  <div class="code-block">
+    <span class="label">live environment</span>
+    <pre><span class="cmd">ip link</span>                 <span class="cmt"># verify NIC</span>
+<span class="cmd">ping -c 3 archlinux.org</span> <span class="cmt"># check internet</span>
+<span class="cmd">timedatectl</span>              <span class="cmt"># check time sync status</span>
+<span class="cmd">timedatectl set-ntp true</span> <span class="cmt"># ensure NTP is enabled</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">wifi via iwctl</span>
+    <pre><span class="cmd">iwctl</span>
+<span class="cmd">device list</span>
+<span class="cmd">station wlan0 scan</span>
+<span class="cmd">station wlan0 get-networks</span>
+<span class="cmd">station wlan0 connect YOUR_SSID</span>
+<span class="cmd">exit</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="archinstall">Beginner path: archinstall</h2>
+  <p>This is the path most beginners should use first. It follows ArchWiki guidance while reducing manual error surface.</p>
+
+  <div class="code-block">
+    <span class="label">launch installer</span>
+    <pre><span class="cmd">archinstall</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// if command is missing</div>
+    Use <code>pacman -Sy archinstall</code> in the live ISO, then run <code>archinstall</code> again.
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3>Suggested choices</h3>
+      <ul class="mini-list">
+        <li>Language/keyboard: your normal locale.</li>
+        <li>Mirrors: pick your region or fastest list.</li>
+        <li>Disk config: automatic (for first install).</li>
+        <li>Filesystem: ext4 (simple and stable).</li>
+        <li>Bootloader: systemd-boot (UEFI).</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3>User/system basics</h3>
+      <ul class="mini-list">
+        <li>Create a regular user and set password.</li>
+        <li>Set root password too.</li>
+        <li>Choose NetworkManager profile.</li>
+        <li>Desktop profile optional; minimal install is fine.</li>
+        <li>Enable SSH only if you need it now.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <span class="label">finish install</span>
+    <pre><span class="cmd">reboot</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="manual">Manual path (learning mode)</h2>
+  <p>If you want to learn the classic Arch flow, this is the command skeleton from the installation guide sequence.</p>
+
+  <div class="code-block">
+    <span class="label">partition and format (example)</span>
+    <pre><span class="cmd">fdisk -l</span>
+
+<span class="cmt"># example target disk: /dev/nvme0n1</span>
+<span class="cmt"># create EFI + root partitions with fdisk/cfdisk</span>
+
+<span class="cmd">mkfs.fat -F32 /dev/nvme0n1p1</span>
+<span class="cmd">mkfs.ext4 /dev/nvme0n1p2</span>
+<span class="cmd">mount /dev/nvme0n1p2 /mnt</span>
+<span class="cmd">mkdir /mnt/boot</span>
+<span class="cmd">mount /dev/nvme0n1p1 /mnt/boot</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">base system</span>
+    <pre><span class="cmd">pacstrap -K /mnt base linux linux-firmware</span>
+<span class="cmd">genfstab -U /mnt >> /mnt/etc/fstab</span>
+<span class="cmd">arch-chroot /mnt</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">inside chroot</span>
+    <pre><span class="cmd">ln -sf /usr/share/zoneinfo/Region/City /etc/localtime</span>
+<span class="cmd">hwclock --systohc</span>
+
+<span class="cmt"># continue with locale, hostname, network, users, bootloader</span>
+<span class="cmt"># then exit and reboot:</span>
+<span class="cmd">exit</span>
+<span class="cmd">umount -R /mnt</span>
+<span class="cmd">reboot</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// practical note</div>
+    For first install, do one clean archinstall run. Then try manual install on a VM to learn each step without stress.
+  </div>
+
+  <hr>
+
+  <h2 id="firstboot">First boot checklist</h2>
+
+  <div class="code-block">
+    <span class="label">after login</span>
+    <pre><span class="cmd">sudo pacman -Syu</span>
+<span class="cmd">sudo pacman -S --needed base-devel git neovim</span>
+<span class="cmd">sudo systemctl enable --now NetworkManager</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">optional quality of life</span>
+    <pre><span class="cmd">sudo pacman -S zsh tmux ripgrep fd</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="troubleshoot">Common issues</h2>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">No internet in live ISO</div>
+      <div class="faq-a">Run <code>ip link</code>. For Wi-Fi, use <code>iwctl</code>. Re-test with <code>ping -c 3 archlinux.org</code>.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Boot fails after install</div>
+      <div class="faq-a">Most often wrong bootloader target, wrong EFI mountpoint, or boot mode mismatch (UEFI vs legacy).</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Wrong disk got formatted</div>
+      <div class="faq-a">Stop immediately. On next attempt, map device names with <code>fdisk -l</code> and unplug external drives during install.</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h2 id="sources">ArchWiki sources</h2>
+  <ul class="resource-list">
+    <li><a href="https://wiki.archlinux.org/title/Installation_guide" target="_blank" rel="noopener">Installation guide</a></li>
+    <li><a href="https://wiki.archlinux.org/title/Archinstall" target="_blank" rel="noopener">Archinstall</a></li>
+    <li><a href="https://wiki.archlinux.org/title/General_recommendations" target="_blank" rel="noopener">General recommendations</a></li>
+  </ul>
+
+</main>
+
+<footer>
+  <span>// swf.wtf - arch-linux-install-beginners</span>
+  <span><a href="/guides/">more guides</a></span>
+</footer>
+
+<script defer src="/assets/js/site.js"></script>
+
+</body>
+</html>
