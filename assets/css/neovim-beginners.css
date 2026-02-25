@@ -357,17 +357,17 @@ p {
 
 .video-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
   margin: 1rem 0 0.85rem;
 }
 
 .video-card {
-  background: #0d1622;
-  border: 1px solid var(--vim-border);
-  padding: 0.72rem 0.85rem;
+  background: transparent;
+  border: 0;
+  padding: 0;
   display: grid;
-  gap: 0.6rem;
+  gap: 0.55rem;
 }
 
 .video-frame {
