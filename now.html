@@ -34,10 +34,11 @@
 
     <h2>Tinkering</h2>
 
-    <p>Getting <strong>Fedora 43</strong> properly dialled in. The <a href="/guides/fedora-setup/">Omakub-style setup guide</a> on this site is basically a live document of that process — part reference, part progress tracker, part low-grade emotional processing.</p>
+    <p>Still daily-driving <strong>Fedora 43</strong>, but lately I have been deep in Arch workflows. I published <a href="/guides/arch-linux-virtualbox-omarchy/">Arch Linux on VirtualBox (Omarchy-style, command by command)</a> to mirror the installer flow with Limine, LUKS, Btrfs subvolumes, and archinstall JSON.</p>
 
-    <p>Also: this website. It was "done" in one morning, which was obviously a lie people tell themselves before doing twelve rounds of cleanup. I just moved the site off scattered inline CSS/JS into shared assets, which felt like finally labeling all the cables behind a desk: not glamorous, but suddenly everything stops hissing at you.</p>
+    <p>I also added a stale-ISO keyring recovery sequence in that guide for the classic pacman GPG/keyring failures, because enough people hit it that it deserved first-class docs.</p>
 
+    <p>On site polish: I restyled <a href="/guides/?v=20260226">/guides/</a> to match the main theme, then added cache-busting on guide nav links after GitHub Pages briefly served a stale cached version.</p>
     <h2>Running</h2>
 
     <ul class="stack-list">
@@ -54,23 +55,21 @@
     <p>What actually made it out the door recently:</p>
 
     <div class="pipeline">
-      <div class="pipeline-item">Published <a href="/guides/coding-with-ai-agents/">The Absolute Guide to Coding with Claude AI, Claude Code, and Codex</a> and linked it across the site</div>
-      <div class="pipeline-item">Published <a href="/guides/git-guide/">Git from Zero</a> and wired it into the homepage so it is visible to humans</div>
-      <div class="pipeline-item">Renamed the SSH guide slug to <a href="/guides/github-ssh-linux/">github-ssh-linux</a> now that it covers multiple distros</div>
-      <div class="pipeline-item">Refactored page CSS/JS into external files plus shared site assets for saner maintenance</div>
-      <div class="pipeline-item">Linked my real GitHub and Mastodon profiles so the internet can find me without a treasure map</div>
+      <div class="pipeline-item">Published <a href="/guides/arch-linux-virtualbox-omarchy/">Arch Linux on VirtualBox (Omarchy-style, command by command)</a></div>
+      <div class="pipeline-item">Added the stale-ISO keyring reset fix to that guide so install failures are recoverable in-place</div>
+      <div class="pipeline-item">Redesigned <a href="/guides/?v=20260226">/guides/</a> so it visually matches the rest of the site</div>
+      <div class="pipeline-item">Added <a href="/guides/linux-downloads/">linux downloads</a> into the rolling ticker on the homepage</div>
+      <div class="pipeline-item">Added cache-busting on internal guides nav links to reduce stale-page cache confusion</div>
     </div>
-
     <h2>Writing next</h2>
 
     <p>Posts I'm actively working on or threatening to finish:</p>
 
     <div class="pipeline">
+      <div class="pipeline-item">Arch Linux on bare metal, Omarchy-style, after validating the full flow in VirtualBox</div>
       <div class="pipeline-item">Why I switched from VS Code to Neovim and actually stuck with it</div>
-      <div class="pipeline-item">Dotfile management in 2026 — what actually works and what is decorative suffering</div>
       <div class="pipeline-item">How I keep Claude AI, Claude Code, and Codex from stepping on each other in one repo</div>
     </div>
-
     <p>No promises on order or timeline. I write when I have something worth saying and enough coffee to say it coherently.</p>
 
     <h2>Elsewhere</h2>
@@ -90,4 +89,5 @@
 
 </body>
 </html>
+
 
