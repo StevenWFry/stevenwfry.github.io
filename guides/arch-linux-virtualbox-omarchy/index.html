@@ -132,8 +132,8 @@
 
 <span class="cmd">lsblk "$DISK"</span>
 
-<span class="cmd">read -rsp "Set install password: " PASSWORD</span>
-<span class="cmd">echo</span>
+<span class="cmd">printf "Set install password: "</span>
+<span class="cmd">stty -echo; read PASSWORD; stty echo; echo</span>
 <span class="cmd">PASSWORD_HASH=$(printf '%s' "$PASSWORD" | openssl passwd -6 -stdin)</span></pre>
   </div>
 
