@@ -153,23 +153,23 @@
     <span class="label">partition + format + mount (example)</span>
     <pre><span class="cmd">fdisk -l</span>
 
-<span class="cmt"># example target disk: /dev/nvme0n1</span>
+<span class="cmt"># example target disk: /dev/sda</span>
 <span class="cmt"># create EFI + swap + root partitions with cfdisk</span>
-<span class="cmd">cfdisk /dev/nvme0n1</span>
+<span class="cmd">cfdisk /dev/sda</span>
 
 <span class="cmt"># in cfdisk create:</span>
-<span class="cmt"># /dev/nvme0n1p1  512M   EFI System</span>
-<span class="cmt"># /dev/nvme0n1p2  8G     Linux swap</span>
-<span class="cmt"># /dev/nvme0n1p3  rest   Linux filesystem</span>
+<span class="cmt"># /dev/sda1  512M   EFI System</span>
+<span class="cmt"># /dev/sda2  8G     Linux swap</span>
+<span class="cmt"># /dev/sda3  rest   Linux filesystem</span>
 <span class="cmt"># then Write -> yes -> Quit</span>
 
-<span class="cmd">mkfs.fat -F32 /dev/nvme0n1p1</span>
-<span class="cmd">mkswap /dev/nvme0n1p2</span>
-<span class="cmd">swapon /dev/nvme0n1p2</span>
-<span class="cmd">mkfs.ext4 /dev/nvme0n1p3</span>
-<span class="cmd">mount /dev/nvme0n1p3 /mnt</span>
+<span class="cmd">mkfs.fat -F32 /dev/sda1</span>
+<span class="cmd">mkswap /dev/sda2</span>
+<span class="cmd">swapon /dev/sda2</span>
+<span class="cmd">mkfs.ext4 /dev/sda3</span>
+<span class="cmd">mount /dev/sda3 /mnt</span>
 <span class="cmd">mkdir /mnt/boot</span>
-<span class="cmd">mount /dev/nvme0n1p1 /mnt/boot</span></pre>
+<span class="cmd">mount /dev/sda1 /mnt/boot</span></pre>
   </div>
 
   <div class="code-block">
@@ -218,7 +218,7 @@
   <div class="code-block">
     <span class="label">inside chroot: systemd-boot (UEFI)</span>
     <pre><span class="cmd">bootctl install</span>
-<span class="cmd">ROOT_PARTUUID=$(blkid -s PARTUUID -o value /dev/nvme0n1p3)</span>
+<span class="cmd">ROOT_PARTUUID=$(blkid -s PARTUUID -o value /dev/sda3)</span>
 
 <span class="cmd">printf \"default arch.conf\\ntimeout 3\\neditor 0\\n\" > /boot/loader/loader.conf</span>
 <span class="cmd">printf \"title Arch Linux\\nlinux /vmlinuz-linux\\ninitrd /initramfs-linux.img\\noptions root=PARTUUID=%s rw\\n\" \"$ROOT_PARTUUID\" > /boot/loader/entries/arch.conf</span></pre>
