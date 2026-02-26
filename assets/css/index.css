@@ -166,7 +166,7 @@ header {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
-  color: var(--dim);
+  color: var(--muted);
   padding: 0 32px;
   flex-shrink: 0;
 }
@@ -174,7 +174,7 @@ header {
 .ticker-item span { color: var(--accent); margin-right: 8px; }
 
 .ticker-item a {
-  color: var(--dim);
+  color: var(--muted);
   text-decoration: none;
   cursor: none;
   transition: color 0.2s;

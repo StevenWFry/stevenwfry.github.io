@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf</title>
 <meta name="description" content="A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/coding-with-ai-agents/"> <meta property="og:title" content="The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf"> <meta property="og:description" content="A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/coding-with-ai-agents/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf"> <meta name="twitter:description" content="A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf","description":"A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition.","url":"https://swf.wtf/guides/coding-with-ai-agents/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
 <link rel="stylesheet" href="/assets/css/coding-with-ai-agents.css">
 </head>
 <body>
@@ -146,7 +147,6 @@
 
     <p>Claude AI doesn't have access to your filesystem. It can't run your tests. It doesn't know about that one config file nested four directories deep that's actually the source of all your problems. For that, you need the tool that lives where the code lives.</p>
 
-
     <h2 id="claude-code">Claude Code — The Doer</h2>
 
     <p>Claude Code is where things get real. This is Anthropic's agentic coding tool that runs in your terminal — or inside VS Code, Cursor, Windsurf, or JetBrains — and has actual access to your files, your git history, and your entire questionable collection of <code>TODO: fix later</code> comments.</p>
@@ -270,7 +270,6 @@ claude mcp add</code></pre>
       <p>The MCP ecosystem went from 100,000 downloads to over 8 million in about five months. That's 80x growth. The plugin ecosystem is real, it's growing fast, and it's worth exploring what's available for your stack.</p>
     </div>
 
-
     <h2 id="codex">OpenAI Codex CLI — The Competition</h2>
 
     <p>Now, you might be thinking: "Steve, you've got a whole section of this guide dedicated to a competitor's product on what is ostensibly a Claude-centric blog post. What are you doing?"</p>
@@ -315,7 +314,6 @@ codex</code></pre>
     <h3>The Desktop App</h3>
 
     <p>OpenAI recently launched a Codex desktop app (currently macOS only), which turns Codex into a kind of command center for managing multiple AI agents working on your code simultaneously. You can have several agents working in isolated git worktrees on the same repo without conflicts. It's like having a team of developers who never argue about tabs vs. spaces because they each get their own copy of the codebase to ruin independently.</p>
-
 
     <h2 id="together">Using Them Together (The Spicy Part)</h2>
 
@@ -375,7 +373,6 @@ git log --oneline --graph --all</code></pre>
     <p>Found a bug you can't crack? Have Claude Code investigate. Then, without sharing Claude's analysis, ask Codex to investigate the same bug independently. Compare their diagnoses. If they converge on the same root cause, you can be pretty confident. If they disagree, congratulations — you've just found the interesting part of the problem.</p>
 
     <p>This is particularly effective for security reviews. Have Claude Code scan for vulnerabilities, then have Codex do the same. Different models have different blind spots.</p>
-
 
     <h2 id="workflows">Real Workflows That Actually Work</h2>
 
@@ -450,7 +447,6 @@ git log --oneline --graph --all</code></pre>
       <p>The legacy codebase use case is, in my opinion, the single most underrated application of these tools. Everyone talks about vibe coding greenfield projects. Nobody talks about the sheer joy of pointing an AI at a ten-year-old Java monolith and saying "explain this to me like I just inherited it and the person who wrote it has left the company." That's not a hypothetical. That's a Tuesday for a lot of us.</p>
     </div>
 
-
     <h2 id="tips">Tips from Someone Who's Broken Things</h2>
 
     <p><strong>Always be in a git repo.</strong> Both Claude Code and Codex modify files directly. If you're not under version control, you're working without a net. <code>git init</code> costs nothing. Regret costs everything.</p>
@@ -468,7 +464,6 @@ git log --oneline --graph --all</code></pre>
     <p><strong>Name your sessions.</strong> In Claude Code, use <code>/rename</code> early. "payment-integration" is findable later. "explain this function" is not. Future you will thank present you.</p>
 
     <p><strong>Use the @-mention for files.</strong> In Claude Code, type <code>@</code> to fuzzy-search files and include them directly in your prompt. Way faster than copy-pasting or hoping Claude will find the right file.</p>
-
 
     <h2 id="closing">Closing Thoughts from a Mortal</h2>
 
