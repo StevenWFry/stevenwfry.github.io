@@ -244,18 +244,18 @@
     <pre><span class="cmd">bootctl install</span>
 <span class="cmd">ROOT_PARTUUID=$(blkid -s PARTUUID -o value /dev/sda3)</span>
 
-<span class="cmt"># edit /boot/loader/loader.conf:</span>
-<span class="cmt"># default arch.conf</span>
-<span class="cmt"># timeout 3</span>
-<span class="cmt"># editor 0</span>
+<span class="cmt"># open /boot/loader/loader.conf and paste these lines exactly (no #):</span>
+<span class="cmt">default arch.conf</span>
+<span class="cmt">timeout 3</span>
+<span class="cmt">editor 0</span>
 <span class="cmd">nvim /boot/loader/loader.conf</span>
 
-<span class="cmt"># edit /boot/loader/entries/arch.conf:</span>
-<span class="cmt"># title Arch Linux</span>
-<span class="cmt"># linux /vmlinuz-linux</span>
-<span class="cmt"># initrd /initramfs-linux.img</span>
-<span class="cmt"># replace &lt;ROOT_PARTUUID&gt; with the value from the command above</span>
-<span class="cmt"># options root=PARTUUID=&lt;ROOT_PARTUUID&gt; rw</span>
+<span class="cmt"># open /boot/loader/entries/arch.conf and paste these lines exactly (no #):</span>
+<span class="cmt">title Arch Linux</span>
+<span class="cmt">linux /vmlinuz-linux</span>
+<span class="cmt">initrd /initramfs-linux.img</span>
+<span class="cmt">replace &lt;ROOT_PARTUUID&gt; below with the value from the command above</span>
+<span class="cmt">options root=PARTUUID=&lt;ROOT_PARTUUID&gt; rw</span>
 <span class="cmd">nvim /boot/loader/entries/arch.conf</span></pre>
   </div>
 
