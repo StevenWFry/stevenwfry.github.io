@@ -108,7 +108,14 @@
 <span class="cmd">ping -c 3 archlinux.org</span>
 <span class="cmd">lsblk -d -e 7,11 -o NAME,SIZE,MODEL</span>
 
-<span class="cmd">pacman -Sy --noconfirm archinstall jq openssl</span></pre>
+<span class="cmd">pacman -Sy --noconfirm archinstall jq openssl</span>
+
+<span class="cmt"># If keyring errors appear on an older ISO, reset keyring:</span>
+<span class="cmd">killall gpg-agent</span>
+<span class="cmd">rm -rf /etc/pacman.d/gnupg</span>
+<span class="cmd">pacman-key --init</span>
+<span class="cmd">pacman-key --populate archlinux</span>
+<span class="cmd">pacman -Sy archlinux-keyring</span></pre>
   </div>
 
   <hr>
