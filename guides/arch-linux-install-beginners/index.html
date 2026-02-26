@@ -180,6 +180,17 @@
   </div>
 
   <div class="code-block">
+    <span class="label">if keyring errors appear (older ISO)</span>
+    <pre><span class="cmt"># run this in the live ISO shell, then retry base system install</span>
+<span class="cmt"># If keyring errors appear on an older ISO, reset keyring:</span>
+<span class="cmd">killall gpg-agent</span>
+<span class="cmd">rm -rf /etc/pacman.d/gnupg</span>
+<span class="cmd">pacman-key --init</span>
+<span class="cmd">pacman-key --populate archlinux</span>
+<span class="cmd">pacman -Sy archlinux-keyring</span></pre>
+  </div>
+
+  <div class="code-block">
     <span class="label">inside chroot: timezone + locale</span>
     <pre><span class="cmd">ln -sf /usr/share/zoneinfo/Region/City /etc/localtime</span>
 <span class="cmd">hwclock --systohc</span>
