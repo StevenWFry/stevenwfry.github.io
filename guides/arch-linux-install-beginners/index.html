@@ -200,14 +200,26 @@
 <span class="cmd">nvim /etc/locale.gen</span>
 <span class="cmd">locale-gen</span>
 
-<span class="cmd">echo \"LANG=en_US.UTF-8\" > /etc/locale.conf</span>
-<span class="cmd">echo \"KEYMAP=us\" > /etc/vconsole.conf</span></pre>
+<span class="cmt"># create /etc/locale.conf with:</span>
+<span class="cmt"># LANG=en_US.UTF-8</span>
+<span class="cmd">nvim /etc/locale.conf</span>
+
+<span class="cmt"># create /etc/vconsole.conf with:</span>
+<span class="cmt"># KEYMAP=us</span>
+<span class="cmd">nvim /etc/vconsole.conf</span></pre>
   </div>
 
   <div class="code-block">
     <span class="label">inside chroot: hostname</span>
-    <pre><span class="cmd">echo \"archbox\" > /etc/hostname</span>
-<span class="cmd">printf \"127.0.0.1\\tlocalhost\\n::1\\tlocalhost\\n127.0.1.1\\tarchbox.localdomain\\tarchbox\\n\" > /etc/hosts</span></pre>
+    <pre><span class="cmt"># create /etc/hostname with:</span>
+<span class="cmt"># archbox</span>
+<span class="cmd">nvim /etc/hostname</span>
+
+<span class="cmt"># create /etc/hosts with:</span>
+<span class="cmt"># 127.0.0.1 localhost</span>
+<span class="cmt"># ::1 localhost</span>
+<span class="cmt"># 127.0.1.1 archbox.localdomain archbox</span>
+<span class="cmd">nvim /etc/hosts</span></pre>
   </div>
 
   <div class="code-block">
@@ -238,12 +250,11 @@
 <span class="cmt"># editor 0</span>
 <span class="cmd">nvim /boot/loader/loader.conf</span>
 
-<span class="cmt"># show PARTUUID, then paste it into arch.conf below</span>
-<span class="cmd">echo \"$ROOT_PARTUUID\"</span>
 <span class="cmt"># edit /boot/loader/entries/arch.conf:</span>
 <span class="cmt"># title Arch Linux</span>
 <span class="cmt"># linux /vmlinuz-linux</span>
 <span class="cmt"># initrd /initramfs-linux.img</span>
+<span class="cmt"># replace &lt;ROOT_PARTUUID&gt; with the value from the command above</span>
 <span class="cmt"># options root=PARTUUID=&lt;ROOT_PARTUUID&gt; rw</span>
 <span class="cmd">nvim /boot/loader/entries/arch.conf</span></pre>
   </div>
