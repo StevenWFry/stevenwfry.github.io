@@ -27,3 +27,35 @@ if (postCountEl) {
   const listedPosts = document.querySelectorAll('#writing .post-list .post-item[href]:not(.post-item--soon)').length;
   postCountEl.textContent = String(featuredPosts + listedPosts);
 }
+
+const tickerInner = document.querySelector('.ticker-inner');
+if (tickerInner) {
+  const tickerItems = Array.from(tickerInner.querySelectorAll('.ticker-item'));
+  const firstLoopCount = Math.floor(tickerItems.length / 2);
+  let resizeTimer;
+
+  const syncTickerLoop = () => {
+    if (firstLoopCount === 0) return;
+    const firstLoopWidth = tickerItems
+      .slice(0, firstLoopCount)
+      .reduce((total, item) => total + item.getBoundingClientRect().width, 0);
+    if (firstLoopWidth <= 0) return;
+
+    tickerInner.style.setProperty('--ticker-loop-width', `${Math.round(firstLoopWidth)}px`);
+    const pxPerSecond = 70;
+    const duration = Math.max(16, firstLoopWidth / pxPerSecond);
+    tickerInner.style.setProperty('--ticker-duration', `${duration.toFixed(2)}s`);
+  };
+
+  syncTickerLoop();
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(syncTickerLoop, 120);
+  });
+
+  window.addEventListener('load', syncTickerLoop, { once: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(syncTickerLoop).catch(() => {});
+  }
+}

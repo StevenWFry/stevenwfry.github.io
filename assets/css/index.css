@@ -152,12 +152,14 @@ header {
   display: flex;
   gap: 0;
   white-space: nowrap;
-  animation: scroll 28s linear infinite;
+  width: max-content;
+  animation: scroll var(--ticker-duration, 28s) linear infinite;
+  will-change: transform;
 }
 
 @keyframes scroll {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(calc(-1 * var(--ticker-loop-width, 50%))); }
 }
 
 .ticker-item {
