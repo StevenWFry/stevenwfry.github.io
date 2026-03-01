@@ -56,7 +56,7 @@
 
     <p>We're going to talk about three tools:</p>
 
-    <p><strong>Claude AI</strong> — the conversational interface at <code>claude.ai</code>. This is where you go to think, plan, ask questions, and have Claude write code snippets you can paste into your project. Think of it as the architect.</p>
+    <p><strong>Claude AI</strong> — the conversational interface at <code>claude.ai</code>. This is where you go to think, plan, ask questions, and have Claude write code snippets you can paste into your project. And with <strong>Claude Cowork</strong>, it can also work directly in a connected project workspace. Think of it as the architect that can now pick up tools when needed.</p>
 
     <p><strong>Claude Code</strong> — Anthropic's CLI-based agentic coding tool. This one lives in your terminal, reads your actual codebase, and makes changes directly. This is the construction crew.</p>
 
@@ -85,25 +85,25 @@
         </tr>
         <tr>
           <td>Reads your codebase</td>
-          <td>Only what you paste</td>
+          <td>Paste-only in plain chat; full repo context with Claude Cowork</td>
           <td>Yes, the whole thing</td>
           <td>Yes, the whole thing</td>
         </tr>
         <tr>
           <td>Makes file changes</td>
-          <td>Nope</td>
+          <td>Not in plain chat; yes with Claude Cowork (permissioned)</td>
           <td>Yes, directly</td>
           <td>Yes, directly</td>
         </tr>
         <tr>
           <td>Runs commands</td>
-          <td>Nope</td>
+          <td>Not in plain chat; yes with Claude Cowork</td>
           <td>Yes (bash, git, tests)</td>
           <td>Yes (bash, git, tests)</td>
         </tr>
         <tr>
           <td>Best for</td>
-          <td>Planning, research, Q&A</td>
+          <td>Planning by default; workspace execution with Claude Cowork</td>
           <td>Execution, refactoring</td>
           <td>Execution, code review</td>
         </tr>
@@ -124,9 +124,9 @@
 
     <h2 id="claude-ai">Claude AI — The Thinker</h2>
 
-    <p>Claude AI — the chat interface, the one you're probably reading this guide through right now (hi, Claude, yes I know you're in there) — is best understood as the <em>planning and research phase</em> of your workflow.</p>
+    <p>Claude AI — the chat interface, the one you're probably reading this guide through right now (hi, Claude, yes I know you're in there) — is best understood as the <em>planning and research phase</em> of your workflow. But with <strong>Claude Cowork</strong>, it can also execute directly in a workspace when you want that mode.</p>
 
-    <p>You don't go to <code>claude.ai</code> to build things. You go there to <em>figure out what to build</em>. This is where you hash out architecture decisions, debug your understanding of a problem, ask "what's the difference between a WebSocket and a Server-Sent Event and should I care," and get genuinely useful explanations that don't make you feel like you're reading a textbook written by someone who actively dislikes the reader.</p>
+    <p>You still go to <code>claude.ai</code> primarily to <em>figure out what to build</em>. This is where you hash out architecture decisions, debug your understanding of a problem, ask "what's the difference between a WebSocket and a Server-Sent Event and should I care," and get genuinely useful explanations that don't make you feel like you're reading a textbook written by someone who actively dislikes the reader.</p>
 
     <h3>What Claude AI Is Great At</h3>
 
@@ -143,9 +143,14 @@
 
     <p><strong>Code review by conversation.</strong> Paste a function in and ask "what's wrong with this?" or "how would a senior developer improve this?" Claude will point out things like missing error handling, opportunities for early returns, and the fact that you have a variable called <code>temp2</code> which, let's be honest, you were never going to rename.</p>
 
-    <h3>What Claude AI Is Not Great At</h3>
+    <h3>Where Claude AI Still Has Limits</h3>
 
-    <p>Claude AI doesn't have access to your filesystem. It can't run your tests. It doesn't know about that one config file nested four directories deep that's actually the source of all your problems. For that, you need the tool that lives where the code lives.</p>
+    <p>In plain chat mode, Claude AI still doesn't have live filesystem access and can't run your tests unless you provide context manually. Claude Cowork changes that by letting Claude work in a connected, permissioned workspace. So the practical rule is simple: use plain chat for thinking, and switch to Cowork when you want direct repo access and execution.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">$ quick mode picker</div>
+      <p><strong>Use plain chat</strong> for architecture, trade-offs, and prompt-driven planning. <strong>Use Claude Cowork</strong> when you want Claude in a connected workspace with repo access and controlled execution. <strong>Use Claude Code</strong> when you want full terminal-native, multi-file implementation loops inside your local project.</p>
+    </div>
 
     <h2 id="claude-code">Claude Code — The Doer</h2>
 
@@ -496,4 +501,3 @@ git log --oneline --graph --all</code></pre>
 
 </body>
 </html>
-
