@@ -36,43 +36,28 @@
     </div>
   </header>
 
-  <!-- Neofetch block -->
-  <div class="nf-card">
-    <div class="nf-inner">
-      <pre class="nf-ascii">          /:-------------:\
-       :-------------------::
-     :-----------/shhOHbmp---:\
-   /-----------omMMMNNNMMD  ---:
-  :-----------sMMMMNMNMP.    ---:
- :-----------:MMMdP-------    ---\
-,------------:MMMd--------    ---:
-:------------:MMMd-------    .---:
-:----    oNMMMMMMMMMNho     .----:
-:--     .+shhhMMMmhhy++   .------/
-:-    -------:MMMd--------------:
-:-   --------/MMMd-------------;
-:-    ------/hMMMy------------:
-:-- :dMNdhhdNMMNo------------;
-:---:sdNMMMMNds:------------:
-:------:://:-------------::
-:---------------------://</pre>
-      <div class="nf-info">
-        <div class="nf-head"><span class="nf-user">swf</span><span class="nf-at">@</span><span class="nf-host">swf.wtf</span></div>
-        <div class="nf-divider">-------------------</div>
-        <div class="nf-line"><span class="nf-key">OS</span><span class="nf-colon">: </span>Fedora Linux 43</div>
-        <div class="nf-line"><span class="nf-key">Shell</span><span class="nf-colon">: </span>zsh</div>
-        <div class="nf-line"><span class="nf-key">WM</span><span class="nf-colon">: </span>GNOME</div>
-        <div class="nf-line"><span class="nf-key">Multiplexer</span><span class="nf-colon">: </span>Zellij</div>
-        <div class="nf-line"><span class="nf-key">Editor</span><span class="nf-colon">: </span>Neovim</div>
-        <div class="nf-line"><span class="nf-key">Theme</span><span class="nf-colon">: </span>dark (obviously)</div>
-        <div class="nf-line"><span class="nf-key">Blog</span><span class="nf-colon">: </span>swf.wtf</div>
-        <div class="nf-line"><span class="nf-key">Posts</span><span class="nf-colon">: </span><span id="post-count">10</span></div>
-        <div class="nf-swatches">
-          <span class="nf-swatch"></span>
-          <span class="nf-swatch"></span>
-          <span class="nf-swatch"></span>
-          <span class="nf-swatch"></span>
-        </div>
+  <!-- Visitor info block -->
+  <div class="nf-card visitor-card">
+    <div class="nf-inner visitor-inner">
+      <div class="visitor-top">
+        <div class="nf-head"><span class="nf-user">visitor</span><span class="nf-at">@</span><span class="nf-host">swf.wtf</span></div>
+        <button type="button" class="visitor-refresh-btn" id="visitor-refresh-btn">refresh</button>
+      </div>
+      <p class="visitor-desc">Browser/device signals plus public-IP geolocation when available.</p>
+      <div class="visitor-lines">
+        <div class="visitor-line"><span class="visitor-key">Public IP</span><span id="visitor-ip">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Location</span><span id="visitor-location">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Coords</span><span id="visitor-coords">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Browser</span><span id="visitor-browser">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">User Agent</span><span id="visitor-user-agent">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">OS</span><span id="visitor-os">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Device</span><span id="visitor-device">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Language</span><span id="visitor-language">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Timezone</span><span id="visitor-timezone">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Viewport</span><span id="visitor-viewport">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Screen</span><span id="visitor-screen">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Network</span><span id="visitor-network">loading...</span></div>
+        <div class="visitor-line"><span class="visitor-key">Posts</span><span id="post-count">10</span></div>
       </div>
     </div>
   </div>
@@ -292,4 +277,3 @@
 
 </body>
 </html>
-
