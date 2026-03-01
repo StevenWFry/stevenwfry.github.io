@@ -25,7 +25,7 @@
   <header class="page-header">
     <div class="page-eyebrow">A <a href="https://nownownow.com/about" target="_blank" rel="noopener">/now page</a> — what I'm up to at the moment</div>
     <h1>/now</h1>
-    <p class="subtitle">Updated Feb 26, 2026, from somewhere with a terminal open and at least three tabs of righteous indignation.</p>
+    <p class="subtitle">Updated Mar 1, 2026, after shipping a Codex parallel site and rebuilding the homepage telemetry panel.</p>
   </header>
 
   <hr class="divider">
@@ -34,15 +34,15 @@
 
     <h2>Tinkering</h2>
 
-    <p>Still daily-driving <strong>Fedora 43</strong>, but lately I have been deep in Arch workflows. I published <a href="/guides/arch-linux-virtualbox-omarchy/">Arch Linux on VirtualBox (Omarchy-style, command by command)</a> to mirror the installer flow with Limine, LUKS, Btrfs subvolumes, and archinstall JSON.</p>
+    <p>I have been building a full alternate version of this site under <a href="/codex/">/codex/</a>: redesigned pages, command palette, mirror explorer, and a complete mirrored copy of the core site.</p>
 
-    <p>I also added a stale-ISO keyring recovery sequence in that guide for the classic pacman GPG/keyring failures, because enough people hit it that it deserved first-class docs.</p>
+    <p>I replaced the old homepage neofetch block with a live visitor-info panel (public IP, browser, OS, device, viewport, and network), then tightened layout and cache-busting so it renders correctly after deploys.</p>
 
-    <p>On site polish: I restyled <a href="/guides/?v=20260226">/guides/</a> to match the main theme, then added cache-busting on guide nav links after GitHub Pages briefly served a stale cached version.</p>
+    <p>I also added a visitor log dashboard in Codex with search/export/clear controls, plus a local file-backed API option for local dev while preserving static-host fallback behavior.</p>
     <h2>Running</h2>
 
     <ul class="stack-list">
-      <li><span class="stack-key">os</span> Fedora Linux 43</li>
+      <li><span class="stack-key">os</span> Omarchy 3.4.0</li>
       <li><span class="stack-key">shell</span> zsh</li>
       <li><span class="stack-key">multiplexer</span> Zellij</li>
       <li><span class="stack-key">editor</span> Neovim (still configuring, still happy about it)</li>
@@ -55,11 +55,11 @@
     <p>What actually made it out the door recently:</p>
 
     <div class="pipeline">
-      <div class="pipeline-item">Published <a href="/guides/arch-linux-virtualbox-omarchy/">Arch Linux on VirtualBox (Omarchy-style, command by command)</a></div>
-      <div class="pipeline-item">Added the stale-ISO keyring reset fix to that guide so install failures are recoverable in-place</div>
-      <div class="pipeline-item">Redesigned <a href="/guides/?v=20260226">/guides/</a> so it visually matches the rest of the site</div>
-      <div class="pipeline-item">Added <a href="/guides/linux-downloads/">linux downloads</a> into the rolling ticker on the homepage</div>
-      <div class="pipeline-item">Added cache-busting on internal guides nav links to reduce stale-page cache confusion</div>
+      <div class="pipeline-item">Built and shipped the full <a href="/codex/">Codex alternate site</a> with distinct UI, extras, and workflow tooling</div>
+      <div class="pipeline-item">Mirrored the full website into <a href="/codex/explorer.html">Codex Mirror Explorer</a> with searchable access</div>
+      <div class="pipeline-item">Added Codex visitor telemetry panel + visitor log page with export and clear controls</div>
+      <div class="pipeline-item">Replaced the main homepage neofetch block with live visitor-info signals</div>
+      <div class="pipeline-item">Simplified hero CTAs and surfaced footer links near the top for faster navigation</div>
     </div>
     <h2>Writing next</h2>
 
@@ -76,7 +76,7 @@
 
     <p>You can find me on <a href="https://github.com/StevenWFry" target="_blank" rel="noopener">GitHub</a> and <a href="https://mastodon.social/@swfwtf" target="_blank" rel="noopener">Mastodon</a> (<code>@swfwtf</code>). Or just email me at <a href="mailto:steven@swf.wtf">steven@swf.wtf</a> — I actually read it.</p>
 
-    <div class="updated-note">// last updated <span>Feb 26, 2026</span> — <a href="https://nownownow.com/about" target="_blank" rel="noopener" style="color:var(--dim);border-bottom:1px solid var(--dim);">what is a /now page?</a></div>
+    <div class="updated-note">// last updated <span>Mar 1, 2026</span> — <a href="https://nownownow.com/about" target="_blank" rel="noopener" style="color:var(--dim);border-bottom:1px solid var(--dim);">what is a /now page?</a></div>
 
   </div>
 
@@ -89,5 +89,4 @@
 
 </body>
 </html>
-
 
