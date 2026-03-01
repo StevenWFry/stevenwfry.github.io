@@ -518,10 +518,10 @@ footer {
 }
 
 .visitor-line {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(88px, 124px) minmax(0, 1fr);
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   border-bottom: 1px dashed var(--border);
   padding-bottom: 2px;
   color: var(--muted);
@@ -530,6 +530,10 @@ footer {
 .visitor-key {
   color: var(--accent3);
   flex-shrink: 0;
+}
+
+.visitor-line .nf-colon {
+  display: none;
 }
 
 .visitor-line span:last-child {
@@ -551,7 +555,10 @@ footer {
   .post-item-tag { display: none; }
   footer { flex-direction: column; align-items: flex-start; }
   .nf-inner { padding: 16px 20px; }
-  .visitor-line { flex-direction: column; gap: 2px; }
+  .visitor-line {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
   .visitor-line span:last-child { text-align: left; max-width: 100%; }
   #visitor-user-agent { max-width: 100%; }
 }
