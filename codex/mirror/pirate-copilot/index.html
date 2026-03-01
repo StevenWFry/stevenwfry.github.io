@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <meta name="description" content="Pirate Copilot: a playful GitHub Copilot experiment with profile sections, a gallery, and 3D visuals.">
+    <!-- SEO META START -->     <link rel="canonical" href="https://swf.wtf/pirate-copilot/">     <meta property="og:title" content="My Profile">     <meta property="og:description" content="Pirate Copilot: a playful GitHub Copilot experiment with profile sections, a gallery, and 3D visuals.">     <meta property="og:type" content="website">     <meta property="og:url" content="https://swf.wtf/pirate-copilot/">     <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png">     <meta name="twitter:card" content="summary_large_image">     <meta name="twitter:title" content="My Profile">     <meta name="twitter:description" content="Pirate Copilot: a playful GitHub Copilot experiment with profile sections, a gallery, and 3D visuals.">     <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png">     <meta name="twitter:site" content="@swfwtf">     <!-- SEO META END -->     <!-- SEO STRUCTURED DATA START -->     <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"My Profile","url":"https://swf.wtf/pirate-copilot/","description":"Pirate Copilot: a playful GitHub Copilot experiment with profile sections, a gallery, and 3D visuals."}</script>     <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="stylesheet" href="../assets/css/codex-mirror.css">
+</head>
+<body>
+    <header>
+        <h1>Github Copilot Project</h1>
+        <div id="greeting"></div>
+        <nav>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <button id="theme-toggle">Toggle Theme</button>
+    </header>
+    
+    <section id="about">
+        <h2>About Me</h2>
+        <img src="images/pirate.jpg" alt="Pirate Image" style="width:100%;max-width:600px;">
+        <p>Ahoy! I be a pirate from the 17th century, sailing the seven seas in search of treasure and adventure. With a trusty crew and a sturdy ship, I navigated through treacherous waters and battled fierce storms. My life was filled with daring escapades, hidden coves, and legendary tales of plunder. The sea was my home, and freedom was my creed. Join me as I recount the thrilling voyages and the untold stories of a pirate's life on the high seas.</p>
+    </section>
+    
+    <section id="projects">
+        <h2>Projects</h2>
+        <img src="images/projects.jpg" alt="Projects Image" style="width:100%;max-width:600px;">
+        <p>Here are some of the projects I've worked on.</p>
+    </section>
+    
+    <section id="gallery">
+        <h2>Photo Gallery</h2>
+        <div class="gallery">
+            <img src="images/photo1.jpg" alt="Photo 1" class="gallery-item">
+            <img src="images/photo2.jpg" alt="Photo 2" class="gallery-item">
+            <img src="images/photo3.jpg" alt="Photo 3" class="gallery-item">
+            <!-- Add more images as needed -->
+        </div>
+    </section>
+    
+    <section id="3d-model">
+        <h2>3D Model</h2>
+        <canvas id="3d-canvas"></canvas>
+    </section>
+
+    <section id="testimonials">
+        <h2>Testimonials</h2>
+        <div class="testimonial">
+            <p>"This pirate is the best! His tales are legendary and his adventures are thrilling!"</p>
+            <p>- Captain Jack Sparrow</p>
+        </div>
+        <div class="testimonial">
+            <p>"A true master of the seas. His knowledge and skills are unmatched."</p>
+            <p>- Blackbeard</p>
+        </div>
+        <div class="testimonial">
+            <p>"Sailing with him was the best decision I ever made. Highly recommended!"</p>
+            <p>- Anne Bonny</p>
+        </div>
+    </section>
+    
+    <section id="contact">
+        <h2>Contact</h2>
+        <img src="images/contact.jpg" alt="Contact Image" style="width:100%;max-width:600px;">
+        <p>You can reach me at <a href="mailto:sw.fry@outlook.com">sw.fry@outlook.com</a>.</p>
+    </section>
+    
+    <footer>
+        <p>&copy; 2025 My Profile. All rights reserved.</p>
+        <div id="visitor-ip">Your IP: Loading...</div>
+    </footer>
+    
+    <button id="back-to-top" title="Back to Top">↑</button>
+    <script src="js/scripts.js"></script>
+    <script src="js/3d-model.js"></script>
+<script defer src="../assets/js/codex-mirror.js"></script>
+</body>
+</html>

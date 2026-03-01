@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sunrise">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex Visitor Log</title>
+<meta name="description" content="Recorded visitor info snapshots captured by the Codex visitor panel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/codex.css">
+</head>
+<body data-page="visitors">
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="page-bg" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span>CODEX</span>
+    <small>alt universe build</small>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="guides.html">Guides</a>
+    <a href="resources.html">Resources</a>
+    <a href="explorer.html">Mirror</a>
+    <a href="visitors.html" aria-current="page">Visitors</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="pill-btn" type="button" data-command-open>Command Palette</button>
+    <button class="pill-btn" type="button" data-theme-cycle>Theme: Sunrise</button>
+  </div>
+</header>
+
+<main id="content" class="content-wrap">
+  <section class="hero hero-compact reveal">
+    <p class="eyebrow">visitor telemetry</p>
+    <h1>Recorded Visitor Snapshots</h1>
+    <p class="lede">
+      Captured fields from the Codex visitor panel: IP, approximate location, user agent, device/system data, network, and viewport.
+    </p>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>Overview</h2>
+      <p>Snapshots are stored in browser local storage and can be exported as JSON.</p>
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span class="section-kicker">records</span>
+        <strong id="visitorRecordCount">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="section-kicker">unique ips</span>
+        <strong id="visitorUniqueIps">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="section-kicker">unique fingerprints</span>
+        <strong id="visitorUniqueFingerprints">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="section-kicker">last seen</span>
+        <strong id="visitorLastSeen">none</strong>
+      </article>
+    </div>
+
+    <div class="log-controls">
+      <label class="search-wrap" for="visitorLogSearch">
+        <span>Search visitor records</span>
+        <input id="visitorLogSearch" type="search" placeholder="ip, browser, os, location, network...">
+      </label>
+      <div class="challenge-actions">
+        <button type="button" class="btn btn-secondary" id="exportVisitorLogBtn">export json</button>
+        <button type="button" class="btn btn-ghost" id="clearVisitorLogBtn">clear log</button>
+      </div>
+    </div>
+    <p class="result-count" id="visitorSource">Storage source: detecting...</p>
+
+    <p class="result-count" id="visitorEmptyState">No visitor records yet. Visit <a href="index.html">home</a> to capture one.</p>
+
+    <div class="table-wrap">
+      <table class="visitor-table" aria-label="Visitor record log">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>IP</th>
+            <th>Location</th>
+            <th>Coords</th>
+            <th>Browser</th>
+            <th>OS</th>
+            <th>Device</th>
+            <th>Language</th>
+            <th>Timezone</th>
+            <th>Viewport</th>
+            <th>Screen</th>
+            <th>Network</th>
+            <th>Page</th>
+            <th>Reason</th>
+            <th>Referrer</th>
+            <th>User Agent</th>
+          </tr>
+        </thead>
+        <tbody id="visitorLogBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Visitor log viewer for Codex edition.</p>
+</footer>
+
+<div class="palette-backdrop" id="commandPalette" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+    <div class="palette-head">
+      <h2 id="paletteTitle">Command Palette</h2>
+      <button type="button" class="close-btn" data-command-close>Esc</button>
+    </div>
+    <input id="commandInput" type="text" autocomplete="off" placeholder="Type: home, visitors, export, clear..." aria-label="Command search">
+    <ul id="commandList"></ul>
+  </div>
+</div>
+
+<script src="js/app.js" defer></script>
+<script src="js/visitors.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>swf.wtf</title>
+<meta name="description" content="I tinker with Linux and write about it.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/"> <meta property="og:title" content="swf.wtf"> <meta property="og:description" content="I tinker with Linux and write about it."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="swf.wtf"> <meta name="twitter:description" content="I tinker with Linux and write about it."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"swf.wtf","url":"https://swf.wtf/","description":"I tinker with Linux and write about it."}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/index.css">
+<link rel="stylesheet" href="assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<div class="container">
+  <header>
+    <div class="site-tag">swf.wtf</div>
+
+    <h1 class="hero-name">
+      <span id="swf-s">Steven</span><br>
+      <span id="swf-w">William</span><br>
+      <span id="swf-f">Fry</span><span class="wtf">.</span>
+      <span class="domain">// swf.wtf</span>
+    </h1>
+
+    <p class="hero-bio">
+      I tinker with <strong>Linux</strong> and write about it.<br>
+      Linux enthusiast. Currently: Arch, The Arch Way, it's just more fun. Terminal maximalist. Occasional chaos agent.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#writing" class="btn btn-primary">↓ Read the blog</a>
+      <a href="guides/fedora-setup/" class="btn btn-secondary">⚡ Fedora × Omakub Guide</a>
+    </div>
+  </header>
+
+  <!-- Neofetch block -->
+  <div class="nf-card">
+    <div class="nf-inner">
+      <pre class="nf-ascii">          /:-------------:\
+       :-------------------::
+     :-----------/shhOHbmp---:\
+   /-----------omMMMNNNMMD  ---:
+  :-----------sMMMMNMNMP.    ---:
+ :-----------:MMMdP-------    ---\
+,------------:MMMd--------    ---:
+:------------:MMMd-------    .---:
+:----    oNMMMMMMMMMNho     .----:
+:--     .+shhhMMMmhhy++   .------/
+:-    -------:MMMd--------------:
+:-   --------/MMMd-------------;
+:-    ------/hMMMy------------:
+:-- :dMNdhhdNMMNo------------;
+:---:sdNMMMMNds:------------:
+:------:://:-------------::
+:---------------------://</pre>
+      <div class="nf-info">
+        <div class="nf-head"><span class="nf-user">swf</span><span class="nf-at">@</span><span class="nf-host">swf.wtf</span></div>
+        <div class="nf-divider">-------------------</div>
+        <div class="nf-line"><span class="nf-key">OS</span><span class="nf-colon">: </span>Fedora Linux 43</div>
+        <div class="nf-line"><span class="nf-key">Shell</span><span class="nf-colon">: </span>zsh</div>
+        <div class="nf-line"><span class="nf-key">WM</span><span class="nf-colon">: </span>GNOME</div>
+        <div class="nf-line"><span class="nf-key">Multiplexer</span><span class="nf-colon">: </span>Zellij</div>
+        <div class="nf-line"><span class="nf-key">Editor</span><span class="nf-colon">: </span>Neovim</div>
+        <div class="nf-line"><span class="nf-key">Theme</span><span class="nf-colon">: </span>dark (obviously)</div>
+        <div class="nf-line"><span class="nf-key">Blog</span><span class="nf-colon">: </span>swf.wtf</div>
+        <div class="nf-line"><span class="nf-key">Posts</span><span class="nf-colon">: </span><span id="post-count">10</span></div>
+        <div class="nf-swatches">
+          <span class="nf-swatch"></span>
+          <span class="nf-swatch"></span>
+          <span class="nf-swatch"></span>
+          <span class="nf-swatch"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item"><span>$</span>dnf update --refresh</span>
+      <span class="ticker-item"><span>//</span>Fedora 43 — Omakub style</span>
+      <span class="ticker-item"><span>$</span>zellij attach</span>
+      <span class="ticker-item"><span>//</span>tinkering since forever</span>
+      <span class="ticker-item"><span>$</span>nvim ~/.zshrc</span>
+      <span class="ticker-item"><span>//</span>swf.wtf — yes, the initials</span>
+      <span class="ticker-item"><span>//</span><a href="guides/linux-downloads/">linux downloads</a></span>
+      <span class="ticker-item"><span>$</span>git push origin main</span>
+      <span class="ticker-item"><span>//</span>powered by curiosity</span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item"><span>$</span>dnf update --refresh</span>
+      <span class="ticker-item"><span>//</span>Fedora 43 — Omakub style</span>
+      <span class="ticker-item"><span>$</span>zellij attach</span>
+      <span class="ticker-item"><span>//</span>tinkering since forever</span>
+      <span class="ticker-item"><span>$</span>nvim ~/.zshrc</span>
+      <span class="ticker-item"><span>//</span>swf.wtf — yes, the initials</span>
+      <span class="ticker-item"><span>//</span><a href="guides/linux-downloads/">linux downloads</a></span>
+      <span class="ticker-item"><span>$</span>git push origin main</span>
+      <span class="ticker-item"><span>//</span>powered by curiosity</span>
+    </div>
+  </div>
+
+  <!-- Writing section -->
+  <section class="section" id="writing">
+    <div class="section-label">Latest writing</div>
+
+    <!-- Featured post -->
+    <a href="guides/arch-linux-virtualbox-omarchy/" class="post-featured">
+      <div class="post-featured-label">★ Latest guide</div>
+      <div class="post-featured-title">Arch Linux on VirtualBox (Omarchy-style)</div>
+      <div class="post-featured-excerpt">
+        Install Arch Linux in VirtualBox the Omarchy way, command by command: Limine bootloader, LUKS encryption, Btrfs subvolumes, and archinstall JSON.
+      </div>
+      <div class="post-meta">
+        <span>Feb 26, 2026</span>
+        <span>·</span>
+        <span>guide</span>
+        <span class="tag">arch</span>
+        <span class="tag">virtualbox</span>
+        <span class="tag">omarchy</span>
+      </div>
+    </a>
+
+    <!-- Post list -->
+    <div class="post-list">
+      <a href="guides/hyprland-base-arch/" class="post-item">
+        <span class="post-item-date">Feb 26, 2026</span>
+        <span class="post-item-title">Hyprland on Base Arch Linux</span>
+        <span class="post-item-tag">hypr</span>
+      </a>
+      <a href="guides/python-beginners/" class="post-item">
+        <span class="post-item-date">Feb 25, 2026</span>
+        <span class="post-item-title">Python for Beginners</span>
+        <span class="post-item-tag">python</span>
+      </a>
+      <a href="guides/arch-linux-install-beginners/" class="post-item">
+        <span class="post-item-date">Feb 25, 2026</span>
+        <span class="post-item-title">Arch Linux Install Guide for Beginners</span>
+        <span class="post-item-tag">arch</span>
+      </a>
+      <a href="guides/neovim-beginners/" class="post-item">
+        <span class="post-item-date">Feb 25, 2026</span>
+        <span class="post-item-title">Neovim for Beginners</span>
+        <span class="post-item-tag">nvim</span>
+      </a>
+      <a href="blog/pirate-copilot-website/" class="post-item">
+        <span class="post-item-date">Feb 24, 2026</span>
+        <span class="post-item-title">Pirate Copilot: Building a Website with AI</span>
+        <span class="post-item-tag">web</span>
+      </a>
+      <a href="guides/coding-with-ai-agents/" class="post-item">
+        <span class="post-item-date">Feb 23, 2026</span>
+        <span class="post-item-title">Coding with Claude AI, Claude Code, and Codex</span>
+        <span class="post-item-tag">ai</span>
+      </a>
+      <a href="guides/git-guide/" class="post-item">
+        <span class="post-item-date">Feb 21, 2026</span>
+        <span class="post-item-title">Git from Zero</span>
+        <span class="post-item-tag">git</span>
+      </a>
+      <a href="guides/github-ssh-linux/" class="post-item">
+        <span class="post-item-date">Feb 20, 2026</span>
+        <span class="post-item-title">GitHub SSH Keys on Linux</span>
+        <span class="post-item-tag">ssh</span>
+      </a>
+      <a href="guides/virtualbox-guest-additions/" class="post-item">
+        <span class="post-item-date">Feb 20, 2026</span>
+        <span class="post-item-title">VirtualBox Guest Additions on Linux</span>
+        <span class="post-item-tag">linux</span>
+      </a>
+      <a href="blog/how-i-set-up-swf-wtf/" class="post-item">
+        <span class="post-item-date">Feb 20, 2026</span>
+        <span class="post-item-title">How I set up swf.wtf in one morning</span>
+        <span class="post-item-tag">meta</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Links / projects -->
+  <section class="section" style="padding-top: 0;">
+    <div class="section-label">Projects & links</div>
+    <div class="links-grid">
+      <a href="guides/fedora-setup/" class="link-card featured-project">
+        <div class="link-icon">⚡</div>
+        <div>
+          <div class="link-info-name">Fedora 43 × Omakub Setup Guide</div>
+          <div class="link-info-desc">Interactive checklist — terminal, GNOME theming, apps, dotfiles</div>
+        </div>
+      </a>
+      <a href="guides/hyprland-base-arch/" class="link-card">
+        <div class="link-icon">::</div>
+        <div>
+          <div class="link-info-name">Hyprland on Base Arch Linux</div>
+          <div class="link-info-desc">From base Arch install to a usable Wayland desktop</div>
+        </div>
+      </a>
+      <a href="guides/sql-guide/" class="link-card">
+        <div class="link-icon">🗃️</div>
+        <div>
+          <div class="link-info-name">SQL Guide</div>
+          <div class="link-info-desc">Oracle 19c + MySQL study notes, web formatted</div>
+        </div>
+      </a>
+      <a href="guides/neovim-beginners/" class="link-card">
+        <div class="link-icon">⌨️</div>
+        <div>
+          <div class="link-info-name">Neovim Beginner Guide</div>
+          <div class="link-info-desc">Mode-based editing guide and daily reference</div>
+        </div>
+      </a>
+      <a href="guides/python-beginners/" class="link-card">
+        <div class="link-icon">🐍</div>
+        <div>
+          <div class="link-info-name">Python Beginner Guide</div>
+          <div class="link-info-desc">Install, venv, pip, syntax, and first project workflow</div>
+        </div>
+      </a>
+      <a href="guides/arch-linux-install-beginners/" class="link-card">
+        <div class="link-icon">🏔️</div>
+        <div>
+          <div class="link-info-name">Arch Linux Install Guide</div>
+          <div class="link-info-desc">Beginner path based on ArchWiki + archinstall</div>
+        </div>
+      </a>
+      <a href="pirate-copilot/" class="link-card">
+        <div class="link-icon">🏴‍☠️</div>
+        <div>
+          <div class="link-info-name">Pirate Copilot</div>
+          <div class="link-info-desc">My first GitHub Copilot experiment</div>
+        </div>
+      </a>
+      <a href="cheatsheets/Claude-Code-cheatsheet.jpeg" class="link-card">
+        <div class="link-icon">[]</div>
+        <div>
+          <div class="link-info-name">Claude Code Cheatsheet</div>
+          <div class="link-info-desc">Quick command reference image</div>
+        </div>
+      </a>
+      <a href="https://github.com/StevenWFry" class="link-card">
+        <div class="link-icon">🐙</div>
+        <div>
+          <div class="link-info-name">GitHub</div>
+          <div class="link-info-desc">@StevenWFry</div>
+        </div>
+      </a>
+      <a href="about.html" class="link-card">
+        <div class="link-icon">📄</div>
+        <div>
+          <div class="link-info-name">About</div>
+          <div class="link-info-desc">man swf.wtf(1)</div>
+        </div>
+      </a>
+      <a href="mailto:steven@swf.wtf" class="link-card">
+        <div class="link-icon">✉️</div>
+        <div>
+          <div class="link-info-name">Email</div>
+          <div class="link-info-desc">steven@swf.wtf</div>
+        </div>
+      </a>
+      <a href="https://mastodon.social/@swfwtf" class="link-card">
+        <div class="link-icon">🐘</div>
+        <div>
+          <div class="link-info-name">Mastodon</div>
+          <div class="link-info-desc">@swfwtf</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-sig">// swf<span>.wtf</span> — built on Fedora</div>
+    <div class="footer-links">
+      <a href="#writing">writing</a>
+      <a href="guides/fedora-setup/">setup guide</a>
+      <a href="guides/python-beginners/">python guide</a>
+      <a href="guides/coding-with-ai-agents/">ai agents guide</a>
+      <a href="guides/sql-guide/">sql guide</a>
+      <a href="guides/linux-downloads/">linux downloads</a>
+      <a href="guides/hyprland-base-arch/">hyprland guide</a>
+      <a href="cheatsheets/Claude-Code-cheatsheet.jpeg">cheatsheet</a>
+      <a href="now.html">/now</a>
+      <a href="about.html">about</a>
+      <a href="mailto:steven@swf.wtf">contact</a>
+    </div>
+  </footer>
+</div>
+
+<script defer src="assets/js/site.js"></script>
+<script defer src="assets/js/index.js"></script>
+
+<script defer src="assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

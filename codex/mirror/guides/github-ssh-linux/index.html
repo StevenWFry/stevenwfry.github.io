@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub SSH Keys on Linux — swf.wtf</title>
+<meta name="description" content="Generate an ed25519 key, add it to ssh-agent, and push to GitHub without ever typing a password again. Fedora, Ubuntu, Debian, Arch, and Mint.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/github-ssh-linux/"> <meta property="og:title" content="GitHub SSH Keys on Linux — swf.wtf"> <meta property="og:description" content="Generate an ed25519 key, add it to ssh-agent, and push to GitHub without ever typing a password again. Fedora, Ubuntu, Debian, Arch, and Mint."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/github-ssh-linux/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="GitHub SSH Keys on Linux — swf.wtf"> <meta name="twitter:description" content="Generate an ed25519 key, add it to ssh-agent, and push to GitHub without ever typing a password again. Fedora, Ubuntu, Debian, Arch, and Mint."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"GitHub SSH Keys on Linux — swf.wtf","description":"Generate an ed25519 key, add it to ssh-agent, and push to GitHub without ever typing a password again. Fedora, Ubuntu, Debian, Arch, and Mint.","url":"https://swf.wtf/guides/github-ssh-linux/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/github-ssh-linux.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <div class="nav-distros">
+      <button class="nav-distro-btn" onclick="switchTab('fedora')">Fedora</button>
+      <button class="nav-distro-btn" onclick="switchTab('ubuntu')">Ubuntu</button>
+      <button class="nav-distro-btn" onclick="switchTab('debian')">Debian</button>
+      <button class="nav-distro-btn" onclick="switchTab('arch')">Arch</button>
+      <button class="nav-distro-btn" onclick="switchTab('mint')">Mint</button>
+    </div>
+    <a href="../../">← home</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-tag">Reference guide</div>
+    <h1>GitHub SSH Keys on Linux</h1>
+    <p class="subtitle">Generate a proper ed25519 key, wire it into the ssh-agent, upload it to GitHub, and never type a password again. Pick your distro.</p>
+
+    <div class="intro-box">
+      <h2>// Why SSH over HTTPS?</h2>
+      <p style="font-size:0.87rem; color: var(--muted); line-height:1.65;">HTTPS asks for your credentials on every push. SSH authenticates silently with a key pair — set it up once, forget about it forever.</p>
+      <div class="features">
+        <div class="feature"><span>→</span> No password prompts</div>
+        <div class="feature"><span>→</span> Secure ed25519 keys</div>
+        <div class="feature"><span>→</span> Works with ssh-agent</div>
+        <div class="feature"><span>→</span> One key, all repos</div>
+        <div class="feature"><span>→</span> Multi-account support</div>
+        <div class="feature"><span>→</span> Required for deploy keys</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- DISTRO TABS -->
+  <div class="distro-tabs">
+    <button class="tab-btn active" onclick="switchTab('fedora')" id="tab-fedora">🎩 Fedora</button>
+    <button class="tab-btn" onclick="switchTab('ubuntu')" id="tab-ubuntu">🟠 Ubuntu</button>
+    <button class="tab-btn" onclick="switchTab('debian')" id="tab-debian">🌀 Debian</button>
+    <button class="tab-btn" onclick="switchTab('arch')" id="tab-arch">🏹 Arch / Manjaro</button>
+    <button class="tab-btn" onclick="switchTab('mint')" id="tab-mint">🌿 Linux Mint</button>
+  </div>
+
+  <!-- ══ FEDORA ══ -->
+  <div class="distro-panel active" id="panel-fedora">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Check for existing SSH keys</div></div>
+        <div class="step-desc">Before generating anything new, check if you already have a key pair in <strong>~/.ssh</strong>. If you see <strong>id_ed25519.pub</strong> or <strong>id_rsa.pub</strong>, skip to step 3.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ls -al ~/.ssh</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span>If <code>~/.ssh</code> doesn't exist yet, that's fine — <code>ssh-keygen</code> will create it automatically.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Generate a new ed25519 key</div></div>
+        <div class="step-desc">Use <strong>ed25519</strong> — faster and more secure than the older RSA approach. Replace the email with the one on your GitHub account.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span></pre>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>When prompted for a file location, press <strong>Enter</strong> to accept the default (<code>~/.ssh/id_ed25519</code>). Add a passphrase for extra security — you'll only type it once per session thanks to ssh-agent.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Add the key to ssh-agent</div></div>
+        <div class="step-desc">The agent holds your decrypted key in memory so you're not prompted for a passphrase on every push.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># Start the agent</span>
+eval "$(ssh-agent -s)"
+
+<span class="comment"># Register your key</span>
+ssh-add ~/.ssh/id_ed25519</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span><strong>Persist across reboots on Fedora:</strong> Enable the systemd user socket so the agent starts automatically: <code>systemctl --user enable --now ssh-agent</code>, then add <code>export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"</code> to your <code>~/.zshrc</code>.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Copy your public key to the clipboard</div></div>
+        <div class="step-desc">Install a clipboard utility and pipe the public key into it. Only ever share the <strong>.pub</strong> file — the private key never leaves your machine.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># Install xclip (X11) or wl-clipboard (Wayland)</span>
+sudo dnf install -y xclip
+
+<span class="comment"># Copy to clipboard — X11</span>
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+<span class="comment"># Or if you're on Wayland (common on Fedora 43+)</span>
+sudo dnf install -y wl-clipboard
+cat ~/.ssh/id_ed25519.pub | wl-copy</pre>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>Not sure which display server you're on? Run <code>echo $XDG_SESSION_TYPE</code>. If it says <code>wayland</code>, use <code>wl-copy</code>.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">5</div><div class="step-title">Add the key to GitHub</div></div>
+        <div class="step-desc">In your browser, navigate to <strong>github.com → Settings → SSH and GPG keys → New SSH key</strong>. Paste your public key, give it a recognisable title (e.g. <strong>fedora43-laptop</strong>), and click <strong>Add SSH key</strong>.</div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>Make sure there are no trailing newlines or extra spaces when you paste. The key must start with <code>ssh-ed25519</code> and end with your email address.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">6</div><div class="step-title">Test the connection</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh -T git@github.com</pre>
+        </div>
+        <div class="verify-box">
+          <h3>// Expected output</h3>
+          <p>If everything is wired up correctly you'll see:</p>
+          <div class="code-block" style="margin: 12px 0 0;">
+            <div class="code-header"><span class="code-lang">output</span></div>
+            <pre><span class="muted">Hi username! You've successfully authenticated,
+but GitHub does not provide shell access.</span></pre>
+          </div>
+          <p style="margin-top:12px">All git operations over SSH URLs will now authenticate silently.</p>
+        </div>
+      </div>
+
+      <div class="step step-bonus">
+        <div class="step-header"><div class="step-num" style="font-size:0.55rem;width:32px;border-radius:4px;background:rgba(255,214,10,0.1);border-color:rgba(255,214,10,0.2);color:var(--accent3)">+1</div><div class="step-title">Configure ~/.ssh/config for multiple accounts</div></div>
+        <div class="step-desc">If you use more than one GitHub account (personal + work), map different hostnames to different keys.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">~/.ssh/config</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># Personal account</span>
+<span class="flag">Host</span> github.com
+  HostName     github.com
+  User         git
+  IdentityFile <span class="path">~/.ssh/id_ed25519</span>
+
+<span class="comment"># Work account</span>
+<span class="flag">Host</span> github-work
+  HostName     github.com
+  User         git
+  IdentityFile <span class="path">~/.ssh/id_ed25519_work</span></pre>
+        </div>
+        <div class="step-desc" style="padding-top:0">Clone work repos with: <code style="font-family:var(--font-mono);font-size:0.78rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">git clone git@github-work:ORG/REPO.git</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num" style="font-size:0.6rem;width:40px;border-radius:4px">TL;DR</div><div class="step-title">The whole thing in one block</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash — full setup</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># 1. Generate key</span>
+ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span>
+
+<span class="comment"># 2. Start agent + add key</span>
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+<span class="comment"># 3. Install clipboard tool + copy public key</span>
+sudo dnf install -y xclip
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+<span class="comment"># (Wayland: sudo dnf install -y wl-clipboard && cat ~/.ssh/id_ed25519.pub | wl-copy)</span>
+
+<span class="comment"># 4. Paste into github.com → Settings → SSH and GPG keys</span>
+
+<span class="comment"># 5. Test</span>
+ssh -T git@github.com</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ UBUNTU ══ -->
+  <div class="distro-panel" id="panel-ubuntu">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Check for existing SSH keys</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ls -al ~/.ssh</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span>If you see <code>id_ed25519.pub</code> or <code>id_rsa.pub</code>, you already have a key. Skip to step 3.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Generate a new ed25519 key</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span></pre>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>Press <strong>Enter</strong> to accept the default save location. Add a passphrase — you'll only type it once per session.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Add the key to ssh-agent</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span><strong>Persist across reboots:</strong> Ubuntu's GNOME Keyring often handles this automatically. If not, add <code>eval "$(ssh-agent -s)"</code> and <code>ssh-add ~/.ssh/id_ed25519</code> to your <code>~/.bashrc</code> or <code>~/.zshrc</code>.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Copy your public key to the clipboard</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># Install xclip</span>
+sudo apt install -y xclip
+
+<span class="comment"># Copy to clipboard — X11</span>
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+<span class="comment"># Or on Wayland (Ubuntu 22.04+)</span>
+sudo apt install -y wl-clipboard
+cat ~/.ssh/id_ed25519.pub | wl-copy</pre>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>Check your session type with <code>echo $XDG_SESSION_TYPE</code>. Ubuntu 22.04+ defaults to Wayland on supported hardware.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">5</div><div class="step-title">Add the key to GitHub</div></div>
+        <div class="step-desc">Go to <strong>github.com → Settings → SSH and GPG keys → New SSH key</strong>. Paste your key, give it a title (e.g. <strong>ubuntu-desktop</strong>), and click <strong>Add SSH key</strong>.</div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>The pasted key must start with <code>ssh-ed25519</code> and end with your email — no extra whitespace.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">6</div><div class="step-title">Test the connection</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh -T git@github.com</pre>
+        </div>
+        <div class="verify-box">
+          <h3>// Expected output</h3>
+          <div class="code-block" style="margin: 12px 0 0;">
+            <div class="code-header"><span class="code-lang">output</span></div>
+            <pre><span class="muted">Hi username! You've successfully authenticated,
+but GitHub does not provide shell access.</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num" style="font-size:0.6rem;width:40px;border-radius:4px">TL;DR</div><div class="step-title">The whole thing in one block</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash — full setup</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span>
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+sudo apt install -y xclip
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+<span class="comment"># Paste into github.com → Settings → SSH and GPG keys</span>
+ssh -T git@github.com</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DEBIAN ══ -->
+  <div class="distro-panel" id="panel-debian">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Check for existing SSH keys</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ls -al ~/.ssh</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span>If you see <code>id_ed25519.pub</code> or <code>id_rsa.pub</code>, you already have a key. Skip to step 3.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Generate a new ed25519 key</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Add the key to ssh-agent</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519</pre>
+        </div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>Debian Stable may ship an older <code>openssh-client</code>. If <code>ssh-keygen -t ed25519</code> fails, run <code>sudo apt install -y openssh-client</code> to ensure you have a current version.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Copy your public key to the clipboard</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># Install xclip</span>
+sudo apt install -y xclip
+
+<span class="comment"># Copy to clipboard</span>
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+<span class="comment"># No clipboard tool available? Just print and copy manually:</span>
+cat ~/.ssh/id_ed25519.pub</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">5</div><div class="step-title">Add the key to GitHub</div></div>
+        <div class="step-desc">Go to <strong>github.com → Settings → SSH and GPG keys → New SSH key</strong>. Paste your key, give it a title (e.g. <strong>debian-machine</strong>), and click <strong>Add SSH key</strong>.</div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>The pasted key must start with <code>ssh-ed25519</code> and end with your email — no extra whitespace.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">6</div><div class="step-title">Test the connection</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh -T git@github.com</pre>
+        </div>
+        <div class="verify-box">
+          <h3>// Expected output</h3>
+          <div class="code-block" style="margin: 12px 0 0;">
+            <div class="code-header"><span class="code-lang">output</span></div>
+            <pre><span class="muted">Hi username! You've successfully authenticated,
+but GitHub does not provide shell access.</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num" style="font-size:0.6rem;width:40px;border-radius:4px">TL;DR</div><div class="step-title">The whole thing in one block</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash — full setup</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span>
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+sudo apt install -y xclip
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+<span class="comment"># Paste into github.com → Settings → SSH and GPG keys</span>
+ssh -T git@github.com</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ ARCH ══ -->
+  <div class="distro-panel" id="panel-arch">
+    <div class="steps">
+
+      <div class="callout tip" style="margin: 0 0 16px;">
+        <span class="callout-icon">🏹</span>
+        <span><strong>Arch / Manjaro:</strong> OpenSSH is usually already installed. The process is identical to other distros — only the clipboard package manager differs.</span>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Check for existing SSH keys</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ls -al ~/.ssh</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span>If you see <code>id_ed25519.pub</code> or <code>id_rsa.pub</code>, skip to step 3.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Generate a new ed25519 key</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Add the key to ssh-agent</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span><strong>Persist on Arch:</strong> Enable the systemd user socket with <code>systemctl --user enable --now ssh-agent</code> and set <code>SSH_AUTH_SOCK</code> in your shell config. Alternatively, KDE Wallet and GNOME Keyring both handle this automatically if you're using a full desktop.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Copy your public key to the clipboard</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># X11</span>
+sudo pacman -S xclip
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+<span class="comment"># Wayland</span>
+sudo pacman -S wl-clipboard
+cat ~/.ssh/id_ed25519.pub | wl-copy</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">5</div><div class="step-title">Add the key to GitHub</div></div>
+        <div class="step-desc">Go to <strong>github.com → Settings → SSH and GPG keys → New SSH key</strong>. Paste your key, give it a title (e.g. <strong>arch-desktop</strong>), and click <strong>Add SSH key</strong>.</div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>The key must start with <code>ssh-ed25519</code> and end with your email — no extra whitespace.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">6</div><div class="step-title">Test the connection</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh -T git@github.com</pre>
+        </div>
+        <div class="verify-box">
+          <h3>// Expected output</h3>
+          <div class="code-block" style="margin: 12px 0 0;">
+            <div class="code-header"><span class="code-lang">output</span></div>
+            <pre><span class="muted">Hi username! You've successfully authenticated,
+but GitHub does not provide shell access.</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num" style="font-size:0.6rem;width:40px;border-radius:4px">TL;DR</div><div class="step-title">The whole thing in one block</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash — full setup</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span>
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+sudo pacman -S xclip
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+<span class="comment"># Paste into github.com → Settings → SSH and GPG keys</span>
+ssh -T git@github.com</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MINT ══ -->
+  <div class="distro-panel" id="panel-mint">
+    <div class="steps">
+
+      <div class="callout tip" style="margin: 0 0 16px;">
+        <span class="callout-icon">🌿</span>
+        <span><strong>Linux Mint</strong> is Ubuntu/Debian-based — the process is identical to Ubuntu. Just swap in your Mint machine name where prompted for a key title.</span>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Check for existing SSH keys</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ls -al ~/.ssh</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span>If you see <code>id_ed25519.pub</code> or <code>id_rsa.pub</code>, skip to step 3.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Generate a new ed25519 key</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Add the key to ssh-agent</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519</pre>
+        </div>
+        <div class="callout info"><span class="callout-icon">ℹ</span><span>Mint's desktop environment (Cinnamon, MATE, or Xfce) may manage the ssh-agent automatically via GNOME Keyring. If you're not being prompted for your passphrase repeatedly, it's already working.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Copy your public key to the clipboard</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo apt install -y xclip
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard</pre>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>Alternatively, open <code>~/.ssh/id_ed25519.pub</code> in a text editor and select all → copy. The result is the same.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">5</div><div class="step-title">Add the key to GitHub</div></div>
+        <div class="step-desc">Go to <strong>github.com → Settings → SSH and GPG keys → New SSH key</strong>. Paste your key, give it a title (e.g. <strong>mint-laptop</strong>), and click <strong>Add SSH key</strong>.</div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>The key must start with <code>ssh-ed25519</code> and end with your email — no extra whitespace.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">6</div><div class="step-title">Test the connection</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh -T git@github.com</pre>
+        </div>
+        <div class="verify-box">
+          <h3>// Expected output</h3>
+          <div class="code-block" style="margin: 12px 0 0;">
+            <div class="code-header"><span class="code-lang">output</span></div>
+            <pre><span class="muted">Hi username! You've successfully authenticated,
+but GitHub does not provide shell access.</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num" style="font-size:0.6rem;width:40px;border-radius:4px">TL;DR</div><div class="step-title">The whole thing in one block</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash — full setup</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>ssh-keygen -t ed25519 -C <span class="str">"you@example.com"</span>
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+sudo apt install -y xclip
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+<span class="comment"># Paste into github.com → Settings → SSH and GPG keys</span>
+ssh -T git@github.com</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="troubleshoot">
+    <h2>Troubleshooting</h2>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Permission denied (publickey) <span class="arrow">▶</span></div>
+      <div class="trouble-a">Three things to check: (1) Is your key loaded? Run <code>ssh-add -l</code> — if it returns "The agent has no identities", run <code>ssh-add ~/.ssh/id_ed25519</code>. (2) Did you add the <strong>public</strong> key (<code>.pub</code>) to GitHub, not the private one? (3) Is your remote URL using SSH, not HTTPS? Check with <code>git remote -v</code> — it should start with <code>git@github.com</code>, not <code>https://</code>.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Asked for passphrase on every push <span class="arrow">▶</span></div>
+      <div class="trouble-a">The ssh-agent isn't running or your key isn't loaded into it. Run <code>eval "$(ssh-agent -s)"</code> followed by <code>ssh-add ~/.ssh/id_ed25519</code>. To make this permanent on Fedora, enable the systemd user socket: <code>systemctl --user enable --now ssh-agent</code> and add <code>export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"</code> to your <code>~/.zshrc</code>. On Ubuntu/Mint, GNOME Keyring usually handles this automatically.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Still prompted for username and password after setup <span class="arrow">▶</span></div>
+      <div class="trouble-a">Your remote is using HTTPS, not SSH. Check with <code>git remote -v</code>. If you see <code>https://github.com/...</code>, update it: <code>git remote set-url origin git@github.com:USER/REPO.git</code>. Replace USER and REPO with your actual GitHub username and repository name.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">ssh -T returns "Host key verification failed" <span class="arrow">▶</span></div>
+      <div class="trouble-a">GitHub's host key isn't in your <code>~/.ssh/known_hosts</code> file, or it changed. The safest fix: run <code>ssh-keyscan github.com >> ~/.ssh/known_hosts</code> to add the current key. Then retry. If you've connected before and it's suddenly changed, that's worth investigating before proceeding.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Pushing to the wrong GitHub account <span class="arrow">▶</span></div>
+      <div class="trouble-a">If you have multiple keys, SSH may be using the wrong one. Check which key is being used with <code>ssh -vT git@github.com</code> and look for the "Offering public key" line. To fix, set up a <code>~/.ssh/config</code> file (see the bonus step in any distro panel above) mapping different host aliases to different keys, then update your remote URL to use the alias: <code>git remote set-url origin git@github-work:ORG/REPO.git</code>.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">// swf<span>.wtf</span> — Steven William Fry</div>
+    <div class="footer-links">
+      <a href="../../">home</a>
+      <a href="../../guides/fedora-setup/">fedora guide</a>
+      <a href="mailto:steven@swf.wtf">contact</a>
+    </div>
+  </footer>
+
+</div>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

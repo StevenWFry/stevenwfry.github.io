@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;700&display=swap');
+
+:root {
+  --codex-bg: #fff8ee;
+  --codex-bg-accent: #ffe4bc;
+  --codex-surface: rgba(255, 255, 255, 0.78);
+  --codex-surface-strong: rgba(255, 255, 255, 0.92);
+  --codex-text: #1f1a16;
+  --codex-muted: #5f554d;
+  --codex-border: rgba(31, 26, 22, 0.14);
+  --codex-accent: #ff5a36;
+  --codex-accent-2: #0a8f85;
+  --codex-shadow: 0 18px 40px rgba(73, 44, 14, 0.16);
+}
+
+html[data-codex-theme="ocean"] {
+  --codex-bg: #e9f7ff;
+  --codex-bg-accent: #c6ebff;
+  --codex-surface: rgba(255, 255, 255, 0.8);
+  --codex-surface-strong: rgba(255, 255, 255, 0.94);
+  --codex-text: #10293d;
+  --codex-muted: #3c576d;
+  --codex-border: rgba(16, 41, 61, 0.14);
+  --codex-accent: #0075b8;
+  --codex-accent-2: #00a58d;
+  --codex-shadow: 0 18px 40px rgba(12, 44, 68, 0.14);
+}
+
+html[data-codex-theme="graphite"] {
+  --codex-bg: #121820;
+  --codex-bg-accent: #1f2935;
+  --codex-surface: rgba(24, 31, 40, 0.8);
+  --codex-surface-strong: rgba(24, 31, 40, 0.94);
+  --codex-text: #eaf2f8;
+  --codex-muted: #a0b3c3;
+  --codex-border: rgba(234, 242, 248, 0.16);
+  --codex-accent: #ff8448;
+  --codex-accent-2: #29c9bb;
+  --codex-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+body.codex-restyled {
+  background:
+    radial-gradient(1000px 580px at 6% -14%, color-mix(in srgb, var(--codex-accent) 18%, transparent), transparent 56%),
+    radial-gradient(850px 500px at 96% 2%, color-mix(in srgb, var(--codex-accent-2) 18%, transparent), transparent 56%),
+    linear-gradient(160deg, var(--codex-bg), var(--codex-bg-accent)) !important;
+  color: var(--codex-text) !important;
+  font-family: "Manrope", "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+  padding-top: 64px;
+  min-height: 100vh;
+}
+
+body.codex-restyled::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 11px,
+    color-mix(in srgb, var(--codex-accent) 4%, transparent) 11px,
+    color-mix(in srgb, var(--codex-accent) 4%, transparent) 12px
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+body.codex-restyled .cursor,
+body.codex-restyled #cursor {
+  display: none !important;
+}
+
+/* Restore native cursor across mirrored pages that originally set cursor:none. */
+body.codex-restyled,
+body.codex-restyled * {
+  cursor: auto !important;
+}
+
+body.codex-restyled a,
+body.codex-restyled button,
+body.codex-restyled [role="button"],
+body.codex-restyled summary,
+body.codex-restyled label[for],
+body.codex-restyled select {
+  cursor: pointer !important;
+}
+
+body.codex-restyled input,
+body.codex-restyled textarea {
+  cursor: text !important;
+}
+
+.codex-mirror-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.68rem 0.95rem;
+  background: color-mix(in srgb, var(--codex-surface-strong) 88%, transparent);
+  border-bottom: 1px solid var(--codex-border);
+  backdrop-filter: blur(10px);
+}
+
+.codex-mirror-toolbar .codex-left,
+.codex-mirror-toolbar .codex-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.codex-mirror-toolbar .codex-badge {
+  font-family: "Bricolage Grotesque", "Manrope", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  letter-spacing: 0.08em;
+  font-size: 0.88rem;
+  color: var(--codex-text);
+  text-decoration: none;
+}
+
+.codex-mirror-toolbar .codex-badge small {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  margin-left: 0.35rem;
+  color: var(--codex-muted);
+}
+
+.codex-mirror-toolbar a,
+.codex-mirror-toolbar button {
+  appearance: none;
+  border: 1px solid var(--codex-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--codex-surface) 84%, transparent);
+  color: var(--codex-text);
+  font: 700 0.72rem "JetBrains Mono", monospace;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.62rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.codex-mirror-toolbar a:hover,
+.codex-mirror-toolbar button:hover {
+  border-color: color-mix(in srgb, var(--codex-accent) 44%, var(--codex-border));
+}
+
+body.codex-restyled a {
+  color: var(--codex-accent) !important;
+}
+
+body.codex-restyled a:hover {
+  color: color-mix(in srgb, var(--codex-accent) 84%, #ffffff 16%) !important;
+}
+
+body.codex-restyled h1,
+body.codex-restyled h2,
+body.codex-restyled h3,
+body.codex-restyled h4,
+body.codex-restyled .post-title,
+body.codex-restyled .hero-name,
+body.codex-restyled .section-title {
+  font-family: "Bricolage Grotesque", "Manrope", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+  color: var(--codex-text) !important;
+}
+
+body.codex-restyled .site-tag,
+body.codex-restyled .eyebrow,
+body.codex-restyled .page-tag,
+body.codex-restyled .post-meta,
+body.codex-restyled .section-label,
+body.codex-restyled .page-eyebrow,
+body.codex-restyled .subtitle,
+body.codex-restyled .page-subtitle,
+body.codex-restyled .post-subtitle {
+  color: var(--codex-muted) !important;
+}
+
+body.codex-restyled .container,
+body.codex-restyled .post-container,
+body.codex-restyled .listing,
+body.codex-restyled article,
+body.codex-restyled main,
+body.codex-restyled .manpage,
+body.codex-restyled .page,
+body.codex-restyled .section,
+body.codex-restyled .guide-card,
+body.codex-restyled .post-card,
+body.codex-restyled .link-card,
+body.codex-restyled .nf-card,
+body.codex-restyled .intro-box,
+body.codex-restyled .callout,
+body.codex-restyled .trouble-item,
+body.codex-restyled .step,
+body.codex-restyled .code-block,
+body.codex-restyled .terminal-bar,
+body.codex-restyled .post-nav,
+body.codex-restyled nav,
+body.codex-restyled header,
+body.codex-restyled footer {
+  background: color-mix(in srgb, var(--codex-surface) 88%, transparent) !important;
+  border-color: var(--codex-border) !important;
+  color: var(--codex-text) !important;
+}
+
+body.codex-restyled .guide-card,
+body.codex-restyled .post-card,
+body.codex-restyled .link-card,
+body.codex-restyled .step,
+body.codex-restyled .code-block,
+body.codex-restyled .trouble-item,
+body.codex-restyled .callout,
+body.codex-restyled .intro-box,
+body.codex-restyled .nf-card {
+  border: 1px solid var(--codex-border) !important;
+  box-shadow: var(--codex-shadow) !important;
+  border-radius: 16px !important;
+}
+
+body.codex-restyled pre,
+body.codex-restyled code,
+body.codex-restyled .code-lang,
+body.codex-restyled .cmd,
+body.codex-restyled .site-name,
+body.codex-restyled .logo,
+body.codex-restyled .stack-key {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", monospace !important;
+}
+
+body.codex-restyled pre,
+body.codex-restyled .code-block pre,
+body.codex-restyled .terminal-card pre {
+  background: color-mix(in srgb, var(--codex-bg) 75%, var(--codex-surface)) !important;
+  color: var(--codex-text) !important;
+  border: 1px solid var(--codex-border) !important;
+  border-radius: 12px !important;
+  padding: 0.82rem !important;
+}
+
+body.codex-restyled pre *,
+body.codex-restyled code *,
+body.codex-restyled .code-block pre * {
+  color: inherit !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body.codex-restyled button,
+body.codex-restyled .btn,
+body.codex-restyled .tab-btn,
+body.codex-restyled .nav-distro-btn,
+body.codex-restyled .copy-btn,
+body.codex-restyled .filter-btn {
+  border-color: var(--codex-border) !important;
+  background: color-mix(in srgb, var(--codex-surface) 90%, transparent) !important;
+  color: var(--codex-text) !important;
+}
+
+body.codex-restyled .btn-primary,
+body.codex-restyled .tab-btn.active,
+body.codex-restyled .nav-distro-btn.active,
+body.codex-restyled .filter-btn.active,
+body.codex-restyled .post-card.featured,
+body.codex-restyled .featured-project {
+  background: linear-gradient(135deg, var(--codex-accent), color-mix(in srgb, var(--codex-accent) 70%, #ffa06a)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+body.codex-restyled .btn-primary *,
+body.codex-restyled .tab-btn.active *,
+body.codex-restyled .nav-distro-btn.active *,
+body.codex-restyled .post-card.featured * {
+  color: #ffffff !important;
+}
+
+body.codex-restyled .ticker-item,
+body.codex-restyled .feature,
+body.codex-restyled .post-item,
+body.codex-restyled .pipeline-item,
+body.codex-restyled li,
+body.codex-restyled p {
+  color: var(--codex-text) !important;
+}
+
+body.codex-restyled .post-item-date,
+body.codex-restyled .post-item-tag,
+body.codex-restyled .link-info-desc,
+body.codex-restyled .post-desc,
+body.codex-restyled .guide-desc,
+body.codex-restyled .footer-note,
+body.codex-restyled .updated-note,
+body.codex-restyled .post-footer-sig,
+body.codex-restyled small {
+  color: var(--codex-muted) !important;
+}
+
+@media (max-width: 860px) {
+  body.codex-restyled {
+    padding-top: 96px;
+  }
+
+  .codex-mirror-toolbar {
+    padding: 0.58rem 0.65rem;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

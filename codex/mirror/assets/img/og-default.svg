@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="t d">
+  <title id="t">swf.wtf</title>
+  <desc id="d">Linux and developer guides by Steven William Fry.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#080b0f"/>
+      <stop offset="100%" stop-color="#0e1318"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="60" y="80" width="16" height="470" fill="#00ff9d"/>
+
+  <text x="110" y="270" fill="#d4e0ec" font-family="IBM Plex Mono, Menlo, Consolas, monospace" font-size="88" font-weight="700">
+    swf.wtf
+  </text>
+  <text x="110" y="330" fill="#5a7a94" font-family="IBM Plex Mono, Menlo, Consolas, monospace" font-size="38">
+    Linux guides, dev notes, and terminal workflows
+  </text>
+
+  <text x="110" y="520" fill="#00ff9d" font-family="IBM Plex Mono, Menlo, Consolas, monospace" font-size="28">
+    by Steven William Fry
+  </text>
+</svg>

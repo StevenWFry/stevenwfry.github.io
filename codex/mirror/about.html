@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>swf.wtf(1) — About</title>
+<meta name="description" content="man swf.wtf — a manual page for this blog.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/about.html"> <meta property="og:title" content="swf.wtf(1) — About"> <meta property="og:description" content="man swf.wtf — a manual page for this blog."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/about.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="swf.wtf(1) — About"> <meta name="twitter:description" content="man swf.wtf — a manual page for this blog."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"swf.wtf(1) — About","url":"https://swf.wtf/about.html","description":"man swf.wtf — a manual page for this blog."}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/about.css">
+<link rel="stylesheet" href="assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<div class="terminal-bar">
+  <div class="terminal-dots">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+  </div>
+  <div class="terminal-title">man swf.wtf — bash — 220×52</div>
+  <a href="" class="terminal-back">← swf.wtf</a>
+  <div class="terminal-cmd">q to quit <span class="blink">▋</span></div>
+</div>
+
+<div class="manpage">
+
+  <!-- MAN PAGE HEADER -->
+  <div class="man-header">
+    <span class="man-header-left">swf.wtf(1)</span>
+    <span class="man-header-center">User Commands</span>
+    <span class="man-header-right">swf.wtf(1)</span>
+  </div>
+
+  <!-- NAME -->
+  <div class="section">
+    <div class="section-title">Name</div>
+    <div class="synopsis">
+      <span class="cmd">swf.wtf</span> — a blog about Linux, developer tooling, and things that should be simpler than they are
+    </div>
+  </div>
+
+  <!-- SYNOPSIS -->
+  <div class="section">
+    <div class="section-title">Synopsis</div>
+    <div class="synopsis">
+      <span class="cmd">swf.wtf</span>
+      [<span class="opt">--read</span> <span class="arg">post</span>]
+      [<span class="opt">--rant</span> <span class="arg">topic</span>]
+      [<span class="opt">--footnote-count</span> <span class="arg">N</span>]
+      [<span class="opt">--coffee</span>]
+      [<span class="opt">--no-bullshit</span>]
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="section">
+    <div class="section-title">Description</div>
+    <div class="man-body">
+      <p><strong>swf.wtf</strong> is a personal technical blog operated by a human being who uses Fedora Linux by choice — and yes, that sentence does contain a certain amount of implied personality. It publishes guides, notes, and opinions about software development, Linux, and the specific kind of low-grade institutional frustration that accumulates when you spend enough time reading documentation that was clearly written by someone who understood the subject so completely that they forgot what it was like not to.</p>
+
+      <p>Posts on <strong>swf.wtf</strong> attempt to be technically accurate, occasionally funny, and — this is the part that distinguishes them from approximately forty percent of the internet — honest about when something is genuinely annoying.<sup><a href="#fn1">[1]</a></sup> The working assumption is that you are an adult who can handle sentences that contain both a <code>git rebase</code> command and an opinion about it.</p>
+
+      <p>The name <strong>swf.wtf</strong> is not explained here. This is intentional. It is, however, pronounced however you want to pronounce it, because the author lacks both the authority and the desire to police that.<sup><a href="#fn2">[2]</a></sup></p>
+    </div>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="section">
+    <div class="section-title">Options</div>
+    <div class="def-list">
+
+      <div class="def-item">
+        <div class="def-term">--read <span class="flag">post</span></div>
+        <div class="def-desc">The primary function. Posts cover Linux configuration, developer tooling, CLI workflows, and whatever else has recently caused the author to stare at a terminal for twenty minutes before discovering the solution was a single environment variable. Written with the assumption that you know what a terminal is but not the assumption that you've memorised every flag of every command.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--rant <span class="flag">topic</span></div>
+        <div class="def-desc">Some posts contain digressions. These digressions are clearly labelled and entirely optional, but they are also correct, so you should probably read them. Topics include but are not limited to: outdated documentation that hasn't been updated since 2019, software that adds a GUI to something that did not require a GUI, and the specific emotional experience of an error message that is technically accurate but provides zero actionable information.<sup><a href="#fn3">[3]</a></sup></div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--footnote-count <span class="flag">N</span></div>
+        <div class="def-desc">Posts on this site contain footnotes. More footnotes than are strictly necessary. This is a feature, not a bug. The footnotes are where things that are true but would disrupt the flow of the main text go to live. They deserve to exist. They have been through enough.<sup><a href="#fn4">[4]</a></sup></div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--coffee</div>
+        <div class="def-desc">Most content was produced between the hours of 9pm and 1am, which explains both the quality of the writing and the intensity of the opinions. This flag cannot be disabled.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">--no-bullshit</div>
+        <div class="def-desc">Enabled by default. Guides include TL;DR sections for the impatient and full explanations for the curious. Affiliate links: zero. Sponsored content: none. Introductory paragraphs explaining what SSH is before getting to the actual SSH guide: kept to a minimum, despite the temptation.<sup><a href="#fn5">[5]</a></sup></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AUTHOR -->
+  <div class="section">
+    <div class="section-title">Author</div>
+    <div class="man-body">
+      <p>A person. Specifically, a person who runs Fedora Linux on their primary machine, uses the terminal for tasks that could technically be accomplished with a GUI but aren't, and has opinions about SSH key algorithms that are, frankly, completely proportionate to the situation and not at all excessive.</p>
+
+      <p>Professional background: software. Specific details: deliberately omitted, because the about page of a personal blog is not a LinkedIn profile and the author would like to keep it that way. What you need to know is that the technical content is written from experience, not from reading three Stack Overflow answers and synthesising them into false confidence.<sup><a href="#fn6">[6]</a></sup></p>
+
+      <p>The author's relationship with Linux began the way most people's relationships with Linux begin: with an Ubuntu live USB, an afternoon of ambient overconfidence, and the slowly dawning realisation that the Wi-Fi driver situation was going to require a second laptop to resolve. Things have improved substantially since then. The opinions have only deepened.</p>
+    </div>
+
+    <div class="note-block">
+      <span class="note-label">Note — On the choice of Fedora</span>
+      Fedora was chosen after extensive use of Ubuntu (fine, opinionated in ways that occasionally conflict with the user's opinions), Arch (excellent, requires the kind of ongoing maintenance commitment usually reserved for vintage motorcycles), and Debian (stable in the way that a geological formation is stable — technically admirable, practically inconvenient when you need software from this decade). Fedora sits at a point on the stability/freshness curve that suits the author's temperament. This note exists because the author has been asked about the distro choice before and would like to answer it once, here, in a footnote-adjacent block, rather than in every comment section for the rest of the blog's existence.<sup><a href="#fn7">[7]</a></sup>
+    </div>
+  </div>
+
+  <!-- ENVIRONMENT -->
+  <div class="section">
+    <div class="section-title">Environment</div>
+    <div class="def-list">
+
+      <div class="def-item">
+        <div class="def-term">OS</div>
+        <div class="def-desc">Fedora Linux (current release). Updated regularly. Occasionally broken by an update and then fixed within twenty minutes, which the author considers an acceptable trade-off for having current software.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">EDITOR</div>
+        <div class="def-desc">Set to something reasonable. The editor wars will not be relitigated here. Both sides have made their arguments. The arguments are well known. The author has chosen. The choice will not be disclosed because the author values their inbox.<sup><a href="#fn8">[8]</a></sup></div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">SHELL</div>
+        <div class="def-desc">zsh. It's on the machine, it has good completion, and the prompt customisation is worth the ten minutes of configuration. bash remains the correct answer for scripts you intend to share with other people's machines, which is a different question.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">TERMINAL</div>
+        <div class="def-desc">Something that renders colour and doesn't fight with tmux. That's the entire specification. The author has stopped having strong feelings about terminal emulators because there is a finite number of hours in a life.</div>
+      </div>
+
+      <div class="def-item">
+        <div class="def-term">COFFEE</div>
+        <div class="def-desc">Present. Non-negotiable. Not a personality trait, just a practical dependency that has been in the requirements file for long enough that removing it would constitute a breaking change.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RETURN VALUE -->
+  <div class="section">
+    <div class="section-title">Return Value</div>
+    <div class="return-block">
+
+      <div class="return-item">
+        <div class="return-code">0</div>
+        <div class="return-desc">You read the post, the command worked, you learned something, life is marginally better. This is the desired outcome and the author is pleased.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">1</div>
+        <div class="return-desc">Something in the guide didn't work on your specific setup. This is not necessarily anyone's fault. Linux is a broad church. File a mental note, check the footnotes, try the thing that's slightly different about your system.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">2</div>
+        <div class="return-desc">You disagree with one of the opinions. That's fine. The opinions are offered freely and with the understanding that reasonable people can disagree. Unreasonable people can also disagree but they tend to do so at higher volume and the author has muted that frequency.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">127</div>
+        <div class="return-desc">Command not found. You're probably looking for a post that doesn't exist yet. Check back. It's likely in a draft state somewhere, half-finished, waiting for the author to stop second-guessing the third paragraph.</div>
+      </div>
+
+      <div class="return-item">
+        <div class="return-code">SIGINT</div>
+        <div class="return-desc">You got halfway through a post and had to go do something else. The post will still be here. The author does not take this personally. Much.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BUGS -->
+  <div class="section">
+    <div class="section-title">Bugs</div>
+    <div class="man-body">
+      <p>Technical errors, factual inaccuracies, and commands that have stopped working because a package maintainer decided to change the flag syntax without telling anyone — these are bugs, and the author wants to know about them. The method for reporting them is: write a message, send it somehow, be specific about what broke and how. This process is deliberately unstructured because the author has watched elaborate bug reporting systems get adopted, ignored, and eventually abandoned by projects that would have been better served by a simple email address.</p>
+
+      <p>Opinions you disagree with are not bugs. Jokes that didn't land are not bugs, though the author accepts that they represent a form of failure. Footnotes that are longer than the main text they annotate are a documented feature and will not be patched.</p>
+    </div>
+  </div>
+
+  <!-- SEE ALSO -->
+  <div class="section">
+    <div class="section-title">See Also</div>
+    <div class="see-also">
+      <a href="">swf.wtf</a> — home<br>
+      <a href="guides/fedora-setup/">fedora-setup(7)</a> — Fedora × Omakub setup guide<br>
+      <a href="guides/sql-guide/">sql-guide(1)</a> — Oracle 19c + MySQL study notes<br>
+      <a href="guides/coding-with-ai-agents/">coding-with-ai-agents(1)</a> — Claude AI, Claude Code, and Codex guide<br>
+      <a href="guides/git-guide/">git-guide(1)</a> — Git from Zero beginner guide<br>
+      <a href="guides/github-ssh-linux/">github-ssh-linux(1)</a> — SSH keys on Linux<br>
+      <a href="now.html">now(1)</a> — what I'm currently up to<br>
+      <a href="mailto:steven@swf.wtf">steven@swf.wtf</a> — contact<br>
+      <a href="https://github.com/StevenWFry">github.com/StevenWFry</a> — source code<br>
+      <a href="https://mastodon.social/@swfwtf">@swfwtf@mastodon.social</a> — Mastodon
+    </div>
+  </div>
+
+  <!-- FOOTNOTES -->
+  <div class="footnotes-section">
+    <div class="section-title" style="margin-bottom:1rem;">Footnotes</div>
+
+    <div class="footnote" id="fn1">
+      <span class="fn-num">[1]</span>
+      <span>The forty percent figure is approximate. The actual figure for "internet content that accurately reflects the emotional experience of doing the thing it describes" is difficult to measure, but any developer who has read a tutorial that described a complex multi-step process as "simply" or "just" doing something knows the feeling of being lied to by an adverb. This blog attempts to use the word "simply" only when the thing is, demonstrably, simple. Which is less often than you might hope.</span>
+    </div>
+
+    <div class="footnote" id="fn2">
+      <span class="fn-num">[2]</span>
+      <span>Current leading pronunciations observed in the wild include "swiff dot what the f", "swuff dot wtf" (treating wtf as an initialism within a domain that is itself an initialism, which is a level of recursive obscurity the author finds endearing), and simply reading out the URL letter by letter, which takes longer but has an undeniable precision to it. All are accepted. None are wrong. This is the one area of this blog where there is no opinion.</span>
+    </div>
+
+    <div class="footnote" id="fn3">
+      <span class="fn-num">[3]</span>
+      <span>"No such file or directory" is perhaps the most technically accurate and least useful error message in the history of computing. Yes. That has been established. The file is not there. What would be helpful is knowing whether it was never there, was there and was deleted, was there under a different name, or requires a package that wasn't installed. The operating system knows some of these things. It has chosen not to share them. This represents a philosophical position about user relationships with their tools that the author disagrees with, at length, usually at around 11pm.</span>
+    </div>
+
+    <div class="footnote" id="fn4">
+      <span class="fn-num">[4]</span>
+      <span>The footnotes are not an affectation. They are a structural solution to a genuine problem: technical writing contains information that is true and relevant but would derail the main argument if inserted inline. The alternatives are: omit the information (bad), include it anyway and lose the reader (also bad), or put it in a footnote where it can be found by those who want it and ignored by those who don't (good). David Foster Wallace used footnotes. Legal documents use footnotes. The author is in acceptable company, is the point.</span>
+    </div>
+
+    <div class="footnote" id="fn5">
+      <span class="fn-num">[5]</span>
+      <span>The introductory paragraph explaining what SSH is before an SSH guide is a genuine temptation, because it pads the word count, signals thoroughness, and provides an on-ramp for beginners. The problem is that anyone who needs SSH explained from first principles is probably not yet at the stage where this specific guide is useful to them, and anyone who is at that stage does not need three paragraphs explaining that SSH stands for Secure Shell and was designed by Tatu Ylönen in 1995. The author has made peace with not being all things to all readers.</span>
+    </div>
+
+    <div class="footnote" id="fn6">
+      <span class="fn-num">[6]</span>
+      <span>The "three Stack Overflow answers synthesised into false confidence" method of technical writing is more prevalent than the industry would like to admit. It produces content that is plausible, internally consistent, and wrong in ways that only become apparent when you try to follow it on a slightly different system configuration than the one the author used. The author has made this mistake. The author is not proud of it. The author now runs the commands before publishing them, which is the minimum viable standard and yet somehow distinguishes this blog from a meaningful portion of its competition.</span>
+    </div>
+
+    <div class="footnote" id="fn7">
+      <span class="fn-num">[7]</span>
+      <span>The distro choice note will not, in fact, prevent the question from appearing in comment sections. Nothing prevents a question from appearing in a comment section. The internet is a place where questions arrive regardless of whether they have already been answered, often with the energy of someone who believes they are the first person to have ever thought of asking. The author has made peace with this too. There is a lot of peace-making involved in maintaining a public presence on the internet. It is, in many ways, a practice in radical acceptance.</span>
+    </div>
+
+    <div class="footnote" id="fn8">
+      <span class="fn-num">[8]</span>
+      <span>The editor wars — specifically the vim versus emacs debate, which has been ongoing since approximately 1985 and shows no signs of resolution — represent one of the most sustained examples of human beings arguing about a preference as though it were a moral position. Both editors are good. Both communities contain people who are unreasonable about this in ways that suggest the editor preference is doing a lot of emotional heavy lifting. The author's choice is made, is comfortable, and is staying private, in the same way that one's vote is private: not because it is shameful, but because announcing it solves nothing and invites everything.</span>
+    </div>
+
+    <div class="footnote" id="fn9">
+      <span class="fn-num">[9]</span>
+      <span>The bash manual is 184 pages in its PDF form, which is remarkable for a program whose core value proposition is "runs commands in sequence." This is not a criticism. The feature set is genuinely extensive and much of it is useful. It is, however, a reminder that the tools we think of as simple — the ones we use without thinking, the ones that feel like furniture — often contain entire architectural philosophies that we have never examined. The author finds this humbling and occasionally terrifying in roughly equal measure.</span>
+    </div>
+
+  </div>
+
+  <!-- MAN PAGE FOOTER -->
+  <div class="man-footer">
+    <span>swf.wtf</span>
+    <span>February 2026</span>
+    <span>swf.wtf(1)</span>
+  </div>
+
+</div>
+
+<script defer src="assets/js/site.js"></script>
+
+<script defer src="assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

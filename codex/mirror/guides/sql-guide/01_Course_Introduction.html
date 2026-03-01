@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0 – Course Introduction (in which you realize SQL is both useful and slightly terrifying) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, when someone says “course objectives” your brain usually leaves the room. But this introduction actually matters, because it tells you what kind...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/01_Course_Introduction.html"> <meta property="og:title" content="Lesson 0 – Course Introduction (in which you realize SQL is both useful and slightly terrifying) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, when someone says “course objectives” your brain usually leaves the room. But this introduction actually matters, because it tells you what kind..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/01_Course_Introduction.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Lesson 0 – Course Introduction (in which you realize SQL is both useful and slightly terrifying) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, when someone says “course objectives” your brain usually leaves the room. But this introduction actually matters, because it tells you what kind..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Lesson 0 – Course Introduction (in which you realize SQL is both useful and slightly terrifying) - SQL Guide - swf.wtf","description":"And look, when someone says “course objectives” your brain usually leaves the room. But this introduction actually matters, because it tells you what kind...","url":"https://swf.wtf/guides/sql-guide/01_Course_Introduction.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 0 – Course Introduction (in which you realize SQL is both useful and slightly terrifying)</h1>
+    <p>And look, when someone says “course objectives” your brain usually leaves the room. But this introduction actually matters, because it tells you what kind of power you’re about to get – and how easily you could use it t...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, when someone says “course objectives” your brain usually leaves the room. But this introduction actually matters, because it tells you <strong>what kind of power</strong> you’re about to get – and how easily you could use it to, say, delete 100,000 rows instead of 10.</p>
+    <p>By the end of this course you should be able to:</p>
+    <ul>
+    <li>Define the goals and structure of the Oracle 19c SQL Workshop.</li>
+    <li>List key features of <strong>Oracle Database 19c</strong> and <strong>MySQL</strong>.</li>
+    <li>Explain what a <strong>relational database</strong> is, both in theory and on disk.</li>
+    <li>Describe how Oracle implements RDBMS and ORDBMS.</li>
+    <li>Recognize the <strong>HR schema</strong> and tables used for all the examples.</li>
+    <li>Pick and use sensible <strong>development tools</strong> (SQL Developer, MySQL Workbench, Live SQL, etc.).</li>
+    </ul>
+    <p>So yes, this is the part where we set expectations – before later chapters demonstrate how those expectations can be exceeded, abused, and rolled back with flashback.</p>
+    <hr>
+    <h2>1. Course Roadmap (a guided tour of future chaos)</h2>
+    <p>The course is structured into units and lessons that slowly escalate from “cute little SELECT” to “cross-database, time-zone-aware, multi-table upserts”.</p>
+    <p>You’ll work through:</p>
+    <ul>
+    <li><strong>Unit 1 – Retrieving, Restricting, and Sorting Data</strong><br>Basic <code>SELECT</code>, filtering, sorting, and row/column retrieval.</li>
+    <li><strong>Unit 2 – Grouping, Joining, and Combining Data</strong><br>Group functions, table joins, subqueries, and set operators.</li>
+    <li><strong>Unit 3 – Changing Structures and Data</strong><br>DML (INSERT, UPDATE, DELETE, MERGE) and DDL (CREATE, ALTER, DROP, etc.).</li>
+    <li><strong>Unit 4 – Data Dictionary and Schema Objects</strong><br>Data dictionary views, sequences, synonyms, indexes, and views.</li>
+    <li><strong>Unit 5 – Managing Schema Objects and Subqueries</strong><br>Managing objects and using subqueries to retrieve and manipulate data.</li>
+    <li><strong>Unit 6 – Controlling User Access</strong><br>Privileges, roles, and the moment you realize you should not be the DBA.</li>
+    <li><strong>Unit 7 – Advanced Queries and Time Zones</strong><br>Multi-table inserts, MERGE, flashback, and managing data across time zones.</li>
+    </ul>
+    <p>Along the way you get:</p>
+    <ul>
+    <li><strong>Standard practices and solutions</strong> – the exercises everyone sees.</li>
+    <li><strong>Additional “challenge” practices</strong> – the “are you sure you like pain?” option for extra SQL reps.</li>
+    </ul>
+    <hr>
+    <h2>2. Icons, Databases, and Why There Are Two of Them</h2>
+    <p>Because one database apparently wasn’t enough, this course uses <strong>Oracle Database 19c</strong> <strong>and</strong> <strong>MySQL</strong>.</p>
+    <ul>
+    <li>The <strong>database cylinder icon on the left</strong> → output from <strong>Oracle Database</strong>.</li>
+    <li>The <strong>icon on the right</strong> → output from <strong>MySQL</strong>.</li>
+    </ul>
+    <p>Same SQL family, different personalities:</p>
+    <ul>
+    <li>Oracle 19c is the big, enterprise-grade, “we run your bank” system.</li>
+    <li>MySQL is the “we run your startup, social network, and at least one game you’re slightly ashamed to admit you play” system.</li>
+    </ul>
+    <p>You’ll see both so that, later, you can’t say “oh, I only learned the <em>other</em> SQL.”</p>
+    <hr>
+    <h2>3. Oracle Database 19c and MySQL: The Big Picture</h2>
+    <h3>3.1 Oracle Database 19c focus areas</h3>
+    <p>Oracle 19c exists to be extremely serious about your data in a few key areas:</p>
+    <ul>
+    <li><strong>Information Management</strong> – store it, index it, keep it consistent.</li>
+    <li><strong>Application Development</strong> – PL/SQL, SQL, drivers, and tools for building apps.</li>
+    <li><strong>Infrastructure / Grids / Cloud</strong> – run on huge clusters or in Oracle Cloud.</li>
+    <li><strong>Key feature themes</strong>:</li>
+    <li>Manageability</li>
+    <li>Information integration</li>
+    <li>Security</li>
+    <li>Performance</li>
+    <li>High availability</li>
+    </ul>
+    <p>Which is a polite way of saying: “we expect your system never to go down, ever, and also to be very fast.”</p>
+    <h3>3.2 MySQL: the busy one</h3>
+    <p>MySQL is a modern relational database used by both:</p>
+    <ul>
+    <li><strong>Digital disruptors</strong> (startups, social networks, random apps that got huge), and</li>
+    <li><strong>Massive enterprises</strong> (governments, telcos, payment providers).</li>
+    </ul>
+    <p>Real‑world scale examples:</p>
+    <ul>
+    <li>Mobile network: supports <strong>800+ million subscribers</strong>.</li>
+    <li>Booking.com: <strong>2 billion events per day</strong>.</li>
+    <li>Government ID system: <strong>1+ billion citizens</strong>.</li>
+    <li>Social media: <strong>1.7 billion</strong> active users.</li>
+    <li>PayPal: ~<strong>100 TB</strong> of user data.</li>
+    <li>Candy Crush: <strong>850 million</strong> gameplays per day.</li>
+    </ul>
+    <p>So yes, that time your query was slow was probably your fault, not MySQL’s.</p>
+    <p>Supported platforms include:</p>
+    <ul>
+    <li>Windows</li>
+    <li>Linux</li>
+    <li>Oracle Solaris</li>
+    <li>macOS</li>
+    </ul>
+    <p>And it can be compiled on other platforms because apparently someone, somewhere, is still running that strange OS from 2003.</p>
+    <h3>3.3 MySQL Enterprise Edition extras</h3>
+    <p>MySQL Enterprise Edition adds the features you want when “little side project” becomes “production system with customers and lawyers”.</p>
+    <p>Highlights:</p>
+    <ul>
+    <li><strong>Scalability &amp; HA</strong>: Thread Pool, Group Replication, InnoDB Cluster, high availability.</li>
+    <li><strong>Security</strong>: Enterprise Authentication, Audit, Encryption / TDE, Firewall.</li>
+    <li><strong>Management</strong>: Enterprise Monitor, Enterprise Backup.</li>
+    <li><strong>Development &amp; Admin</strong>: Connectors, Workbench, Utilities.</li>
+    <li><strong>Support</strong>: Oracle Premier Support with 24×7×365 coverage, hot fixes, and people who actually know how the server works.</li>
+    </ul>
+    <p>Why care? Because when things go wrong at 3 a.m., Stack Overflow is not contractually obligated to answer.</p>
+    <hr>
+    <h2>4. Relational Database Concepts (a.k.a. “why everything is in tables”)</h2>
+    <p>The relational model was proposed by <strong>Dr. E. F. Codd</strong> in 1970 and has been quietly running most of civilization ever since.</p>
+    <p>Key ideas:</p>
+    <ul>
+    <li>Data lives in <strong>relations</strong> – which you know as <strong>tables</strong>.</li>
+    <li>A relation has <strong>rows</strong> (tuples) and <strong>columns</strong> (attributes).</li>
+    <li>There is a <strong>set of operators</strong> (SQL) to query and manipulate those relations.</li>
+    <li><strong>Data integrity</strong> rules keep everything accurate and consistent.</li>
+    </ul>
+    <p>“Relational” doesn’t mean “it’s about relationships” in the human sense; it means data is stored in <strong>related tables</strong> that can be joined by keys.</p>
+    <h3>4.1 From ideas to tables: entity and table models</h3>
+    <p>The journey from business idea to database looks like this:</p>
+    <ol>
+    <li>A human has an idea: “We need to track employees and departments.”</li>
+    <li>We build an <strong>entity model</strong> from that narrative.</li>
+    </ol>
+    <ul>
+    <li>Entities = things we care about (Employee, Department).</li>
+    <li>Attributes = properties (employee_id, last_name, department_id, etc.).</li>
+    </ul>
+    <ol>
+    <li>We map that to a <strong>table model</strong>: each entity becomes a <strong>table</strong>, each attribute becomes a <strong>column</strong>.</li>
+    </ol>
+    <p>Conventions:</p>
+    <ul>
+    <li><strong>Entity (table)</strong>: singular name, uppercase, drawn as a “soft box” (rounded corners).</li>
+    <li><strong>Attributes (columns)</strong>: usually lowercase in diagrams; mandatory ones marked with <code>*</code>, optional with <code>o</code>.</li>
+    <li><strong>Primary identifier</strong>: marked with <code>#</code> (primary key).</li>
+    <li>Secondary identifiers can form <strong>composite keys</strong> (less common, but they exist).</li>
+    </ul>
+    <h3>4.2 Primary keys, foreign keys, and “who’s the parent?”</h3>
+    <p>Every row should be uniquely identifiable. That’s the job of the <strong>primary key</strong>.</p>
+    <ul>
+    <li>In <code>EMPLOYEES</code>, the primary key is often <code>EMPLOYEE_ID</code>.</li>
+    <li>In <code>DEPARTMENTS</code>, the primary key is <code>DEPARTMENT_ID</code>.</li>
+    </ul>
+    <p>To relate tables:</p>
+    <ul>
+    <li><code>DEPARTMENTS.DEPARTMENT_ID</code> is the <strong>parent</strong> (primary key).</li>
+    <li><code>EMPLOYEES.DEPARTMENT_ID</code> is the <strong>child</strong> (foreign key).</li>
+    </ul>
+    <p>Foreign key rules:</p>
+    <ul>
+    <li>You must insert the <strong>parent</strong> rows first (departments).</li>
+    <li>Only then can you insert <strong>child</strong> rows that reference them (employees).</li>
+    </ul>
+    <p>So before you insert “Steven King in department 90”, department 90 has to exist in <code>DEPARTMENTS</code>. The database is basically insisting that your org chart make sense.</p>
+    <h3>4.3 Rows, columns, fields, and NULLs</h3>
+    <p>In relational terminology:</p>
+    <ul>
+    <li><strong>Row</strong> – a single record (e.g., one employee). Runs horizontally.</li>
+    <li><strong>Column</strong> – a single attribute (e.g., salary). Runs vertically.</li>
+    <li><strong>Field</strong> – the intersection of a row and a column (one specific value).<br>In spreadsheet language, that’s a “cell”.</li>
+    <li><strong>Primary key column</strong> – uniquely identifies rows; no duplicates, no missing values.</li>
+    <li><strong>Foreign key column</strong> – references another table’s primary key; can repeat, can be <code>NULL</code>.</li>
+    <li><strong>NULL</strong> – “no value / unknown / not applicable”, not zero, not empty string.</li>
+    </ul>
+    <p>In many tools, number columns are right‑aligned and character columns are left‑aligned, which is your first tiny clue about the data type.</p>
+    <hr>
+    <h2>5. The HR Schema: Your Playground</h2>
+    <p>For this course you’ll mostly work with the <strong>HR schema</strong> – a fictional but suspiciously realistic human resources schema.</p>
+    <p>Key tables include:</p>
+    <ul>
+    <li><code>EMPLOYEES</code></li>
+    <li><code>DEPARTMENTS</code></li>
+    <li><code>LOCATIONS</code></li>
+    <li><code>COUNTRIES</code></li>
+    <li><code>REGIONS</code></li>
+    <li><code>JOBS</code>, <code>JOB_HISTORY</code>, <code>JOB_GRADES</code></li>
+    </ul>
+    <p>Some details:</p>
+    <ul>
+    <li>Table names (in black/bold in diagrams) = the <strong>tables</strong>.</li>
+    <li>Column names (in lowercase) = the <strong>attributes</strong>.</li>
+    <li>Columns in blue in the diagram = <strong>primary key</strong> columns.</li>
+    <li><code>JOB_HISTORY</code> uses a <strong>composite key</strong> (two columns together form the unique identifier).</li>
+    <li><code>EMPLOYEES</code> has a <strong>self‑referential relationship</strong>: an employee’s <code>MANAGER_ID</code> can point to another <code>EMPLOYEE_ID</code> in the same table. That gives you a hierarchy (think org chart).</li>
+    </ul>
+    <p>About the data sets:</p>
+    <ul>
+    <li>For the <strong>first half</strong> of the course (roughly chapters 1–11), you use a smaller <code>EMPLOYEES</code> table with about <strong>20</strong> rows.</li>
+    <li>From <strong>chapter 12 onward</strong>, you switch to a larger <code>EMPLOYEES</code> table with <strong>107</strong> employees.</li>
+    </ul>
+    <p>So if your query result suddenly has five times more rows, it’s not necessarily wrong – you might just be in the “big data” version of HR.</p>
+    <hr>
+    <h2>6. SQL and Development Environments</h2>
+    <h3>6.1 What SQL actually is</h3>
+    <p><strong>SQL</strong> = Structured Query Language.</p>
+    <ul>
+    <li>ANSI standard language for relational databases.</li>
+    <li>Lets you <strong>define</strong> objects, <strong>retrieve</strong> data, and <strong>manipulate</strong> data.</li>
+    <li>Works at a <strong>set/logical</strong> level – you say <em>what</em> you want, not <em>how</em> to loop through rows.</li>
+    </ul>
+    <p>Major categories of SQL statements:</p>
+    <ul>
+    <li><strong>DML (Data Manipulation Language)</strong><br><code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>MERGE</code></li>
+    <li><strong>DDL (Data Definition Language)</strong><br><code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>RENAME</code>, <code>TRUNCATE</code>, <code>COMMENT</code></li>
+    <li><strong>DCL (Data Control Language)</strong><br><code>GRANT</code>, <code>REVOKE</code></li>
+    <li><strong>Transaction Control</strong><br><code>COMMIT</code>, <code>ROLLBACK</code>, <code>SAVEPOINT</code></li>
+    </ul>
+    <h3>6.2 Oracle development environments</h3>
+    <p>You have a few options:</p>
+    <ul>
+    <li><strong>SQL Developer</strong> – the main tool for this course. GUI, nice features, fewer chances to accidentally retype the same destructive command.</li>
+    <li><strong>SQL*Plus</strong> – command‑line, powerful, but less friendly for beginners.</li>
+    <li><strong>Oracle Live SQL</strong> – browser-based environment:</li>
+    <li>No install required.</li>
+    <li>Great for quick experiments and sharing snippets.</li>
+    </ul>
+    <p>The course assumes SQL Developer as your day‑to‑day Oracle environment.</p>
+    <h3>6.3 MySQL development environments</h3>
+    <p>For MySQL you’ll see:</p>
+    <ul>
+    <li><strong>MySQL Workbench</strong> – primary GUI for modeling, running queries, and administration.</li>
+    <li><strong><code>mysql</code> command-line client</strong> – interactive shell; scriptable, quick, a bit unforgiving.</li>
+    </ul>
+    <p>Again, think of Workbench as the place you’re meant to live, and the CLI as the place you go to when something is on fire.</p>
+    <hr>
+    <h2>7. Documentation, Resources, and Training Paths</h2>
+    <h3>7.1 Oracle 19c documentation highlights</h3>
+    <p>Useful docs include:</p>
+    <ul>
+    <li>Oracle Database New Features Guide</li>
+    <li>Oracle Database Concepts</li>
+    <li>Oracle Database SQL Language Reference</li>
+    <li>Oracle Database Reference</li>
+    <li>Oracle SQL Developer User&#x27;s Guide</li>
+    </ul>
+    <p>Additional learning resources:</p>
+    <ul>
+    <li>Oracle Learning Library</li>
+    <li>Oracle Cloud resources</li>
+    <li>SQL Developer home page &amp; tutorials</li>
+    </ul>
+    <h3>7.2 Oracle training and certification</h3>
+    <p>For <strong>developers</strong> the typical path is:</p>
+    <ul>
+    <li><strong>Introductory</strong>: Introduction to SQL (this course).</li>
+    <li><strong>Intermediate</strong>: PL/SQL Fundamentals.</li>
+    <li><strong>Advanced</strong>: SQL Tuning for Developers.</li>
+    </ul>
+    <p>Formats include ILT (instructor-led training), IVC (virtual classroom), and TOD (training on demand).</p>
+    <p>Certification examples:</p>
+    <ul>
+    <li>Oracle Database SQL Certified Associate</li>
+    <li>Oracle Database PL/SQL Certified Associate</li>
+    <li>Oracle Database PL/SQL Certified Professional</li>
+    </ul>
+    <p>Exams are delivered via <strong>Pearson VUE</strong> in 175+ countries, which means you can panic in a testing center almost anywhere on Earth.</p>
+    <h3>7.3 MySQL resources, training, and certification</h3>
+    <p><strong>Websites:</strong></p>
+    <ul>
+    <li><code>mysql.com</code> – product information, services, white papers, webinars, trial versions of MySQL Enterprise Edition.</li>
+    <li><code>dev.mysql.com</code> – Developer Zone, documentation, downloads.</li>
+    <li>GitHub – source code for the MySQL server and related tools.</li>
+    </ul>
+    <p><strong>Training paths:</strong></p>
+    <ul>
+    <li><strong>Introductory</strong>: MySQL Fundamentals (for devs and DBAs).</li>
+    <li><strong>Intermediate</strong>: MySQL for Developers, MySQL for Database Administrators.</li>
+    <li><strong>Advanced</strong>: MySQL Performance Tuning (for both), plus MySQL Cluster (for DBAs).</li>
+    </ul>
+    <p><strong>Certification:</strong></p>
+    <ul>
+    <li>Oracle Certified Professional, MySQL 5.6 Database Administrator.</li>
+    <li>Oracle Certified Professional, MySQL 5.6 Developer.</li>
+    </ul>
+    <p>Yes, even your MySQL skills can come with official paperwork.</p>
+    <hr>
+    <h2>8. What You Should Take Away from This Introduction</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Explain the <strong>goals of the course</strong> and where each unit fits.</li>
+    <li>Summarize key features of <strong>Oracle Database 19c</strong> and <strong>MySQL</strong>.</li>
+    <li>Describe what a <strong>relational database</strong> is and how tables relate using keys.</li>
+    <li>Recognize Oracle’s implementation of <strong>RDBMS</strong> and <strong>ORDBMS</strong> ideas.</li>
+    <li>Identify the <strong>HR schema</strong> and its main tables as your practice playground.</li>
+    <li>Choose and use appropriate <strong>development environments</strong> for Oracle and MySQL.</li>
+    </ul>
+    <p>The practice for this lesson typically covers:</p>
+    <ul>
+    <li>Starting SQL Developer.</li>
+    <li>Creating a new database connection.</li>
+    <li>Browsing tables and schemas.</li>
+    </ul>
+    <p>In other words: before we let you write queries that rearrange reality, we make sure you at least know how to log in.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="index.html">&larr; previous</a>
+    <a href="01_Course_Introduction.md">view source markdown</a>
+    <a href="02_Retrieving_Data_Using_the_SQL_SELECT_Statement.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

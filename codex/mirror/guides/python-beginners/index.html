@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python for Beginners - swf.wtf</title>
+<meta name="description" content="A practical Python beginner guide: install Python, run scripts, use virtual environments, install packages, and build your first clean project.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/python-beginners/"> <meta property="og:title" content="Python for Beginners - swf.wtf"> <meta property="og:description" content="A practical Python beginner guide: install Python, run scripts, use virtual environments, install packages, and build your first clean project."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/python-beginners/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Python for Beginners - swf.wtf"> <meta name="twitter:description" content="A practical Python beginner guide: install Python, run scripts, use virtual environments, install packages, and build your first clean project."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Python for Beginners - swf.wtf","description":"A practical Python beginner guide: install Python, run scripts, use virtual environments, install packages, and build your first clean project.","url":"https://swf.wtf/guides/python-beginners/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/python-beginners.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="../../">swf<span>.wtf</span></a>
+    <nav>
+      <a href="../../#writing">writing</a>
+      <a href="../../guides/?v=20260226">guides</a>
+      <a href="../../about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <div class="post-meta">
+    <span>Feb 25, 2026</span>
+    <span class="tag green">guide</span>
+    <span class="tag">python</span>
+    <span class="tag">beginner</span>
+    <span class="tag">reference</span>
+  </div>
+
+  <h1>Python for Beginners.<br><span class="dim">// setup to first real project.</span></h1>
+  <p class="subtitle">A practical guide you can keep open while learning. Focus on commands and habits you will actually use.</p>
+
+  <div class="terminal-intro">
+    <div><span class="prompt">$</span> <span class="cmd-text">python --version</span></div>
+    <div class="output">Python 3.12.x</div>
+    <div><span class="prompt">$</span> <span class="cmd-text">python main.py</span></div>
+    <div class="output">hello, world</div>
+    <div><span class="prompt">$</span> <span class="cmd-text">_</span></div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">// contents</div>
+    <a href="#setup">Install Python</a>
+    <a href="#first-script">First script</a>
+    <a href="#venv">Virtual environments</a>
+    <a href="#pip">Packages with pip</a>
+    <a href="#syntax">Core syntax</a>
+    <a href="#data">Data structures</a>
+    <a href="#functions">Functions</a>
+    <a href="#files">Files and JSON</a>
+    <a href="#errors">Errors and debugging</a>
+    <a href="#layout">Project layout</a>
+    <a href="#practice">Practice plan</a>
+    <a href="#cheatsheet">Cheat sheet</a>
+  </div>
+
+  <hr>
+
+  <h2 id="setup">Install Python</h2>
+  <p>Use Python 3.11+ if possible. Newer versions are faster and better supported.</p>
+
+  <div class="code-block">
+    <span class="label">fedora</span>
+    <pre><span class="cmd">sudo dnf install -y python3 python3-pip</span>
+<span class="cmd">python3 --version</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">ubuntu / debian / mint</span>
+    <pre><span class="cmd">sudo apt update</span>
+<span class="cmd">sudo apt install -y python3 python3-pip python3-venv</span>
+<span class="cmd">python3 --version</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">arch</span>
+    <pre><span class="cmd">sudo pacman -S python python-pip</span>
+<span class="cmd">python --version</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// command name note</div>
+    Some systems use <code>python3</code>, others use <code>python</code>. In this guide I use <code>python</code>. If that fails, swap it to <code>python3</code>.
+  </div>
+
+  <hr>
+
+  <h2 id="first-script">First script</h2>
+
+  <div class="code-block">
+    <span class="label">hello.py</span>
+    <pre><span class="cmd">print</span>(<span class="str">"hello, world"</span>)
+name = <span class="str">"steve"</span>
+print(<span class="str">f"hi {name}"</span>)</pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">run</span>
+    <pre><span class="cmd">python hello.py</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="venv">Virtual environments</h2>
+  <p>Always use a virtual environment per project. It avoids dependency conflicts between projects.</p>
+
+  <div class="code-block">
+    <span class="label">create and activate</span>
+    <pre><span class="cmd">mkdir python-demo</span>
+<span class="cmd">cd python-demo</span>
+<span class="cmd">python -m venv .venv</span>
+
+<span class="cmt"># Linux/macOS</span>
+<span class="cmd">source .venv/bin/activate</span>
+
+<span class="cmt"># Windows PowerShell</span>
+<span class="cmd">.venv\Scripts\Activate.ps1</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">deactivate</span>
+    <pre><span class="cmd">deactivate</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">// do this early</div>
+    Create and activate <code>.venv</code> before installing packages.
+  </div>
+
+  <hr>
+
+  <h2 id="pip">Packages with pip</h2>
+
+  <div class="code-block">
+    <span class="label">common commands</span>
+    <pre><span class="cmd">python -m pip install requests</span>
+<span class="cmd">python -m pip install -U pip</span>
+<span class="cmd">python -m pip list</span>
+<span class="cmd">python -m pip freeze > requirements.txt</span>
+<span class="cmd">python -m pip install -r requirements.txt</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// why python -m pip</div>
+    It guarantees pip belongs to the Python interpreter you are currently using.
+  </div>
+
+  <hr>
+
+  <h2 id="syntax">Core syntax</h2>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3>Variables and types</h3>
+      <div class="code-block compact">
+        <pre>name = <span class="str">"Ada"</span>
+age = 28
+height = 1.72
+is_admin = False
+
+print(type(name))</pre>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Conditionals and loops</h3>
+      <div class="code-block compact">
+        <pre>if age >= 18:
+    print(<span class="str">"adult"</span>)
+else:
+    print(<span class="str">"minor"</span>)
+
+for i in range(3):
+    print(i)</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// biggest beginner gotcha</div>
+    Indentation is syntax. Use consistent spaces (4 spaces per level is standard).
+  </div>
+
+  <hr>
+
+  <h2 id="data">Data structures</h2>
+
+  <div class="code-block">
+    <span class="label">list / dict / set / tuple</span>
+    <pre>langs = [<span class="str">"python"</span>, <span class="str">"go"</span>, <span class="str">"rust"</span>]
+user = {<span class="str">"name"</span>: <span class="str">"steve"</span>, <span class="str">"role"</span>: <span class="str">"dev"</span>}
+tags = {<span class="str">"linux"</span>, <span class="str">"python"</span>}
+point = (10, 20)
+
+langs.append(<span class="str">"bash"</span>)
+print(user[<span class="str">"name"</span>])</pre>
+  </div>
+
+  <hr>
+
+  <h2 id="functions">Functions</h2>
+
+  <div class="code-block">
+    <span class="label">functions.py</span>
+    <pre>def greet(name: str) -> str:
+    return f<span class="str">"hello, {name}"</span>
+
+def area(width: float, height: float) -> float:
+    return width * height
+
+print(greet(<span class="str">"steve"</span>))
+print(area(3, 5))</pre>
+  </div>
+
+  <hr>
+
+  <h2 id="files">Files and JSON</h2>
+
+  <div class="code-block">
+    <span class="label">read and write text</span>
+    <pre>with open(<span class="str">"notes.txt"</span>, <span class="str">"w"</span>, encoding=<span class="str">"utf-8"</span>) as f:
+    f.write(<span class="str">"learn python\n"</span>)
+
+with open(<span class="str">"notes.txt"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) as f:
+    print(f.read())</pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">json</span>
+    <pre>import json
+
+data = {<span class="str">"name"</span>: <span class="str">"steve"</span>, <span class="str">"score"</span>: 99}
+
+with open(<span class="str">"data.json"</span>, <span class="str">"w"</span>, encoding=<span class="str">"utf-8"</span>) as f:
+    json.dump(data, f, indent=2)
+
+with open(<span class="str">"data.json"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) as f:
+    loaded = json.load(f)
+    print(loaded[<span class="str">"score"</span>])</pre>
+  </div>
+
+  <hr>
+
+  <h2 id="errors">Errors and debugging</h2>
+
+  <div class="code-block">
+    <span class="label">try/except</span>
+    <pre>try:
+    value = int(<span class="str">"42"</span>)
+except ValueError as exc:
+    print(<span class="str">"bad number:"</span>, exc)
+else:
+    print(value)</pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">debugging basics</span>
+    <pre><span class="cmd">python -m pdb app.py</span>        <span class="cmt"># step debugger</span>
+<span class="cmd">python -m pip install ruff</span>   <span class="cmt"># fast linting</span>
+<span class="cmd">ruff check .</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="layout">Project layout</h2>
+
+  <div class="code-block">
+    <span class="label">starter layout</span>
+    <pre>my_project/
+  .venv/
+  src/
+    main.py
+  tests/
+    test_main.py
+  requirements.txt
+  README.md
+  .gitignore</pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// .gitignore minimum</div>
+    Add <code>.venv/</code>, <code>__pycache__/</code>, and <code>*.pyc</code> so generated files do not get committed.
+  </div>
+
+  <hr>
+
+  <h2 id="practice">Practice plan (7 days)</h2>
+  <ul class="practice-list">
+    <li><strong>Day 1:</strong> Install Python and run <code>hello.py</code>.</li>
+    <li><strong>Day 2:</strong> Use <code>if</code>, <code>for</code>, and <code>while</code> in a small script.</li>
+    <li><strong>Day 3:</strong> Use lists and dictionaries to model simple data.</li>
+    <li><strong>Day 4:</strong> Write 3 functions with parameters and return values.</li>
+    <li><strong>Day 5:</strong> Read and write one text file and one JSON file.</li>
+    <li><strong>Day 6:</strong> Create a project with <code>.venv</code> and <code>requirements.txt</code>.</li>
+    <li><strong>Day 7:</strong> Build a tiny CLI tool (todo list or unit converter).</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="cheatsheet">Cheat sheet</h2>
+
+  <div class="code-block">
+    <span class="label">daily python commands</span>
+    <pre><span class="cmd">python --version</span>
+<span class="cmd">python file.py</span>
+<span class="cmd">python -m venv .venv</span>
+<span class="cmd">source .venv/bin/activate</span>
+<span class="cmd">python -m pip install package</span>
+<span class="cmd">python -m pip freeze > requirements.txt</span>
+<span class="cmd">python -m pip install -r requirements.txt</span>
+<span class="cmd">deactivate</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// next step</div>
+    After this guide, pick one small project and finish it end to end. That is where Python sticks.
+  </div>
+
+</main>
+
+<footer>
+  <span>// swf.wtf - python-beginners</span>
+  <span><a href="../../guides/?v=20260226">more guides</a></span>
+</footer>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

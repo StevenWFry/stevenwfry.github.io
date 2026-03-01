@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 12 – Introduction to Data Dictionary Views (or: the database’s own gossip column) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, your schema knows things about itself that you have absolutely no idea about: who created which table, what constraints lurk on which columns, a...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/12_Introduction_to_Data_Dictionary_Views.html"> <meta property="og:title" content="Lesson 12 – Introduction to Data Dictionary Views (or: the database’s own gossip column) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, your schema knows things about itself that you have absolutely no idea about: who created which table, what constraints lurk on which columns, a..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/12_Introduction_to_Data_Dictionary_Views.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Lesson 12 – Introduction to Data Dictionary Views (or: the database’s own gossip column) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, your schema knows things about itself that you have absolutely no idea about: who created which table, what constraints lurk on which columns, a..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Lesson 12 – Introduction to Data Dictionary Views (or: the database’s own gossip column) - SQL Guide - swf.wtf","description":"And look, your schema knows things about itself that you have absolutely no idea about: who created which table, what constraints lurk on which columns, a...","url":"https://swf.wtf/guides/sql-guide/12_Introduction_to_Data_Dictionary_Views.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 12 – Introduction to Data Dictionary Views (or: the database’s own gossip column)</h1>
+    <p>And look, your schema knows things about itself that you have absolutely no idea about: who created which table, what constraints lurk on which columns, and why that one INSERT keeps failing. The data dictionary is the...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, your schema knows things about itself that you have absolutely no idea about: who created which table, what constraints lurk on which columns, and why that one INSERT keeps failing. The <strong>data dictionary</strong> is the part of Oracle that keeps receipts on all of it.</p>
+    <p>This lesson is about using those built‑in views to let the database tell you about… itself.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Explain what the Oracle data dictionary is and how it’s organized.</li>
+    <li>Use <code>DICTIONARY</code> (a.k.a. <code>DICT</code>) to discover available views.</li>
+    <li>Use <code>USER_</code>, <code>ALL_</code>, and <code>DBA_</code> views to explore objects, tables, columns, and constraints.</li>
+    <li>Add comments to tables and columns and retrieve them from comment views.</li>
+    </ul>
+    <hr>
+    <h2>1. What Is the Data Dictionary?</h2>
+    <p>The database stores two broad kinds of information:</p>
+    <ul>
+    <li><strong>Business data</strong> – your actual application tables (EMPLOYEES, DEPARTMENTS, LOCATIONS, JOB_HISTORY, etc.).</li>
+    <li><strong>Metadata</strong> – information <em>about</em> those objects (who owns them, when they were created, what columns/constraints they have, who can access them).</li>
+    </ul>
+    <p>The metadata lives in the <strong>data dictionary</strong>.</p>
+    <p>Internally, the dictionary consists of <strong>base tables</strong> owned by Oracle. You don’t query those directly; instead you query <strong>views</strong> that sit on top of them.</p>
+    <p>These views fall into families based on <strong>scope</strong>:</p>
+    <ul>
+    <li><code>USER_...</code> – objects <strong>you own</strong>.</li>
+    <li><code>ALL_...</code> – objects you can <strong>access</strong> (your own + others you have privileges on).</li>
+    <li><code>DBA_...</code> – everything in the database (DBA privileges required).</li>
+    <li><code>V$...</code> – dynamic performance and monitoring views.</li>
+    </ul>
+    <p>So you have a kind of metadata onion, going from “just my stuff” to “everyone’s stuff” to “how the whole database is feeling right now.”</p>
+    <hr>
+    <h2>2. DICTIONARY / DICT – The Directory of the Dictionary</h2>
+    <p>If you’ve ever wondered “what dictionary views even exist?”, Oracle gives you a meta‑view of the metadata: <code>DICTIONARY</code> (also known as <code>DICT</code>).</p>
+    <pre><code class="language-sql">SELECT table_name,
+           comments
+    FROM   dictionary;</code></pre>
+    <ul>
+    <li><code>TABLE_NAME</code> – name of the dictionary view or table.</li>
+    <li><code>COMMENTS</code> – brief description.</li>
+    </ul>
+    <p>You’ll see entries like:</p>
+    <ul>
+    <li><code>USER_OBJECTS</code> – “Objects owned by the user.”</li>
+    <li><code>ALL_TABLES</code> – “Description of all tables accessible to the user.”</li>
+    <li><code>V$SESSION</code> – “Session information.”</li>
+    </ul>
+    <p>It’s the help index for every other metadata view.</p>
+    <hr>
+    <h2>3. USER_OBJECTS, ALL_OBJECTS – What Objects Exist?</h2>
+    <h3>3.1 Objects you own: <code>USER_OBJECTS</code></h3>
+    <p><code>USER_OBJECTS</code> shows <strong>everything you own</strong> in your schema: tables, indexes, sequences, views, etc.</p>
+    <pre><code class="language-sql">SELECT object_name,
+           object_type,
+           status,
+           created,
+           last_ddl_time
+    FROM   user_objects;</code></pre>
+    <ul>
+    <li><code>OBJECT_TYPE</code> – <code>TABLE</code>, <code>INDEX</code>, <code>VIEW</code>, <code>SEQUENCE</code>, etc.</li>
+    <li><code>STATUS</code> – usually <code>VALID</code> or <code>INVALID</code>.</li>
+    </ul>
+    <p>Example check:</p>
+    <pre><code class="language-sql">SELECT COUNT(*)
+    FROM   user_objects;</code></pre>
+    <p>Tells you how many objects you personally own.</p>
+    <h3>3.2 Objects you can see: <code>ALL_OBJECTS</code></h3>
+    <p><code>ALL_OBJECTS</code> shows objects you can <strong>access</strong>, not just those you own:</p>
+    <pre><code class="language-sql">SELECT owner,
+           object_name,
+           object_type
+    FROM   all_objects;</code></pre>
+    <p>You’ll see rows from schemas like <code>SYS</code>, <code>SYSTEM</code>, and application schemas. This includes:</p>
+    <ul>
+    <li>Your objects.</li>
+    <li>Objects owned by others that you have privileges on.</li>
+    </ul>
+    <p>With <code>ALL_OBJECTS</code> you can answer questions like “which user owns table X?” and “do I have access to that package?”</p>
+    <hr>
+    <h2>4. USER_TABLES and ALL_TABLES – Table‑Level Info</h2>
+    <p><code>USER_TABLES</code> describes every <strong>table</strong> you own:</p>
+    <pre><code class="language-sql">SELECT table_name,
+           num_rows,
+           blocks,
+           temporary,
+           partitioned
+    FROM   user_tables;</code></pre>
+    <ul>
+    <li>No column‑level info here—this is table metadata only.</li>
+    </ul>
+    <p><code>ALL_TABLES</code> is the broader version, for all accessible tables:</p>
+    <pre><code class="language-sql">SELECT owner,
+           table_name
+    FROM   all_tables;</code></pre>
+    <p>Remember: Oracle stores object and column names in uppercase by default, so query using uppercase identifiers (e.g., <code>&#x27;EMPLOYEES&#x27;</code>).</p>
+    <hr>
+    <h2>5. USER_TAB_COLUMNS – Column‑Level Info</h2>
+    <p>To see <strong>columns</strong> and their properties, use <code>USER_TAB_COLUMNS</code> (or <code>ALL_TAB_COLUMNS</code>):</p>
+    <pre><code class="language-sql">SELECT table_name,
+           column_name,
+           data_type,
+           data_length,
+           data_precision,
+           data_scale,
+           nullable,
+           data_default
+    FROM   user_tab_columns
+    WHERE  table_name = &#x27;EMPLOYEES&#x27;
+    ORDER  BY column_id;</code></pre>
+    <p>This tells you for each column:</p>
+    <ul>
+    <li>Name and data type.</li>
+    <li>Length / precision / scale.</li>
+    <li>Whether it can be <code>NULL</code>.</li>
+    <li>Any default value.</li>
+    </ul>
+    <p>It’s your “what does this table actually look like?” view.</p>
+    <hr>
+    <h2>6. USER_CONSTRAINTS and USER_CONS_COLUMNS – Constraint Info</h2>
+    <p>Constraints are described in <strong>two</strong> main views:</p>
+    <ul>
+    <li><code>USER_CONSTRAINTS</code> – one row per constraint.</li>
+    <li><code>USER_CONS_COLUMNS</code> – links constraints to columns.</li>
+    </ul>
+    <h3>6.1 USER_CONSTRAINTS</h3>
+    <pre><code class="language-sql">SELECT constraint_name,
+           constraint_type,
+           table_name,
+           status
+    FROM   user_constraints
+    WHERE  table_name = &#x27;EMPLOYEES&#x27;;</code></pre>
+    <p><code>CONSTRAINT_TYPE</code> codes:</p>
+    <ul>
+    <li><code>P</code> – PRIMARY KEY</li>
+    <li><code>R</code> – FOREIGN KEY (referential)</li>
+    <li><code>U</code> – UNIQUE</li>
+    <li><code>C</code> – CHECK or NOT NULL</li>
+    <li><code>O</code> – READ ONLY (on views)</li>
+    </ul>
+    <p>This tells you <strong>what</strong> constraints exist and on which tables.</p>
+    <h3>6.2 USER_CONS_COLUMNS</h3>
+    <pre><code class="language-sql">SELECT constraint_name,
+           table_name,
+           column_name,
+           position
+    FROM   user_cons_columns
+    WHERE  table_name = &#x27;EMPLOYEES&#x27;;</code></pre>
+    <p>This tells you <strong>which columns</strong> are involved in each constraint.</p>
+    <h3>6.3 Joining the two</h3>
+    <p>To see a combined view of constraints and their columns:</p>
+    <pre><code class="language-sql">SELECT c.constraint_name,
+           c.constraint_type,
+           c.table_name,
+           cc.column_name,
+           c.status
+    FROM   user_constraints   c
+    JOIN   user_cons_columns cc
+           ON c.constraint_name = cc.constraint_name
+    WHERE  c.table_name = &#x27;EMPLOYEES&#x27;
+    ORDER  BY c.constraint_name, cc.position;</code></pre>
+    <p>Now you can answer questions like:</p>
+    <ul>
+    <li>“What is the primary key on this table?”</li>
+    <li>“Which columns form this foreign key?”</li>
+    <li>“Where are the NOT NULL or CHECK constraints?”</li>
+    </ul>
+    <hr>
+    <h2>7. Table and Column Comments – In‑Schema Documentation</h2>
+    <p>You can attach <strong>comments</strong> to tables and columns to document their purpose.</p>
+    <h3>7.1 Adding comments</h3>
+    <pre><code class="language-sql">-- Table comment
+    COMMENT ON TABLE dept IS &#x27;Demo department table&#x27;;
+    
+    -- Column comment
+    COMMENT ON COLUMN dept.id IS &#x27;Primary key for DEPT&#x27;;</code></pre>
+    <p>Once set, comments are stored in the dictionary and follow the object around.</p>
+    <h3>7.2 Querying comments</h3>
+    <p>Use:</p>
+    <ul>
+    <li><code>USER_TAB_COMMENTS</code> – comments on your tables.</li>
+    <li><code>USER_COL_COMMENTS</code> – comments on your columns.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">SELECT table_name,
+           comments
+    FROM   user_tab_comments
+    WHERE  table_name = &#x27;DEPT&#x27;;
+    
+    SELECT table_name,
+           column_name,
+           comments
+    FROM   user_col_comments
+    WHERE  table_name = &#x27;DEPT&#x27;;</code></pre>
+    <p>This is how GUI tools like SQL Developer show “description” text for tables and columns.</p>
+    <hr>
+    <h2>8. Summary of Key Dictionary Views</h2>
+    <p>Views you should now recognize and know when to use:</p>
+    <ul>
+    <li><code>DICTIONARY</code> / <code>DICT</code> – catalog of all dictionary views and base tables.</li>
+    <li><code>USER_OBJECTS</code> – all objects you own (tables, indexes, views, etc.).</li>
+    <li><code>ALL_OBJECTS</code> – all objects you can access.</li>
+    <li><code>USER_TABLES</code> / <code>ALL_TABLES</code> – table‑level information.</li>
+    <li><code>USER_TAB_COLUMNS</code> – column‑level information.</li>
+    <li><code>USER_CONSTRAINTS</code> – one row per constraint.</li>
+    <li><code>USER_CONS_COLUMNS</code> – columns participating in each constraint.</li>
+    <li><code>USER_TAB_COMMENTS</code> / <code>USER_COL_COMMENTS</code> – table and column documentation.</li>
+    </ul>
+    <hr>
+    <h2>9. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Explain what the data dictionary is and why it exists.</li>
+    <li>Use <code>DICTIONARY</code> to discover relevant metadata views.</li>
+    <li>Query <code>USER_</code> and <code>ALL_</code> views to inspect your own objects and objects you can access.</li>
+    <li>Use <code>USER_TAB_COLUMNS</code>, <code>USER_CONSTRAINTS</code>, and <code>USER_CONS_COLUMNS</code> to understand table structures and rules.</li>
+    <li>Add and retrieve comments on tables and columns for in‑database documentation.</li>
+    </ul>
+    <p>You now know how to make the database tell you what’s really going on under the hood—which, in practice, is half of “debugging SQL” and roughly 90% of “finding out who to blame for that constraint you didn’t know existed.”</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="11B_Introduction_to_Data_Definition_Language_in_MySQL.html">&larr; previous</a>
+    <a href="12_Introduction_to_Data_Dictionary_Views.md">view source markdown</a>
+    <a href="13_Creating_Sequences_Synonyms_and_Indexes.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 11B – Introduction to Data Definition Language in MySQL (or: building the skeleton your data hangs on) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, you can write the world’s fanciest queries, but if your tables are mis‑shapen nightmares—with missing columns, wrong types, and no constraints—y...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/11B_Introduction_to_Data_Definition_Language_in_MySQL.html"> <meta property="og:title" content="Lesson 11B – Introduction to Data Definition Language in MySQL (or: building the skeleton your data hangs on) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, you can write the world’s fanciest queries, but if your tables are mis‑shapen nightmares—with missing columns, wrong types, and no constraints—y..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/11B_Introduction_to_Data_Definition_Language_in_MySQL.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Lesson 11B – Introduction to Data Definition Language in MySQL (or: building the skeleton your data hangs on) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, you can write the world’s fanciest queries, but if your tables are mis‑shapen nightmares—with missing columns, wrong types, and no constraints—y..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Lesson 11B – Introduction to Data Definition Language in MySQL (or: building the skeleton your data hangs on) - SQL Guide - swf.wtf","description":"And look, you can write the world’s fanciest queries, but if your tables are mis‑shapen nightmares—with missing columns, wrong types, and no constraints—y...","url":"https://swf.wtf/guides/sql-guide/11B_Introduction_to_Data_Definition_Language_in_MySQL.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 11B – Introduction to Data Definition Language in MySQL (or: building the skeleton your data hangs on)</h1>
+    <p>And look, you can write the world’s fanciest queries, but if your tables are mis‑shapen nightmares—with missing columns, wrong types, and no constraints—your database is basically a very expensive junk drawer. MySQL’s D...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, you can write the world’s fanciest queries, but if your tables are mis‑shapen nightmares—with missing columns, wrong types, and no constraints—your database is basically a very expensive junk drawer. MySQL’s <strong>DDL</strong> is where you decide what the data is allowed to look like <em>before</em> people start shoving values into it.</p>
+    <p>This lesson is about defining and changing schema structure in <strong>MySQL</strong>.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Create databases and tables.</li>
+    <li>List and choose column data types.</li>
+    <li>Use <code>SHOW CREATE TABLE</code> to reverse‑engineer table definitions.</li>
+    <li>Set column and table options (NULL/NOT NULL, DEFAULT, AUTO_INCREMENT).</li>
+    <li>Create indexes, keys, and constraints.</li>
+    <li>Use <code>CREATE TABLE ... AS SELECT</code> and <code>ALTER TABLE</code> safely.</li>
+    </ul>
+    <hr>
+    <h2>1. Databases, Tables, and Naming Rules</h2>
+    <p>In MySQL you typically work with:</p>
+    <ul>
+    <li><strong>Databases</strong> (a.k.a. schemas) – logical containers for tables and other objects.</li>
+    <li><strong>Tables</strong> – the actual structured storage for data.</li>
+    <li><strong>Indexes / keys</strong> – structures to speed up lookups and enforce uniqueness.</li>
+    <li><strong>Constraints</strong> – rules that keep your data from going off the rails.</li>
+    </ul>
+    <h3>1.1 Creating a database</h3>
+    <p>General syntax:</p>
+    <pre><code class="language-sql">CREATE DATABASE dbname;
+    
+    -- or
+    CREATE DATABASE IF NOT EXISTS dbname;
+    
+    -- equivalent
+    CREATE SCHEMA dbname;</code></pre>
+    <ul>
+    <li><code>IF NOT EXISTS</code> prevents errors if the database already exists (handy in scripts).</li>
+    </ul>
+    <p>Switch to the database:</p>
+    <pre><code class="language-sql">USE dbname;</code></pre>
+    <h3>1.2 Naming rules (databases, tables, columns)</h3>
+    <p>Allowed characters:</p>
+    <ul>
+    <li>Letters <code>A–Z</code>, <code>a–z</code></li>
+    <li>Digits <code>0–9</code></li>
+    <li>Underscore <code>_</code></li>
+    <li>Dollar sign <code>$</code></li>
+    </ul>
+    <p>Constraints:</p>
+    <ul>
+    <li>Names must be <strong>≤ 64 characters</strong>.</li>
+    <li>Avoid reserved words (e.g., <code>SELECT</code>, <code>TABLE</code>).</li>
+    <li>Avoid special characters (slashes, <code>#</code>, spaces, etc.) unless you <strong>quote</strong> with backticks.</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">CREATE DATABASE my database;         -- ERROR (space)
+    CREATE DATABASE `my database`;       -- works, but you’ll regret it later</code></pre>
+    <p>Backticks are MySQL’s “fine, but you’re responsible for this” feature.</p>
+    <hr>
+    <h2>2. Data Types in MySQL</h2>
+    <p>MySQL supports several families of data types.</p>
+    <h3>2.1 Numeric types</h3>
+    <ul>
+    <li><strong>Integers</strong> – whole numbers, signed or unsigned.</li>
+    <li><code>TINYINT</code>, <code>SMALLINT</code>, <code>MEDIUMINT</code>, <code>INT</code>/<code>INTEGER</code>, <code>BIGINT</code>.</li>
+    <li>Optional attributes: <code>UNSIGNED</code>, <code>ZEROFILL</code>.</li>
+    </ul>
+    <pre><code class="language-sql">  age INT UNSIGNED;</code></pre>
+    <ul>
+    <li><strong>Fixed‑point</strong> – exact decimals (for money, etc.).</li>
+    <li><code>DECIMAL(M, D)</code> or <code>NUMERIC(M, D)</code>.</li>
+    </ul>
+    <pre><code class="language-sql">  price DECIMAL(8,2);   -- e.g., 999,999.99 max</code></pre>
+    <ul>
+    <li><strong>Floating‑point</strong> – approximate values.</li>
+    <li><code>FLOAT</code>, <code>DOUBLE</code>.</li>
+    </ul>
+    <p>Use <code>DECIMAL</code> for anything involving money; floating‑point is for scientific/numeric approximations, not payroll.</p>
+    <h3>2.2 Date and time types</h3>
+    <ul>
+    <li><code>DATE</code> – <code>YYYY-MM-DD</code>.</li>
+    <li><code>TIME</code> – <code>HH:MM:SS</code>.</li>
+    <li><code>DATETIME</code> – <code>YYYY-MM-DD HH:MM:SS</code>.</li>
+    <li><code>TIMESTAMP</code> – like <code>DATETIME</code>, with automatic time zone/UTC handling.</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">hire_date DATE,
+    last_login TIMESTAMP;</code></pre>
+    <h3>2.3 String types</h3>
+    <ul>
+    <li><code>CHAR(M)</code> – fixed‑length; padded with spaces.</li>
+    <li><code>VARCHAR(M)</code> – variable‑length (most common text type).</li>
+    <li><code>TEXT</code> (and <code>TINYTEXT</code>/<code>MEDIUMTEXT</code>/<code>LONGTEXT</code>) – large text blobs.</li>
+    <li><code>BLOB</code> (and variations) – binary data.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">code   CHAR(5),
+    name   VARCHAR(50),
+    notes  TEXT,
+    photo  BLOB;</code></pre>
+    <h3>2.4 Other types</h3>
+    <ul>
+    <li>Spatial types – for geographic data.</li>
+    <li><code>JSON</code> – structured text stored as JSON documents.</li>
+    </ul>
+    <p>In day‑to‑day tables you’ll mostly combine <code>INT</code>, <code>DECIMAL</code>, <code>VARCHAR</code>, <code>DATE</code>/<code>DATETIME</code>, and the occasional <code>TEXT</code> or <code>BLOB</code>.</p>
+    <hr>
+    <h2>3. CREATE TABLE – Building the Structure</h2>
+    <p>General pattern:</p>
+    <pre><code class="language-sql">CREATE TABLE employees (
+      employee_id   INT          NOT NULL,
+      last_name     VARCHAR(25)  NOT NULL,
+      first_name    VARCHAR(25),
+      hire_date     DATE         NOT NULL,
+      salary        DECIMAL(8,2),
+      department_id INT,
+    
+      PRIMARY KEY (employee_id)
+    );</code></pre>
+    <p>Key points:</p>
+    <ul>
+    <li>Each column definition includes <strong>name</strong>, <strong>type</strong>, and optional <strong>constraints</strong>.</li>
+    <li>You can define <strong>primary key</strong>, <strong>unique</strong>, and <strong>foreign key</strong> constraints inline.</li>
+    <li>You can provide <strong>default</strong> values and <code>AUTO_INCREMENT</code> where appropriate.</li>
+    </ul>
+    <h3>3.1 Column options</h3>
+    <p>Common column attributes:</p>
+    <ul>
+    <li><code>NULL</code> / <code>NOT NULL</code> – whether <code>NULL</code> is allowed.</li>
+    <li><code>DEFAULT value</code> – value used if none is provided on insert.</li>
+    <li><code>AUTO_INCREMENT</code> – automatically generate numeric values (one per table).</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">CREATE TABLE departments (
+      department_id   INT          NOT NULL AUTO_INCREMENT,
+      department_name VARCHAR(30)  NOT NULL,
+      manager_id      INT,
+      location_id     INT,
+    
+      PRIMARY KEY (department_id)
+    );</code></pre>
+    <p>MySQL will auto‑increment <code>department_id</code> for each new row if you omit a value.</p>
+    <h3>3.2 Creating a table with existing data (CTAS)</h3>
+    <p>You can create a table and populate it from a <code>SELECT</code> in one go:</p>
+    <pre><code class="language-sql">CREATE TABLE dept80 AS
+    SELECT employee_id,
+           last_name,
+           salary * 12 AS annsal,
+           hire_date
+    FROM   employees
+    WHERE  department_id = 80;</code></pre>
+    <p>Notes:</p>
+    <ul>
+    <li>Column names come from the <code>SELECT</code> list (use aliases like <code>annsal</code>).</li>
+    <li>Data types are inferred from the expressions and source columns.</li>
+    <li>Constraints from the source table are <strong>not</strong> copied; you must re‑add keys/constraints afterward.</li>
+    </ul>
+    <hr>
+    <h2>4. Keys, Indexes, and Constraints</h2>
+    <h3>4.1 Indexes and keys</h3>
+    <p>In MySQL, <strong>keys</strong> are usually just indexes with special semantics:</p>
+    <ul>
+    <li><strong>PRIMARY KEY</strong> – unique, non‑NULL, used to identify rows.</li>
+    <li><strong>UNIQUE KEY</strong> – unique values, but can contain <code>NULL</code>s.</li>
+    <li><strong>FOREIGN KEY</strong> – enforces referential integrity across tables.</li>
+    <li><strong>Secondary indexes</strong> – non‑unique indexes to speed up lookups.</li>
+    </ul>
+    <p>Indexes:</p>
+    <ul>
+    <li>Are collections of pointers that let MySQL locate rows quickly.</li>
+    <li>Avoid full table scans for indexed searches.</li>
+    <li>Cost space and must be updated when data changes.</li>
+    </ul>
+    <h3>4.2 Primary keys</h3>
+    <p>Define a primary key at table creation:</p>
+    <pre><code class="language-sql">CREATE TABLE jobs (
+      job_id   INT         NOT NULL,
+      job_title VARCHAR(25) NOT NULL,
+    
+      PRIMARY KEY (job_id)
+    );</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li>Only <strong>one</strong> primary key per table.</li>
+    <li>Cannot contain <code>NULL</code>s.</li>
+    </ul>
+    <h3>4.3 Unique keys</h3>
+    <p>Require values to be distinct, but allow <code>NULL</code>s:</p>
+    <pre><code class="language-sql">CREATE TABLE employees6 (
+      employee_id INT         NOT NULL,
+      email       VARCHAR(50) NOT NULL,
+    
+      PRIMARY KEY (employee_id),
+      UNIQUE KEY emp6_email_uk (email)
+    );</code></pre>
+    <ul>
+    <li>Multiple unique keys per table are allowed.</li>
+    </ul>
+    <h3>4.4 Foreign keys</h3>
+    <p>Maintain relationships between parent and child tables.</p>
+    <p>Example – classic departments/employees relationship:</p>
+    <pre><code class="language-sql">CREATE TABLE departments (
+      department_id   INT         NOT NULL,
+      department_name VARCHAR(30) NOT NULL,
+      PRIMARY KEY (department_id)
+    );
+    
+    CREATE TABLE employees6 (
+      employee_id   INT         NOT NULL,
+      last_name     VARCHAR(25) NOT NULL,
+      department_id INT,
+    
+      PRIMARY KEY (employee_id),
+      CONSTRAINT emp6_dept_fk
+        FOREIGN KEY (department_id)
+        REFERENCES departments (department_id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT
+    );</code></pre>
+    <p>You can also define the FK in a later <code>ALTER TABLE</code>:</p>
+    <pre><code class="language-sql">ALTER TABLE employees6
+    ADD CONSTRAINT emp6_manager_fk
+    FOREIGN KEY (manager_id)
+    REFERENCES employees6 (employee_id);</code></pre>
+    <p><strong>Referential actions</strong> for <code>ON DELETE</code> / <code>ON UPDATE</code>:</p>
+    <ul>
+    <li><code>RESTRICT</code> / <code>NO ACTION</code> – prevent delete/update if children exist.</li>
+    <li><code>CASCADE</code> – propagate changes to child rows.</li>
+    <li><code>SET NULL</code> – set child FK to <code>NULL</code> when parent changes.</li>
+    </ul>
+    <p>Useful for keeping relationships valid; dangerous if you forget you added <code>CASCADE</code>.</p>
+    <h3>4.5 Secondary indexes</h3>
+    <p>Non‑constraint indexes for performance:</p>
+    <pre><code class="language-sql">CREATE INDEX idx_emp6_lastname
+    ON employees6 (last_name);</code></pre>
+    <p>You can also create indexes via <code>ALTER TABLE</code> as part of constraint definitions.</p>
+    <hr>
+    <h2>5. SHOW CREATE TABLE – Reverse‑Engineering a Table</h2>
+    <p><code>SHOW CREATE TABLE</code> reveals the full DDL MySQL would use to recreate a table.</p>
+    <pre><code class="language-sql">SHOW CREATE TABLE employees6\G</code></pre>
+    <p>You’ll see:</p>
+    <ul>
+    <li>Column definitions and types.</li>
+    <li>Primary/unique/foreign keys.</li>
+    <li>Index definitions.</li>
+    <li>Table options (engine, charset, etc.).</li>
+    </ul>
+    <p>This is extremely useful when you inherit a schema and want to see how it was built without reading someone else’s migration scripts.</p>
+    <hr>
+    <h2>6. ALTER TABLE – Changing Existing Structure</h2>
+    <p>Use <code>ALTER TABLE</code> to modify a table’s definition.</p>
+    <h3>6.1 ADD columns</h3>
+    <pre><code class="language-sql">ALTER TABLE dept80
+    ADD COLUMN job_id VARCHAR(9) NOT NULL DEFAULT &#x27;ST_CLERK&#x27;
+    AFTER last_name;</code></pre>
+    <ul>
+    <li><code>ADD COLUMN</code> defines a new column, its type, nullability, and default.</li>
+    <li><code>AFTER last_name</code> places it immediately after <code>last_name</code>.</li>
+    </ul>
+    <h3>6.2 MODIFY columns</h3>
+    <pre><code class="language-sql">ALTER TABLE dept80
+    MODIFY COLUMN last_name VARCHAR(30) NOT NULL FIRST;</code></pre>
+    <ul>
+    <li>Changes type/size/options.</li>
+    <li><code>FIRST</code> moves the column to the first position.</li>
+    <li>You must supply the <strong>full</strong> column definition; omitting <code>NOT NULL</code> would drop the constraint.</li>
+    <li>Shrinking a column is allowed only if existing data fits the new size.</li>
+    </ul>
+    <h3>6.3 DROP columns</h3>
+    <pre><code class="language-sql">ALTER TABLE dept80
+    DROP COLUMN job_id;</code></pre>
+    <ul>
+    <li>Removes the column and all its data.</li>
+    </ul>
+    <h3>6.4 Adding indexes or constraints</h3>
+    <p>You can attach indexes/constraints after creation:</p>
+    <pre><code class="language-sql">ALTER TABLE employees6
+    ADD CONSTRAINT emp6_manager_fk
+    FOREIGN KEY (manager_id)
+    REFERENCES employees6 (employee_id);</code></pre>
+    <p>Or create a separate index:</p>
+    <pre><code class="language-sql">CREATE INDEX idx_emp6_job
+    ON employees6 (job_id);</code></pre>
+    <hr>
+    <h2>7. DROP TABLE – Removing Tables</h2>
+    <p><code>DROP TABLE</code> removes a table and its data.</p>
+    <pre><code class="language-sql">DROP TABLE dept80;
+    
+    -- or safer in scripts:
+    DROP TABLE IF EXISTS dept80;</code></pre>
+    <ul>
+    <li>In MySQL there is no Recycle Bin by default: once dropped, the table is gone unless you have backups.</li>
+    <li><code>IF EXISTS</code> avoids errors if the table is already gone.</li>
+    </ul>
+    <hr>
+    <h2>8. Putting It Together – Example: Adding JOB_TITLE to JOBS</h2>
+    <p>Back to Ben’s complaint: the <code>JOBS</code> table is missing <code>JOB_TITLE</code>.</p>
+    <p>Assuming a simple existing <code>JOBS</code> table, you could add the column with:</p>
+    <pre><code class="language-sql">ALTER TABLE jobs
+    ADD COLUMN job_title VARCHAR(25) NOT NULL;</code></pre>
+    <p>Then populate it with appropriate titles via <code>UPDATE</code> statements.</p>
+    <hr>
+    <h2>9. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Create databases with <code>CREATE DATABASE</code> / <code>CREATE SCHEMA</code> and switch between them with <code>USE</code>.</li>
+    <li>Create tables with <code>CREATE TABLE</code>, choosing appropriate MySQL data types.</li>
+    <li>Use column options like <code>NOT NULL</code>, <code>DEFAULT</code>, and <code>AUTO_INCREMENT</code>.</li>
+    <li>Create primary keys, unique keys, foreign keys, and secondary indexes.</li>
+    <li>Use <code>SHOW CREATE TABLE</code> to view the underlying DDL for an existing table.</li>
+    <li>Use <code>CREATE TABLE ... AS SELECT</code> to create and populate a table from a query.</li>
+    <li>Modify tables with <code>ALTER TABLE</code> and remove them with <code>DROP TABLE</code>.</li>
+    </ul>
+    <p>You’ve now graduated from “I use whatever tables exist” to “I design the tables”—which is both a promotion and an exciting new way to break production if you’re not careful.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="11A_Introduction_to_Data_Definition_Language_in_Oracle.html">&larr; previous</a>
+    <a href="11B_Introduction_to_Data_Definition_Language_in_MySQL.md">view source markdown</a>
+    <a href="12_Introduction_to_Data_Dictionary_Views.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

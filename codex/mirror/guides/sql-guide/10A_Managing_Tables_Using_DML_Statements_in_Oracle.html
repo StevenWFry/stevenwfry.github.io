@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 10A – Managing Tables Using DML Statements in Oracle (or: how to change the data without regretting everything) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, reading data is safe. It’s like browsing a store: you can stare at products all day and nothing changes. DML is when you start rearranging shelv...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/10A_Managing_Tables_Using_DML_Statements_in_Oracle.html"> <meta property="og:title" content="Lesson 10A – Managing Tables Using DML Statements in Oracle (or: how to change the data without regretting everything) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, reading data is safe. It’s like browsing a store: you can stare at products all day and nothing changes. DML is when you start rearranging shelv..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/10A_Managing_Tables_Using_DML_Statements_in_Oracle.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Lesson 10A – Managing Tables Using DML Statements in Oracle (or: how to change the data without regretting everything) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, reading data is safe. It’s like browsing a store: you can stare at products all day and nothing changes. DML is when you start rearranging shelv..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Lesson 10A – Managing Tables Using DML Statements in Oracle (or: how to change the data without regretting everything) - SQL Guide - swf.wtf","description":"And look, reading data is safe. It’s like browsing a store: you can stare at products all day and nothing changes. DML is when you start rearranging shelv...","url":"https://swf.wtf/guides/sql-guide/10A_Managing_Tables_Using_DML_Statements_in_Oracle.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 10A – Managing Tables Using DML Statements in Oracle (or: how to change the data without regretting everything)</h1>
+    <p>And look, reading data is safe. It’s like browsing a store: you can stare at products all day and nothing changes. DML is when you start rearranging shelves, throwing things out, and repainting the walls—except the “wal...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, reading data is safe. It’s like browsing a store: you can stare at products all day and nothing changes. <strong>DML</strong> is when you start rearranging shelves, throwing things out, and repainting the walls—except the “walls” are shared by everyone and the consequences are permanent unless you manage <strong>transactions</strong> correctly.</p>
+    <p>This lesson is about making changes on purpose and being able to undo them when you inevitably change the wrong thing.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Describe each <strong>DML</strong> statement: <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, and (later) <code>MERGE</code>.</li>
+    <li>Insert new rows into tables.</li>
+    <li>Update and delete existing rows safely.</li>
+    <li>Understand <code>TRUNCATE</code> vs <code>DELETE</code>.</li>
+    <li>Control transactions with <code>COMMIT</code>, <code>ROLLBACK</code>, and <code>SAVEPOINT</code>.</li>
+    <li>Use <code>SELECT ... FOR UPDATE</code> to lock rows while you’re editing them.</li>
+    </ul>
+    <hr>
+    <h2>1. DML and Transactions: What’s at Stake</h2>
+    <p><strong>DML (Data Manipulation Language)</strong> statements:</p>
+    <ul>
+    <li><code>INSERT</code> – add new rows.</li>
+    <li><code>UPDATE</code> – modify existing rows.</li>
+    <li><code>DELETE</code> – remove rows.</li>
+    <li><code>MERGE</code> – conditional insert/update/delete (you’ll meet this later).</li>
+    </ul>
+    <p>A <strong>transaction</strong> is a set of DML statements that together form a <strong>logical unit of work</strong>, for example:</p>
+    <ul>
+    <li>Insert a new employee.</li>
+    <li>Update their department’s headcount.</li>
+    <li>Log the change in an audit table.</li>
+    </ul>
+    <p>You either want <strong>all</strong> of that to succeed, or <strong>none</strong> of it. That’s what <code>COMMIT</code> and <code>ROLLBACK</code> are for.</p>
+    <hr>
+    <h2>2. INSERT – Getting New Rows into a Table</h2>
+    <h3>2.1 Basic <code>INSERT ... VALUES</code></h3>
+    <p>Best practice: <strong>name the columns</strong>, then provide matching values.</p>
+    <pre><code class="language-sql">INSERT INTO departments (department_id, department_name, manager_id, location_id)
+    VALUES (70, &#x27;Public Relations&#x27;, 100, 1700);</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li>The column list in parentheses defines the <strong>target columns</strong>.</li>
+    <li>The <code>VALUES</code> list is <strong>positional</strong>: first value → first column, etc.</li>
+    <li>Character and date literals need <strong>single quotes</strong> (<code>&#x27;Public Relations&#x27;</code>).</li>
+    <li>Number literals do not (<code>100</code>, <code>1700</code>).</li>
+    </ul>
+    <p>You can <strong>omit</strong> the column list <em>only</em> if you provide values for <strong>every column</strong> in the table, in the table’s default column order:</p>
+    <pre><code class="language-sql">INSERT INTO departments
+    VALUES (80, &#x27;Sales&#x27;, 149, 2500);</code></pre>
+    <p>This is legal but fragile—if a column is added or reordered, this breaks.</p>
+    <h3>2.2 Inserting NULL values</h3>
+    <p>Two ways to get <code>NULL</code> into a column:</p>
+    <ul>
+    <li><strong>Implicitly</strong>: leave the column off the column list.</li>
+    </ul>
+    <pre><code class="language-sql">  INSERT INTO demo (id)
+      VALUES (2);   -- name column becomes NULL</code></pre>
+    <ul>
+    <li><strong>Explicitly</strong>: use the <code>NULL</code> keyword.</li>
+    </ul>
+    <pre><code class="language-sql">  INSERT INTO departments (department_id, department_name, manager_id, location_id)
+      VALUES (100, &#x27;Finance&#x27;, NULL, NULL);</code></pre>
+    <p>Works as long as the column does <strong>not</strong> have a <code>NOT NULL</code> constraint.</p>
+    <h3>2.3 Inserting dates and special values</h3>
+    <p>Use date functions or <code>TO_DATE</code> to avoid ambiguity:</p>
+    <pre><code class="language-sql">INSERT INTO employees (employee_id, last_name, hire_date, salary)
+    VALUES (300, &#x27;Nguyen&#x27;, CURRENT_DATE, 5000);
+    
+    INSERT INTO employees (employee_id, last_name, hire_date, salary)
+    VALUES (301, &#x27;Lee&#x27;, TO_DATE(&#x27;2016-02-01&#x27;, &#x27;YYYY-MM-DD&#x27;), 4500);</code></pre>
+    <ul>
+    <li><code>CURRENT_DATE</code> – evaluated from the session time zone.</li>
+    <li><code>SYSDATE</code> – evaluated at the database server.</li>
+    </ul>
+    <h3>2.4 INSERT with a subquery (<code>INSERT ... SELECT</code>)</h3>
+    <p>You can insert <strong>multiple rows at once</strong> by selecting from another table.</p>
+    <pre><code class="language-sql">INSERT INTO sales_reps (id, name, salary, commission_pct)
+    SELECT employee_id,
+           last_name,
+           salary,
+           commission_pct
+    FROM   employees
+    WHERE  job_id = &#x27;SA_REP&#x27;;</code></pre>
+    <ul>
+    <li>No <code>VALUES</code> clause here.</li>
+    <li>The <strong>target column list</strong> in <code>sales_reps</code> must line up <strong>positionally</strong> and <strong>by type</strong> with the <code>SELECT</code> list.</li>
+    </ul>
+    <hr>
+    <h2>3. UPDATE – Changing Existing Rows (Carefully)</h2>
+    <p><code>UPDATE</code> modifies existing rows. The dangers live mostly in the <code>WHERE</code> clause.</p>
+    <h3>3.1 Basic UPDATE</h3>
+    <pre><code class="language-sql">UPDATE employees
+    SET    department_id = 50
+    WHERE  employee_id   = 113;</code></pre>
+    <ul>
+    <li>Only employee 113 is moved to department 50.</li>
+    </ul>
+    <p>If you <strong>omit</strong> the <code>WHERE</code> clause:</p>
+    <pre><code class="language-sql">UPDATE employees
+    SET    department_id = 10;</code></pre>
+    <ul>
+    <li>Every row in <code>employees</code> gets department 10.</li>
+    <li>There’s an entire genre of “I forgot the WHERE clause” horror stories; don’t contribute to it.</li>
+    </ul>
+    <h3>3.2 Updating multiple columns</h3>
+    <pre><code class="language-sql">UPDATE employees
+    SET    salary   = 6000,
+           job_id   = &#x27;SA_REP&#x27;
+    WHERE  employee_id = 113;</code></pre>
+    <p>You can even use subqueries to copy values from another row:</p>
+    <pre><code class="language-sql">-- Make employee 103’s job and salary match employee 205
+    UPDATE employees
+    SET   (job_id, salary) = (
+            SELECT job_id, salary
+            FROM   employees
+            WHERE  employee_id = 205
+          )
+    WHERE employee_id = 103;</code></pre>
+    <p>Be sure the subquery returns exactly <strong>one row</strong>.</p>
+    <hr>
+    <h2>4. DELETE and TRUNCATE – Removing Rows</h2>
+    <h3>4.1 DELETE</h3>
+    <p><code>DELETE</code> removes rows from a table.</p>
+    <pre><code class="language-sql">DELETE FROM departments
+    WHERE  department_name = &#x27;Finance&#x27;;</code></pre>
+    <ul>
+    <li>Removes only rows where the condition matches.</li>
+    </ul>
+    <p>Without a <code>WHERE</code> clause:</p>
+    <pre><code class="language-sql">DELETE FROM demo;</code></pre>
+    <ul>
+    <li>Removes <strong>all rows</strong> from <code>demo</code>, but the table structure stays.</li>
+    <li>Can be undone with <code>ROLLBACK</code> if you haven’t committed yet.</li>
+    </ul>
+    <p>You can use subqueries to drive deletions:</p>
+    <pre><code class="language-sql">DELETE FROM employees
+    WHERE  department_id IN (
+             SELECT department_id
+             FROM   departments
+             WHERE  department_name LIKE &#x27;Public%&#x27;
+           );</code></pre>
+    <h3>4.2 TRUNCATE</h3>
+    <p><code>TRUNCATE</code> is like <code>DELETE</code> without a <code>WHERE</code> clause, but <strong>more final</strong> and much faster.</p>
+    <pre><code class="language-sql">TRUNCATE TABLE demo;</code></pre>
+    <ul>
+    <li>Removes <strong>all rows</strong>.</li>
+    <li>Keeps the table structure.</li>
+    <li>Is a <strong>DDL</strong> operation → it <strong>auto‑commits</strong>.</li>
+    <li><strong>Cannot be rolled back</strong>, even if you try.</li>
+    </ul>
+    <p>Why use it?</p>
+    <ul>
+    <li><code>DELETE</code> logs each row change (slow for large tables).</li>
+    <li><code>TRUNCATE</code> typically does not log each row, so it’s much faster—but permanent.</li>
+    </ul>
+    <hr>
+    <h2>5. Transaction Control: COMMIT, ROLLBACK, SAVEPOINT</h2>
+    <p>A transaction starts with the <strong>first DML</strong> after the last <code>COMMIT</code>/<code>ROLLBACK</code> and ends when you:</p>
+    <ul>
+    <li>Issue <code>COMMIT</code> – make all changes <strong>permanent</strong>.</li>
+    <li>Issue <code>ROLLBACK</code> – undo all changes since the last commit.</li>
+    <li>Execute a DDL or DCL statement (<code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>TRUNCATE</code>, <code>GRANT</code>, <code>REVOKE</code>), which <strong>auto‑commits</strong>.</li>
+    <li>Exit SQL Developer / SQL*Plus normally (commit) or crash (rollback).</li>
+    </ul>
+    <h3>5.1 COMMIT</h3>
+    <pre><code class="language-sql">INSERT INTO demo VALUES (1, &#x27;Mickey&#x27;);
+    INSERT INTO demo VALUES (2, &#x27;Mary&#x27;);
+    COMMIT;</code></pre>
+    <p>Effects:</p>
+    <ul>
+    <li>Changes are now visible to <strong>all sessions</strong>.</li>
+    <li>Locks are released.</li>
+    <li>Savepoints (if any) are discarded.</li>
+    </ul>
+    <h3>5.2 ROLLBACK</h3>
+    <pre><code class="language-sql">INSERT INTO demo VALUES (3, &#x27;Larry&#x27;);
+    ROLLBACK;</code></pre>
+    <p>Effects:</p>
+    <ul>
+    <li>Undoes all uncommitted changes back to the last commit.</li>
+    <li>Data returns to its previous state.</li>
+    <li>Locks from those changes are released.</li>
+    </ul>
+    <p>Rollbacks have no effect on changes that have already been committed.</p>
+    <h3>5.3 SAVEPOINT</h3>
+    <p><code>SAVEPOINT</code> lets you set intermediate markers <strong>within</strong> a transaction.</p>
+    <p>Example:</p>
+    <pre><code class="language-sql">INSERT INTO demo VALUES (1, &#x27;Mickey&#x27;);
+    INSERT INTO demo VALUES (2, &#x27;Mary&#x27;);
+    SAVEPOINT before_mass_update;
+    
+    UPDATE demo
+    SET    name = &#x27;Bentley&#x27;;   -- oops, too broad
+    
+    ROLLBACK TO before_mass_update;</code></pre>
+    <ul>
+    <li>Rows inserted before the savepoint remain part of the transaction.</li>
+    <li>The mass <code>UPDATE</code> is undone.</li>
+    <li>You can still <code>COMMIT</code> or <code>ROLLBACK</code> the whole transaction later.</li>
+    </ul>
+    <p>Multiple savepoints are allowed, but rolling back to an <strong>earlier</strong> savepoint discards any savepoints set after it.</p>
+    <h3>5.4 Implicit vs explicit transaction boundaries</h3>
+    <p>Implicit commits happen when you execute:</p>
+    <ul>
+    <li>DDL: <code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>TRUNCATE</code>, <code>RENAME</code>, <code>COMMENT</code>.</li>
+    <li>DCL: <code>GRANT</code>, <code>REVOKE</code>.</li>
+    <li>Normal session exit.</li>
+    </ul>
+    <p>Implicit rollbacks happen when:</p>
+    <ul>
+    <li>The session crashes or disconnects abnormally.</li>
+    </ul>
+    <p>Until you commit:</p>
+    <ul>
+    <li>Only your session sees its uncommitted changes.</li>
+    <li>Affected rows are <strong>locked</strong> against conflicting writes from other sessions.</li>
+    </ul>
+    <hr>
+    <h2>6. Row Locking and SELECT ... FOR UPDATE</h2>
+    <p>Oracle uses <strong>row‑level locking</strong>:</p>
+    <ul>
+    <li>Readers don’t block readers.</li>
+    <li>Readers don’t block writers.</li>
+    <li>Writers block other writers on the <strong>same rows</strong>.</li>
+    </ul>
+    <p>To explicitly lock rows <strong>while you inspect them</strong>, you can use:</p>
+    <pre><code class="language-sql">SELECT *
+    FROM   demo
+    FOR UPDATE;</code></pre>
+    <p>Effects:</p>
+    <ul>
+    <li>Locks the selected rows until you <code>COMMIT</code> or <code>ROLLBACK</code>.</li>
+    <li>Another session trying to update those rows will block until your lock is released.</li>
+    </ul>
+    <p>You can limit locking to certain columns/tables in joins:</p>
+    <pre><code class="language-sql">SELECT e.employee_id,
+           e.salary,
+           d.department_name
+    FROM   employees e
+    JOIN   departments d
+           ON e.department_id = d.department_id
+    FOR UPDATE OF e.salary;</code></pre>
+    <ul>
+    <li>Only rows in <code>employees</code> (where <code>salary</code> resides) are locked.</li>
+    </ul>
+    <h3>6.1 FOR UPDATE with WAIT</h3>
+    <p>If another session already holds a lock, your <code>FOR UPDATE</code> will wait indefinitely—unless you set a timeout:</p>
+    <pre><code class="language-sql">SELECT *
+    FROM   demo
+    FOR UPDATE WAIT 5;</code></pre>
+    <ul>
+    <li>Oracle waits up to 5 seconds to acquire the lock.</li>
+    <li>If it can’t, you get an error like “resource busy, acquire with WAIT timeout expired”.</li>
+    </ul>
+    <p>This prevents your session from hanging forever because someone went to lunch holding a lock.</p>
+    <h3>6.2 LOCK TABLE</h3>
+    <p><code>LOCK TABLE</code> lets you explicitly lock one or more tables in a specific mode:</p>
+    <pre><code class="language-sql">LOCK TABLE demo IN EXCLUSIVE MODE;</code></pre>
+    <ul>
+    <li>Other sessions may be prevented from reading/writing depending on the lock mode.</li>
+    <li>Locks are released on <code>COMMIT</code> or <code>ROLLBACK</code>.</li>
+    </ul>
+    <p>Use this sparingly; row‑level locks are usually enough.</p>
+    <hr>
+    <h2>7. Read Consistency – What Other Sessions See</h2>
+    <p>Oracle guarantees that queries see a <strong>consistent snapshot</strong> of data:</p>
+    <ul>
+    <li>Readers do <strong>not</strong> see uncommitted changes from other sessions.</li>
+    <li>A session that updates a row sees its own changes immediately.</li>
+    </ul>
+    <p>Example:</p>
+    <ul>
+    <li>Session A: <code>UPDATE employees SET salary = salary * 1.1 WHERE employee_id = 200;</code> (uncommitted).</li>
+    <li>Session B: <code>SELECT salary FROM employees WHERE employee_id = 200;</code></li>
+    </ul>
+    <p>Session B sees the <strong>old</strong> salary until Session A commits. This avoids “partial” views of data mid‑transaction.</p>
+    <hr>
+    <h2>8. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Use <code>INSERT</code>, <code>UPDATE</code>, and <code>DELETE</code> to manipulate data safely.</li>
+    <li>Use <code>TRUNCATE</code> when you truly mean “empty this table, quickly and permanently”.</li>
+    <li>Group related changes into transactions and control them with <code>COMMIT</code>, <code>ROLLBACK</code>, and <code>SAVEPOINT</code>.</li>
+    <li>Understand when changes become visible to other sessions and when locks are held.</li>
+    <li>Use <code>SELECT ... FOR UPDATE</code> (with optional <code>WAIT</code>) to safely edit data without conflicting writers.</li>
+    </ul>
+    <p>You’re now trusted not just to <strong>read</strong> from the database, but to <strong>change</strong> it—and more importantly, to back out your mistakes before everyone else sees them.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="09_Using_Set_Operators.html">&larr; previous</a>
+    <a href="10A_Managing_Tables_Using_DML_Statements_in_Oracle.md">view source markdown</a>
+    <a href="10B_Managing_Tables_Using_DML_Statements_in_MySQL.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

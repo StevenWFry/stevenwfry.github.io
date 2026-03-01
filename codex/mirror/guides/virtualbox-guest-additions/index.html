@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtualBox Guest Additions on Linux — swf.wtf</title>
+<meta name="description" content="How to install VirtualBox Guest Additions on Fedora, Ubuntu, Debian, Arch, and Linux Mint. The page I wish existed so I'd stop Googling this every time.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/virtualbox-guest-additions/"> <meta property="og:title" content="VirtualBox Guest Additions on Linux — swf.wtf"> <meta property="og:description" content="How to install VirtualBox Guest Additions on Fedora, Ubuntu, Debian, Arch, and Linux Mint. The page I wish existed so I&#39;d stop Googling this every time."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/virtualbox-guest-additions/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="VirtualBox Guest Additions on Linux — swf.wtf"> <meta name="twitter:description" content="How to install VirtualBox Guest Additions on Fedora, Ubuntu, Debian, Arch, and Linux Mint. The page I wish existed so I&#39;d stop Googling this every time."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"VirtualBox Guest Additions on Linux — swf.wtf","description":"How to install VirtualBox Guest Additions on Fedora, Ubuntu, Debian, Arch, and Linux Mint. The page I wish existed so I\u0027d stop Googling this every time.","url":"https://swf.wtf/guides/virtualbox-guest-additions/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/virtualbox-guest-additions.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <div class="nav-distros">
+      <button class="nav-distro-btn" onclick="switchTab('fedora')">Fedora</button>
+      <button class="nav-distro-btn" onclick="switchTab('ubuntu')">Ubuntu</button>
+      <button class="nav-distro-btn" onclick="switchTab('debian')">Debian</button>
+      <button class="nav-distro-btn" onclick="switchTab('arch')">Arch</button>
+      <button class="nav-distro-btn" onclick="switchTab('mint')">Mint</button>
+    </div>
+    <a href="../../">← home</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-tag">Reference guide</div>
+    <h1>VirtualBox Guest Additions on Linux</h1>
+    <p class="subtitle">The page I made so I'd stop Googling this every single time. Pick your distro, run the commands, reboot, done.</p>
+
+    <div class="intro-box">
+      <h2>// What do Guest Additions actually give you?</h2>
+      <p style="font-size:0.87rem; color: var(--muted); line-height:1.65;">A small package of drivers and utilities that make your VM feel like a real computer instead of a potato running inside another computer.</p>
+      <div class="features">
+        <div class="feature"><span>→</span> Auto-resize screen</div>
+        <div class="feature"><span>→</span> Shared clipboard</div>
+        <div class="feature"><span>→</span> Drag & drop files</div>
+        <div class="feature"><span>→</span> Shared folders</div>
+        <div class="feature"><span>→</span> Seamless mouse</div>
+        <div class="feature"><span>→</span> Better video perf</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- DISTRO TABS -->
+  <div class="distro-tabs">
+    <button class="tab-btn active" onclick="switchTab('fedora')" id="tab-fedora">🎩 Fedora</button>
+    <button class="tab-btn" onclick="switchTab('ubuntu')" id="tab-ubuntu">🟠 Ubuntu</button>
+    <button class="tab-btn" onclick="switchTab('debian')" id="tab-debian">🌀 Debian</button>
+    <button class="tab-btn" onclick="switchTab('arch')" id="tab-arch">🏹 Arch / Manjaro</button>
+    <button class="tab-btn" onclick="switchTab('mint')" id="tab-mint">🌿 Linux Mint</button>
+  </div>
+
+  <!-- ══ FEDORA ══ -->
+  <div class="distro-panel active" id="panel-fedora">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">Update your system first</div>
+        </div>
+        <div class="step-desc">Always update before installing kernel-related packages. A mismatch between your running kernel and headers will cause the build to fail.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo dnf update -y && sudo reboot</pre>
+        </div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>Actually reboot after updating. Skipping this is the #1 reason Guest Additions fails to compile on Fedora.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">Install build tools and kernel headers</div>
+        </div>
+        <div class="step-desc">Guest Additions compiles kernel modules on the fly, so it needs your kernel headers and build tools.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo dnf install -y gcc make perl kernel-headers kernel-devel dkms</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">Insert the Guest Additions CD image</div>
+        </div>
+        <div class="step-desc">In the VirtualBox window menu: <strong>Devices → Insert Guest Additions CD Image…</strong><br>A dialog will pop up — click <strong>Cancel</strong> (don't let it autorun).</div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>If the CD doesn't appear, it usually mounts automatically at <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">/run/media/$USER/VBox_GAs_*</code></span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-title">Run the installer</div>
+        </div>
+        <div class="step-desc">Navigate to the mounted CD and run the Linux installer script as root.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># Replace YOUR_USERNAME with your actual username</span>
+cd /run/media/$USER/VBox_GAs_*/
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+        <div class="step-desc" style="padding-top:0">This takes 2–4 minutes. You'll see it building kernel modules — that's normal.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">5</div>
+          <div class="step-title">Reboot</div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin: 0;">
+        <span class="callout-icon">ℹ</span>
+        <span><strong>Alternatively:</strong> You can skip steps 3–5 entirely by installing from RPM Fusion instead:<br>
+        <code style="font-family:var(--font-mono);font-size:0.73rem;background:rgba(0,0,0,0.3);padding:2px 7px;border-radius:3px;color:var(--accent3)">sudo dnf install -y virtualbox-guest-additions</code><br>
+        This is simpler but may lag behind the latest VirtualBox version.</span>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <p>After reboot, the VM window should auto-resize when you drag it. You can also confirm the services are running:</p>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ UBUNTU ══ -->
+  <div class="distro-panel" id="panel-ubuntu">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Update and install build dependencies</div></div>
+        <div class="step-desc">Ubuntu needs the same build tools as Fedora. One command handles it all.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo apt update && sudo apt upgrade -y
+sudo apt install -y build-essential dkms linux-headers-$(uname -r)</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Insert the Guest Additions CD</div></div>
+        <div class="step-desc">In the VirtualBox menu: <strong>Devices → Insert Guest Additions CD Image…</strong><br>Ubuntu may auto-open a file manager — close it and use the terminal instead.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Mount and run the installer</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># CD usually automounts — navigate to it:</span>
+cd /media/$USER/VBox_GAs_*/
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>If automount didn't work: <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">sudo mount /dev/cdrom /mnt && cd /mnt</code></span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Reboot</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <p>Window should auto-resize after reboot. To check services:</p>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DEBIAN ══ -->
+  <div class="distro-panel" id="panel-debian">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Update and install dependencies</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo apt update && sudo apt upgrade -y
+sudo apt install -y build-essential dkms linux-headers-$(uname -r)</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Insert Guest Additions CD</div></div>
+        <div class="step-desc"><strong>Devices → Insert Guest Additions CD Image…</strong> in the VirtualBox window.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Mount the CD manually (Debian often doesn't automount)</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo mkdir -p /mnt/cdrom
+sudo mount /dev/cdrom /mnt/cdrom
+cd /mnt/cdrom
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><span>Debian is the pickiest distro about kernel header versions. If the build fails, run <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">apt install linux-headers-$(uname -r)</code> and try again.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Reboot</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ ARCH ══ -->
+  <div class="distro-panel" id="panel-arch">
+    <div class="steps">
+
+      <div class="callout tip" style="margin: 0 0 16px;">
+        <span class="callout-icon">🏹</span>
+        <span><strong>Good news:</strong> Arch is actually the easiest. Install from the official repos — no CD image needed, no manual compilation.</span>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Update your system</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo pacman -Syu</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">Install Guest Additions from official repos</div></div>
+        <div class="step-desc">For systems with a desktop (X11 or Wayland). Use <code style="font-family:var(--font-mono);font-size:0.8rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">virtualbox-guest-utils-nox</code> for headless/server setups.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="comment"># For desktop systems (Gnome, KDE, etc.):</span>
+sudo pacman -S virtualbox-guest-utils
+
+<span class="comment"># For headless / server:</span>
+sudo pacman -S virtualbox-guest-utils-nox</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Enable and start the service</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo systemctl enable --now vboxservice</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">Add yourself to the vboxsf group (for shared folders)</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo usermod -aG vboxsf $USER
+sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin: 0;">
+        <span class="callout-icon">ℹ</span>
+        <span><strong>Manjaro:</strong> Same commands, but Manjaro often ships with Guest Additions already installed. Check first with <code style="font-family:var(--font-mono);font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px;color:var(--accent3)">pacman -Qs virtualbox-guest</code></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MINT ══ -->
+  <div class="distro-panel" id="panel-mint">
+    <div class="steps">
+
+      <div class="callout tip" style="margin: 0 0 16px;">
+        <span class="callout-icon">🌿</span>
+        <span><strong>Linux Mint tip:</strong> Mint is Ubuntu/Debian-based, so the process is nearly identical to Ubuntu — but Mint often has a GUI shortcut worth trying first.</span>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">Try the GUI shortcut first</div></div>
+        <div class="step-desc">In the VirtualBox window: <strong>Devices → Insert Guest Additions CD Image…</strong><br>Mint usually pops up an autorun dialog. If it does, click <strong>Run</strong> and follow the prompts — you're done.</div>
+        <div class="callout tip"><span class="callout-icon">💡</span><span>If the autorun worked and the screen resizes after reboot, skip the rest. You're all set.</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">If autorun didn't work — install manually</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo apt update
+sudo apt install -y build-essential dkms linux-headers-$(uname -r)
+
+<span class="comment"># Navigate to the mounted CD:</span>
+cd /media/$USER/VBox_GAs_*/
+sudo ./VBoxLinuxAdditions.run</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">Reboot</div></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>sudo reboot</pre>
+        </div>
+      </div>
+
+      <div class="verify-box">
+        <h3>// Verify it's working</h3>
+        <div class="code-block" style="margin: 12px 0 0;">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>systemctl status vboxservice</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="troubleshoot">
+    <h2>Troubleshooting</h2>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Screen doesn't resize after reboot <span class="arrow">▶</span></div>
+      <div class="trouble-a">First, make sure <strong>View → Auto-resize Guest Display</strong> is ticked in the VirtualBox menu. If it is, check that <code>vboxservice</code> is running with <code>systemctl status vboxservice</code>. If the service failed, the build likely didn't compile correctly — re-run the installer after confirming kernel headers match your running kernel (<code>uname -r</code>).</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Installer says "kernel headers not found" <span class="arrow">▶</span></div>
+      <div class="trouble-a">Your running kernel version and installed headers don't match. Run <code>uname -r</code> to see your kernel version, then install the exact matching headers. On Fedora: <code>sudo dnf install kernel-headers-$(uname -r) kernel-devel-$(uname -r)</code>. On Ubuntu/Debian/Mint: <code>sudo apt install linux-headers-$(uname -r)</code>. Then re-run the installer.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Shared clipboard isn't working <span class="arrow">▶</span></div>
+      <div class="trouble-a">Two things to check: (1) In VirtualBox settings for the VM, go to <strong>General → Advanced</strong> and set Shared Clipboard to <strong>Bidirectional</strong>. (2) Make sure <code>vboxclient --clipboard</code> is running. You can add it to your desktop startup if it isn't launching automatically. On Fedora/GNOME this usually starts itself — if not, add it to your <code>~/.bash_profile</code>.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">After a kernel update, Guest Additions stopped working <span class="arrow">▶</span></div>
+      <div class="trouble-a">This is the most common ongoing issue. When your kernel updates, the Guest Additions modules need to be recompiled. If you installed via the CD script, just re-run <code>sudo ./VBoxLinuxAdditions.run</code> again after updating. If you installed via your package manager (dnf/pacman), update the package too. DKMS should handle this automatically — but sometimes it doesn't. Run <code>sudo dkms status</code> to check.</div>
+    </div>
+
+    <div class="trouble-item" onclick="toggleTrouble(this)">
+      <div class="trouble-q">Can't access shared folders (permission denied) <span class="arrow">▶</span></div>
+      <div class="trouble-a">You need to add your user to the <code>vboxsf</code> group: <code>sudo usermod -aG vboxsf $USER</code>. Then log out and back in (or reboot) for the group change to take effect. Shared folders mount at <code>/media/sf_foldername</code> by default.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">// swf<span>.wtf</span> — Steven William Fry</div>
+    <div class="footer-links">
+      <a href="../../">home</a>
+      <a href="../../guides/fedora-setup/">fedora guide</a>
+      <a href="mailto:steven@swf.wtf">contact</a>
+    </div>
+  </footer>
+
+</div>
+
+<script defer src="../../assets/js/site.js"></script>
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

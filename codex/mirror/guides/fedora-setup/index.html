@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fedora 43 × Omakub Style Setup</title>
+<meta name="description" content="Step-by-step Fedora 43 setup checklist inspired by Omakub: terminal tools, GNOME theming, apps, and dotfiles.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/fedora-setup/"> <meta property="og:title" content="Fedora 43 &#215; Omakub Style Setup"> <meta property="og:description" content="Step-by-step Fedora 43 setup checklist inspired by Omakub: terminal tools, GNOME theming, apps, and dotfiles."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/fedora-setup/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Fedora 43 &#215; Omakub Style Setup"> <meta name="twitter:description" content="Step-by-step Fedora 43 setup checklist inspired by Omakub: terminal tools, GNOME theming, apps, and dotfiles."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Fedora 43 × Omakub Style Setup","description":"Step-by-step Fedora 43 setup checklist inspired by Omakub: terminal tools, GNOME theming, apps, and dotfiles.","url":"https://swf.wtf/guides/fedora-setup/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/fedora-setup.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-left">
+    <a href="../../" class="home-link">← swf.wtf</a>
+    <h1><span>Fedora 43</span> × <em>Omakub</em> Style</h1>
+    <div class="subtitle">// Manual setup checklist — inspired by DHH's opinionated Ubuntu workflow</div>
+  </div>
+  <div class="progress-panel">
+    <div class="progress-label">Overall progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-count"><span id="doneCount">0</span> <small>/ <span id="totalCount">0</span> done</small></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- SECTION 1: Terminal & Shell -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-terminal">⚡</div>
+      <div class="section-title">Terminal & Shell</div>
+      <div class="section-count" id="count-0"></div>
+    </div>
+    <div class="items" id="section-0"></div>
+  </div>
+
+  <!-- SECTION 2: GNOME Theming -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-gnome">🎨</div>
+      <div class="section-title">GNOME Theming</div>
+      <div class="section-count" id="count-1"></div>
+    </div>
+    <div class="items" id="section-1"></div>
+  </div>
+
+  <!-- SECTION 3: App Installations -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-apps">📦</div>
+      <div class="section-title">App Installations</div>
+      <div class="section-count" id="count-2"></div>
+    </div>
+    <div class="items" id="section-2"></div>
+  </div>
+
+  <!-- SECTION 4: Dotfiles & Config -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-dotfiles">⚙️</div>
+      <div class="section-title">Dotfiles & Configs</div>
+      <div class="section-count" id="count-3"></div>
+    </div>
+    <div class="items" id="section-3"></div>
+  </div>
+
+  <div class="congrats" id="congrats">
+    <div class="emoji">🚀</div>
+    <h2>// SETUP COMPLETE</h2>
+    <p>Your Fedora 43 is now running in full Omakub style. Happy hacking.</p>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ Reset all checkboxes</button>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+<script defer src="../../assets/js/fedora-setup.js"></script>
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

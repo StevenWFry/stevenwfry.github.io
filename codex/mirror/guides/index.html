@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guides - swf.wtf</title>
+<meta name="description" content="Technical guides on Linux, Git, SSH, and developer workflows.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/"> <meta property="og:title" content="Guides - swf.wtf"> <meta property="og:description" content="Technical guides on Linux, Git, SSH, and developer workflows."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/guides/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Guides - swf.wtf"> <meta name="twitter:description" content="Technical guides on Linux, Git, SSH, and developer workflows."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Guides - swf.wtf","url":"https://swf.wtf/guides/","description":"Technical guides on Linux, Git, SSH, and developer workflows."}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../assets/css/site.css">
+<style>
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 1.1rem 0;
+    background: rgba(8, 11, 15, 0.92);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-name {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    letter-spacing: -0.03em;
+  }
+
+  .site-name span { color: var(--muted); }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    margin-left: 1.15rem;
+    letter-spacing: 0.08em;
+    transition: color 0.15s;
+  }
+
+  nav a:hover { color: var(--accent); }
+
+  .listing {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+
+  .eyebrow {
+    color: var(--accent3);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.65rem;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: var(--font-mono);
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    line-height: 1.18;
+    margin-bottom: 0.7rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    max-width: 700px;
+    margin-bottom: 1.6rem;
+    line-height: 1.7;
+  }
+
+  .disclaimer {
+    margin: 0 0 1.5rem;
+    padding: 0.8rem 0.95rem;
+    border: 1px solid rgba(255, 214, 10, 0.35);
+    border-left: 3px solid var(--accent3);
+    border-radius: 8px;
+    background: rgba(255, 214, 10, 0.06);
+    color: var(--text);
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+
+  .disclaimer strong {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent3);
+  }
+
+  .top {
+    display: inline-block;
+    margin-bottom: 1.4rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .top:hover { color: var(--accent); }
+
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 0.4rem;
+  }
+
+  .guide-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: block;
+  }
+
+  .guide-card:hover {
+    border-color: rgba(0, 255, 157, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.36);
+  }
+
+  .guide-title {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    line-height: 1.45;
+    margin-bottom: 0.45rem;
+  }
+
+  .guide-desc {
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+</style>
+<link rel="stylesheet" href="../assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="../">swf<span>.wtf</span></a>
+    <nav>
+      <a href="../#writing">writing</a>
+      <a href="../blog/">blog</a>
+      <a href="../about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main class="listing">
+  <a class="top" href="../">&larr; home</a>
+  <div class="eyebrow">Reference Library</div>
+  <h1>Guides</h1>
+  <p class="subtitle">Long-form walkthroughs for Linux, virtual machines, Git, Neovim, Python, SSH, SQL, and AI-assisted development workflows.</p>
+  <p class="disclaimer"><strong>Notice:</strong> All guides are currently being verified. Follow them at your own risk and validate commands against your own system before running anything destructive.</p>
+
+  <div class="guide-grid">
+    <a class="guide-card" href="../guides/arch-linux-virtualbox-omarchy/">
+      <div class="guide-title">Arch Linux on VirtualBox (Omarchy-style, command by command)</div>
+      <div class="guide-desc">Replicate Omarchy's install flow manually: Limine, LUKS, Btrfs subvolumes, and archinstall JSON.</div>
+    </a>
+    <a class="guide-card" href="../guides/fedora-setup/">
+      <div class="guide-title">Fedora 43 x Omakub Setup Guide</div>
+      <div class="guide-desc">Interactive post-install checklist for terminal setup, GNOME theming, apps, and dotfiles.</div>
+    </a>
+    <a class="guide-card" href="../guides/arch-linux-install-beginners/">
+      <div class="guide-title">Arch Linux Install Guide for Beginners</div>
+      <div class="guide-desc">Beginner path based on ArchWiki, with both archinstall and manual command routes.</div>
+    </a>
+    <a class="guide-card" href="../guides/hyprland-base-arch/">
+      <div class="guide-title">Hyprland on Base Arch Linux</div>
+      <div class="guide-desc">Install and configure a usable Hyprland desktop on fresh Arch: packages, portals, audio, startup, and validation.</div>
+    </a>
+    <a class="guide-card" href="../guides/python-beginners/">
+      <div class="guide-title">Python for Beginners</div>
+      <div class="guide-desc">Practical setup from install to venv, pip, syntax, and first project workflow.</div>
+    </a>
+    <a class="guide-card" href="../guides/coding-with-ai-agents/">
+      <div class="guide-title">Coding with Claude AI, Claude Code, and Codex</div>
+      <div class="guide-desc">A practical division-of-labor workflow for multiple coding assistants in one repo.</div>
+    </a>
+    <a class="guide-card" href="../guides/git-guide/">
+      <div class="guide-title">Git from Zero</div>
+      <div class="guide-desc">Command-first Git guide from setup and commits to branching and remotes.</div>
+    </a>
+    <a class="guide-card" href="../guides/neovim-beginners/">
+      <div class="guide-title">Neovim for Beginners</div>
+      <div class="guide-desc">Mode-based editing fundamentals and daily command patterns for getting fluent.</div>
+    </a>
+    <a class="guide-card" href="../guides/github-ssh-linux/">
+      <div class="guide-title">GitHub SSH Keys on Linux</div>
+      <div class="guide-desc">Set up secure key-based auth for GitHub with ssh-agent and verification steps.</div>
+    </a>
+    <a class="guide-card" href="../guides/virtualbox-guest-additions/">
+      <div class="guide-title">VirtualBox Guest Additions on Linux</div>
+      <div class="guide-desc">Per-distro install instructions for resizing, clipboard sharing, and smoother VM UX.</div>
+    </a>
+    <a class="guide-card" href="../guides/linux-downloads/">
+      <div class="guide-title">Linux Downloads</div>
+      <div class="guide-desc">Curated distro download links organized for quick decision-making.</div>
+    </a>
+    <a class="guide-card" href="../guides/sql-guide/">
+      <div class="guide-title">SQL Guide</div>
+      <div class="guide-desc">Oracle 19c and MySQL study notes, split into web chapters for easy reference.</div>
+    </a>
+  </div>
+</main>
+<script defer src="../assets/js/site.js"></script>
+<script defer src="../assets/js/codex-mirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sunrise">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex Mirror Explorer</title>
+<meta name="description" content="Search and browse every page copied from the main website into codex/mirror.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/codex.css">
+</head>
+<body data-page="explorer">
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="page-bg" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span>CODEX</span>
+    <small>alt universe build</small>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="guides.html">Guides</a>
+    <a href="resources.html">Resources</a>
+    <a href="explorer.html" aria-current="page">Mirror</a>
+    <a href="visitors.html">Visitors</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="pill-btn" type="button" data-command-open>Command Palette</button>
+    <button class="pill-btn" type="button" data-theme-cycle>Theme: Sunrise</button>
+  </div>
+</header>
+
+<main id="content" class="content-wrap">
+  <section class="hero hero-compact reveal">
+    <p class="eyebrow">full content explorer</p>
+    <h1>Every Copied Page, One Search Box Away</h1>
+    <p class="lede">
+      This view indexes <code>codex/mirror/sitemap.xml</code> and turns the full main-site copy into a searchable catalog.
+      Use this when you want everything, not just a curated subset.
+    </p>
+  </section>
+
+  <section class="section reveal">
+    <div class="toolbar">
+      <label class="search-wrap" for="mirrorSearch">
+        <span>Search</span>
+        <input id="mirrorSearch" type="search" placeholder="sql, blog, hyprland, pirate, fedora...">
+      </label>
+
+      <div class="filter-wrap" aria-label="Filter mirror pages">
+        <button type="button" class="filter-chip active" data-kind="all">all</button>
+        <button type="button" class="filter-chip" data-kind="core">core</button>
+        <button type="button" class="filter-chip" data-kind="guides">guides</button>
+        <button type="button" class="filter-chip" data-kind="sql">sql</button>
+        <button type="button" class="filter-chip" data-kind="blog">blog</button>
+        <button type="button" class="filter-chip" data-kind="projects">projects</button>
+        <button type="button" class="filter-chip" data-kind="other">other</button>
+      </div>
+    </div>
+
+    <p class="result-count" id="mirrorCount">Reading mirror sitemap...</p>
+    <div class="link-grid" id="mirrorGrid"></div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>Direct Mirror Shortcuts</h2>
+      <p>Fast jump links into the copied website structure.</p>
+    </div>
+    <div class="resource-inline">
+      <a href="mirror/index.html">mirror home</a>
+      <a href="mirror/about.html">mirror about</a>
+      <a href="mirror/now.html">mirror /now</a>
+      <a href="mirror/guides/index.html">mirror guides</a>
+      <a href="mirror/blog/index.html">mirror blog</a>
+      <a href="mirror/guides/sql-guide/index.html">mirror sql guide</a>
+      <a href="mirror/pirate-copilot/index.html">mirror pirate-copilot</a>
+      <a href="mirror/cheatsheets/Claude-Code-cheatsheet.jpeg">mirror cheatsheet</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Mirror Explorer powered by sitemap parsing and categorized path mapping.</p>
+</footer>
+
+<div class="palette-backdrop" id="commandPalette" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+    <div class="palette-head">
+      <h2 id="paletteTitle">Command Palette</h2>
+      <button type="button" class="close-btn" data-command-close>Esc</button>
+    </div>
+    <input id="commandInput" type="text" autocomplete="off" placeholder="Type: guides, mirror, sql, blog..." aria-label="Command search">
+    <ul id="commandList"></ul>
+  </div>
+</div>
+
+<script src="js/app.js" defer></script>
+<script src="js/explorer.js" defer></script>
+</body>
+</html>

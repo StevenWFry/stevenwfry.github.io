@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pirate Copilot: How I Built My First AI-Assisted Website - swf.wtf</title>
+<meta name="description" content="A build log of Pirate Copilot, my first GitHub Copilot website experiment: goals, architecture, workflow, and what I learned.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/blog/pirate-copilot-website/"> <meta property="og:title" content="Pirate Copilot: How I Built My First AI-Assisted Website - swf.wtf"> <meta property="og:description" content="A build log of Pirate Copilot, my first GitHub Copilot website experiment: goals, architecture, workflow, and what I learned."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/blog/pirate-copilot-website/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Pirate Copilot: How I Built My First AI-Assisted Website - swf.wtf"> <meta name="twitter:description" content="A build log of Pirate Copilot, my first GitHub Copilot website experiment: goals, architecture, workflow, and what I learned."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Pirate Copilot: How I Built My First AI-Assisted Website - swf.wtf","description":"A build log of Pirate Copilot, my first GitHub Copilot website experiment: goals, architecture, workflow, and what I learned.","url":"https://swf.wtf/blog/pirate-copilot-website/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/pirate-copilot-website.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<div class="post-container">
+  <nav class="post-nav">
+    <a href="../../">&larr; swf.wtf</a>
+    <span class="nav-right">Feb 24, 2026</span>
+  </nav>
+
+  <header class="post-header">
+    <div class="post-meta">
+      <span>build log</span>
+      <span>web dev</span>
+      <span>~8 min read</span>
+    </div>
+    <h1 class="post-title">Pirate Copilot: Building a Website with AI Without Losing the Plot</h1>
+    <p class="post-subtitle">A practical breakdown of what I built, what Copilot actually helped with, and what still needed real human judgment.</p>
+  </header>
+
+  <article class="post-body">
+    <h2 id="why">Why I Built Pirate Copilot</h2>
+    <p>Pirate Copilot started as a simple experiment: could I ship a complete, fun microsite while using AI as a collaborator instead of a code vending machine?</p>
+    <p>I wanted something visual, opinionated, and small enough to finish quickly. The pirate theme gave me enough creative direction to keep design and content decisions focused.</p>
+
+    <h2 id="stack">Stack and Structure</h2>
+    <p>The site lives in <code>/pirate-copilot</code> in this repo and uses plain HTML, CSS, and JavaScript. No framework, no build pipeline, no dependencies.</p>
+    <p>That constraint matters. It forced the project to stay understandable and easy to iterate on. AI suggestions were useful, but simple architecture made those suggestions safe to adopt.</p>
+
+    <pre data-lang="text"><code>pirate-copilot/
+  index.html
+  css/styles.css
+  js/scripts.js
+  js/3d-model.js
+  images/</code></pre>
+
+    <h2 id="workflow">What Copilot Helped With</h2>
+    <p>Copilot was strongest on speed tasks:</p>
+    <p><strong>Boilerplate and repetitive markup.</strong> It filled out predictable sections quickly.</p>
+    <p><strong>CSS scaffolding.</strong> Useful for rough layout structure before manual polish.</p>
+    <p><strong>JavaScript stubs.</strong> Good at getting a first pass of interaction logic started.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">$ rule that worked</div>
+      <p>I treated Copilot output as a draft, never a final answer. Review first, keep second.</p>
+    </div>
+
+    <h2 id="limits">Where AI Was Not Enough</h2>
+    <p>Three areas still depended on manual decisions:</p>
+    <p><strong>Visual taste.</strong> Copilot can generate CSS, but it does not know your aesthetic bar.</p>
+    <p><strong>Content voice.</strong> The tone needed to match the project personality, which required direct writing and editing.</p>
+    <p><strong>Performance and cleanup.</strong> AI can over-generate classes and scripts. I trimmed dead code and simplified aggressively.</p>
+
+    <h2 id="lessons">Lessons from the Project</h2>
+    <p><strong>1. Start with constraints.</strong> Small scope beats ambitious scope.</p>
+    <p><strong>2. Keep files readable.</strong> Clean structure makes AI assistance safer.</p>
+    <p><strong>3. Use AI for momentum, not authority.</strong> You still own architecture, correctness, and final quality.</p>
+    <p><strong>4. Ship, then refine.</strong> Getting to a live version quickly made improvements easier to prioritize.</p>
+
+    <h2 id="whats-next">What I Would Add Next</h2>
+    <p>If I continue Pirate Copilot, I would add:</p>
+    <p><strong>Accessibility pass.</strong> Stronger keyboard navigation and contrast checks.</p>
+    <p><strong>Asset optimization.</strong> Compress images and tighten delivery for faster load times.</p>
+    <p><strong>Content expansion.</strong> A short behind-the-scenes section for design and implementation notes.</p>
+
+    <h2 id="closing">Closing</h2>
+    <p>Pirate Copilot proved that AI can speed up a web project, but only when the human running it has clear constraints and editorial control.</p>
+    <p>The biggest win was not generated code. It was reduced friction between idea and a working first version.</p>
+  </article>
+
+  <footer class="post-footer">
+    <div class="post-footer-sig">// Steven William Fry - Feb 24, 2026</div>
+    <a href="../../" class="back-link">&larr; back to all posts</a>
+  </footer>
+</div>
+
+<script defer src="../../assets/js/pirate-copilot-website.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

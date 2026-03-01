@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sunrise">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex // Alt Site</title>
+<meta name="description" content="Codex home: a main-site-inspired layout with a different visual direction and full mirror access.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/codex.css">
+</head>
+<body data-page="home">
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="page-bg" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span>CODEX</span>
+    <small>alt universe build</small>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html" aria-current="page">Home</a>
+    <a href="guides.html">Guides</a>
+    <a href="resources.html">Resources</a>
+    <a href="explorer.html">Mirror</a>
+    <a href="visitors.html">Visitors</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="pill-btn" type="button" data-command-open>Command Palette</button>
+    <button class="pill-btn" type="button" data-theme-cycle>Theme: Sunrise</button>
+  </div>
+</header>
+
+<main id="content" class="content-wrap">
+  <section class="hero reveal codex-home-hero">
+    <div>
+      <p class="eyebrow">main-site energy, codex flavor</p>
+      <p class="codex-tag">swf.wtf // codex edition</p>
+
+      <h1 class="codex-name">
+        <span id="swf-s">System</span>
+        <span id="swf-w">Workflow</span>
+        <span><span id="swf-f">Forge</span><span class="codex-dot">.</span></span>
+      </h1>
+      <p class="codex-domain">// swf.wtf :: codex</p>
+
+      <p class="lede">
+        I tinker with <strong>Linux</strong> and write about it.<br>
+        This version keeps the original homepage cadence, then adds Codex navigation and mirror tooling.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#writing">Read latest writing</a>
+        <a class="btn btn-secondary" href="mirror/guides/fedora-setup/index.html">Fedora x Omakub guide</a>
+        <a class="btn btn-ghost" href="explorer.html">Browse Full Mirror</a>
+      </div>
+    </div>
+
+    <aside class="sys-card visitor-card" aria-label="Visitor information">
+      <div class="sys-top">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-gold"></span>
+        <span class="dot dot-green"></span>
+        <strong>visitor.info</strong>
+        <button type="button" class="launch-btn visitor-refresh" id="refreshVisitorBtn">refresh</button>
+      </div>
+      <p class="extras-desc">This panel shows browser/device info plus public-IP geolocation when available.</p>
+      <div class="sys-lines visitor-lines">
+        <div><span>public ip</span><b id="visitorIp">loading…</b></div>
+        <div><span>location</span><b id="visitorLocation">loading…</b></div>
+        <div><span>coords</span><b id="visitorCoords">waiting…</b></div>
+        <div><span>browser</span><b id="visitorBrowser">detecting…</b></div>
+        <div><span>user agent</span><b id="visitorUserAgent">detecting…</b></div>
+        <div><span>os</span><b id="visitorOS">detecting…</b></div>
+        <div><span>device</span><b id="visitorDevice">detecting…</b></div>
+        <div><span>language</span><b id="visitorLanguage">detecting…</b></div>
+        <div><span>timezone</span><b id="visitorTimezone">detecting…</b></div>
+        <div><span>viewport</span><b id="visitorViewport">detecting…</b></div>
+        <div><span>screen</span><b id="visitorScreen">detecting…</b></div>
+        <div><span>network</span><b id="visitorNetwork">detecting…</b></div>
+        <div><span>posts</span><b id="codexPostCount">0</b></div>
+      </div>
+      <div class="challenge-actions visitor-actions">
+        <button type="button" class="btn btn-secondary" id="geolocateBtn">request precise geolocation</button>
+        <a class="btn btn-ghost" href="visitors.html">open visitor log</a>
+      </div>
+    </aside>
+  </section>
+
+  <section class="command-strip reveal" aria-label="Ticker commands">
+    <div class="command-track">
+      <span class="command-item">$ dnf update --refresh</span>
+      <span class="command-item">// Fedora 43 x Omakub vibes</span>
+      <span class="command-item">$ zellij attach -c codex</span>
+      <span class="command-item">// mirror + styled explorer</span>
+      <span class="command-item">$ rg -n "TODO" .</span>
+      <span class="command-item">// ship, review, iterate</span>
+      <span class="command-item">$ git push origin master</span>
+      <span class="command-item">// learn in public</span>
+      <span class="command-item">$ dnf update --refresh</span>
+      <span class="command-item">// Fedora 43 x Omakub vibes</span>
+      <span class="command-item">$ zellij attach -c codex</span>
+      <span class="command-item">// mirror + styled explorer</span>
+      <span class="command-item">$ rg -n "TODO" .</span>
+      <span class="command-item">// ship, review, iterate</span>
+      <span class="command-item">$ git push origin master</span>
+      <span class="command-item">// learn in public</span>
+    </div>
+  </section>
+
+  <section class="section reveal" id="writing">
+    <div class="section-head">
+      <div class="section-kicker">Latest writing</div>
+      <h2>Latest Writing</h2>
+      <p>Main-site structure, reworked in Codex style.</p>
+    </div>
+
+    <a class="blog-feature" href="mirror/guides/arch-linux-virtualbox-omarchy/index.html">
+      <div class="blog-feature-label">Latest guide</div>
+      <h3>Arch Linux on VirtualBox (Omarchy-style)</h3>
+      <p>Limine bootloader, LUKS, Btrfs subvolumes, and a command-by-command install flow.</p>
+      <div class="blog-feature-meta">
+        <span>Feb 26, 2026</span>
+        <span>guide</span>
+        <span>arch</span>
+      </div>
+    </a>
+
+    <div class="post-rail" id="codexPostRail">
+      <a class="post-row" href="mirror/guides/hyprland-base-arch/index.html"><span>Feb 26, 2026</span><strong>Hyprland on Base Arch Linux</strong><em>hypr</em></a>
+      <a class="post-row" href="mirror/guides/python-beginners/index.html"><span>Feb 25, 2026</span><strong>Python for Beginners</strong><em>python</em></a>
+      <a class="post-row" href="mirror/guides/arch-linux-install-beginners/index.html"><span>Feb 25, 2026</span><strong>Arch Linux Install Guide for Beginners</strong><em>arch</em></a>
+      <a class="post-row" href="mirror/guides/neovim-beginners/index.html"><span>Feb 25, 2026</span><strong>Neovim for Beginners</strong><em>nvim</em></a>
+      <a class="post-row" href="mirror/blog/pirate-copilot-website/index.html"><span>Feb 24, 2026</span><strong>Pirate Copilot: Building a Website with AI</strong><em>web</em></a>
+      <a class="post-row" href="mirror/guides/coding-with-ai-agents/index.html"><span>Feb 23, 2026</span><strong>Coding with Claude AI, Claude Code, and Codex</strong><em>ai</em></a>
+      <a class="post-row" href="mirror/guides/git-guide/index.html"><span>Feb 21, 2026</span><strong>Git from Zero</strong><em>git</em></a>
+      <a class="post-row" href="mirror/guides/github-ssh-linux/index.html"><span>Feb 20, 2026</span><strong>GitHub SSH Keys on Linux</strong><em>ssh</em></a>
+      <a class="post-row" href="mirror/guides/virtualbox-guest-additions/index.html"><span>Feb 20, 2026</span><strong>VirtualBox Guest Additions on Linux</strong><em>linux</em></a>
+      <a class="post-row" href="mirror/blog/how-i-set-up-swf-wtf/index.html"><span>Feb 20, 2026</span><strong>How I set up swf.wtf in one morning</strong><em>meta</em></a>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <div class="section-kicker">Projects & links</div>
+      <h2>Projects & Links</h2>
+      <p>Same utility-first idea as the main site, with Codex card treatment.</p>
+    </div>
+    <div class="link-grid">
+      <a class="link-tile" href="mirror/guides/fedora-setup/index.html"><span class="link-tag">guide</span><strong>Fedora 43 x Omakub Setup</strong><small>Interactive checklist for terminal, GNOME, apps, and dotfiles.</small></a>
+      <a class="link-tile" href="mirror/guides/sql-guide/index.html"><span class="link-tag">study</span><strong>SQL Guide</strong><small>Oracle + MySQL chapters, formatted for web reading.</small></a>
+      <a class="link-tile" href="mirror/guides/linux-downloads/index.html"><span class="link-tag">reference</span><strong>Linux Downloads</strong><small>Curated distro downloads organized by use case.</small></a>
+      <a class="link-tile" href="mirror/pirate-copilot/index.html"><span class="link-tag">project</span><strong>Pirate Copilot</strong><small>The original AI-assisted microsite experiment.</small></a>
+      <a class="link-tile" href="mirror/cheatsheets/Claude-Code-cheatsheet.jpeg"><span class="link-tag">cheatsheet</span><strong>Claude Code Cheat Sheet</strong><small>Quick command reference image.</small></a>
+      <a class="link-tile" href="mirror/about.html"><span class="link-tag">profile</span><strong>About (man page style)</strong><small>The original about page in terminal man-page format.</small></a>
+      <a class="link-tile" href="https://github.com/StevenWFry" target="_blank" rel="noopener"><span class="link-tag">social</span><strong>GitHub</strong><small>@StevenWFry</small></a>
+      <a class="link-tile" href="mailto:steven@swf.wtf"><span class="link-tag">contact</span><strong>Email</strong><small>steven@swf.wtf</small></a>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <div class="section-kicker">Codex extras</div>
+      <h2>Codex Extras</h2>
+      <p>Practical helpers you can use immediately during a real dev session.</p>
+    </div>
+
+    <div class="extras-grid">
+      <article class="extras-panel">
+        <h3>Session Startup Checklist</h3>
+        <p class="extras-desc">A small pre-flight list that prevents avoidable mistakes.</p>
+        <p class="extras-stat"><b id="startupDone">0</b> / 6 complete</p>
+        <div class="task-list" id="startupChecklist">
+          <label class="task-item"><input type="checkbox" data-start-task="sync"><span>Pull latest changes and review git status.</span></label>
+          <label class="task-item"><input type="checkbox" data-start-task="branch"><span>Create a focused branch for this session.</span></label>
+          <label class="task-item"><input type="checkbox" data-start-task="tests"><span>Run baseline tests before touching code.</span></label>
+          <label class="task-item"><input type="checkbox" data-start-task="notes"><span>Write a 3-line goal for today’s scope.</span></label>
+          <label class="task-item"><input type="checkbox" data-start-task="risks"><span>Identify rollback point for risky edits.</span></label>
+          <label class="task-item"><input type="checkbox" data-start-task="ship"><span>Define “done” before starting implementation.</span></label>
+        </div>
+        <div class="challenge-actions">
+          <button class="btn btn-secondary" type="button" id="resetChecklistBtn">reset checklist</button>
+        </div>
+      </article>
+
+      <article class="extras-panel">
+        <h3>Command Launchpad</h3>
+        <p class="extras-desc">Copy a known-good command template and move faster.</p>
+        <div class="launch-grid">
+          <button type="button" class="launch-btn" data-copy-text="git switch -c chore/session-$(date +%Y%m%d-%H%M)">new branch template</button>
+          <button type="button" class="launch-btn" data-copy-text="git add -A && git commit -m \"checkpoint: before major edit\"">checkpoint commit</button>
+          <button type="button" class="launch-btn" data-copy-text="rg -n \"TODO|FIXME|HACK\" .">find technical debt</button>
+          <button type="button" class="launch-btn" data-copy-text="git reflog --date=local | head -n 15">recovery reflog</button>
+          <button type="button" class="launch-btn" data-copy-text="python3 -m http.server 8080">local static server</button>
+          <button type="button" class="launch-btn" data-copy-text="npm test -- --watch">watch tests</button>
+        </div>
+      </article>
+
+      <article class="extras-panel">
+        <h3>Prompt Templates</h3>
+        <p class="extras-desc">Use structured prompts so agent output is actionable, not vague.</p>
+        <div class="launch-grid">
+          <button type="button" class="launch-btn" data-copy-text="Goal:\nConstraints:\nAcceptance criteria:\nFiles expected to change:\nFailure modes to watch:\nReturn format: step-by-step plan + patch summary">implementation plan prompt</button>
+          <button type="button" class="launch-btn" data-copy-text="Review this change for:\n1) correctness bugs\n2) regressions\n3) missing tests\n4) security risks\nGive findings ordered by severity with file references.">code review prompt</button>
+          <button type="button" class="launch-btn" data-copy-text="I need a rollback-safe migration plan.\nContext:\nCurrent schema:\nTarget schema:\nDowntime tolerance:\nProvide forward and rollback SQL with verification steps.">migration prompt</button>
+        </div>
+      </article>
+
+      <article class="extras-panel">
+        <h3>Recovery Map</h3>
+        <p class="extras-desc">When things go sideways, these are the first links to open.</p>
+        <div class="resource-inline extras-links">
+          <a href="mirror/guides/github-ssh-linux/index.html">ssh auth fixes</a>
+          <a href="mirror/guides/virtualbox-guest-additions/index.html">vm driver fixes</a>
+          <a href="mirror/guides/git-guide/index.html">git recovery basics</a>
+          <a href="mirror/guides/coding-with-ai-agents/index.html">ai workflow guardrails</a>
+          <a href="explorer.html">open full mirror explorer</a>
+        </div>
+      </article>
+    </div>
+
+    <article class="challenge-card">
+      <p id="challengeText">Loading challenge...</p>
+      <div class="challenge-actions">
+        <button class="btn btn-secondary" type="button" id="newChallengeBtn">new challenge</button>
+        <a class="btn btn-ghost" href="explorer.html">open mirror explorer</a>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Codex home now mirrors the original site structure with a distinct visual and interaction layer.</p>
+</footer>
+
+<div class="palette-backdrop" id="commandPalette" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+    <div class="palette-head">
+      <h2 id="paletteTitle">Command Palette</h2>
+      <button type="button" class="close-btn" data-command-close>Esc</button>
+    </div>
+    <input id="commandInput" type="text" autocomplete="off" placeholder="Type: guides, resources, mirror, top..." aria-label="Command search">
+    <ul id="commandList"></ul>
+  </div>
+</div>
+
+<script src="js/app.js" defer></script>
+</body>
+</html>

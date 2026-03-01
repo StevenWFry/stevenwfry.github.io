@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 6 – Reporting Aggregated Data Using Group Functions (or: how to stop counting things by hand) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, at some point “one row per employee” stops cutting it. HR doesn’t want every salary; they want average salary by department, or total pay for sa...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/06_Reporting_Aggregated_Data_Using_Group_Functions.html"> <meta property="og:title" content="Lesson 6 – Reporting Aggregated Data Using Group Functions (or: how to stop counting things by hand) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, at some point “one row per employee” stops cutting it. HR doesn’t want every salary; they want average salary by department, or total pay for sa..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/06_Reporting_Aggregated_Data_Using_Group_Functions.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Lesson 6 – Reporting Aggregated Data Using Group Functions (or: how to stop counting things by hand) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, at some point “one row per employee” stops cutting it. HR doesn’t want every salary; they want average salary by department, or total pay for sa..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Lesson 6 – Reporting Aggregated Data Using Group Functions (or: how to stop counting things by hand) - SQL Guide - swf.wtf","description":"And look, at some point “one row per employee” stops cutting it. HR doesn’t want every salary; they want average salary by department, or total pay for sa...","url":"https://swf.wtf/guides/sql-guide/06_Reporting_Aggregated_Data_Using_Group_Functions.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 6 – Reporting Aggregated Data Using Group Functions (or: how to stop counting things by hand)</h1>
+    <p>And look, at some point “one row per employee” stops cutting it. HR doesn’t want every salary; they want average salary by department, or total pay for sales reps, or “how many people do we even have?”. That’s where gro...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, at some point “one row per employee” stops cutting it. HR doesn’t want <em>every</em> salary; they want <strong>average salary by department</strong>, or <strong>total pay for sales reps</strong>, or “how many people do we even have?”. That’s where <strong>group functions</strong> show up and say: “What if we crushed all these rows down into one useful number?”</p>
+    <p>In this lesson you will learn to:</p>
+    <ul>
+    <li>Identify the main <strong>group (aggregate) functions</strong>.</li>
+    <li>Describe how group functions work.</li>
+    <li>Group data with <code>GROUP BY</code>.</li>
+    <li>Filter groups with <code>HAVING</code>.</li>
+    </ul>
+    <hr>
+    <h2>1. Group Functions: What They Are and Why They Exist</h2>
+    <p>Group (aggregate) functions operate on <strong>sets of rows</strong> and return <strong>one result per group</strong>.</p>
+    <p>Common group functions:</p>
+    <ul>
+    <li><code>AVG</code> – average value.</li>
+    <li><code>SUM</code> – total of values.</li>
+    <li><code>MIN</code> – smallest value.</li>
+    <li><code>MAX</code> – largest value.</li>
+    <li><code>COUNT</code> – how many rows/values.</li>
+    <li><code>LISTAGG</code> – concatenates values into a single string (Oracle).</li>
+    <li><code>STDDEV</code> – standard deviation.</li>
+    <li><code>VARIANCE</code> – variance.</li>
+    </ul>
+    <p>Syntax pattern:</p>
+    <pre><code class="language-sql">SELECT AVG(salary)   AS avg_sal,
+           SUM(salary)   AS total_sal,
+           MIN(salary)   AS min_sal,
+           MAX(salary)   AS max_sal
+    FROM   employees
+    WHERE  job_id LIKE &#x27;%REP%&#x27;;</code></pre>
+    <ul>
+    <li>Input: many <code>salary</code> values.</li>
+    <li>Output: <strong>one row</strong> with four aggregated numbers.</li>
+    </ul>
+    <p>Group functions ignore <code>NULL</code> values in their input columns—unless you drag them back in with something like <code>NVL</code>/<code>IFNULL</code>.</p>
+    <hr>
+    <h2>2. AVG, SUM, MIN, MAX, COUNT – The Core Four (Plus One)</h2>
+    <h3>2.1 AVG and SUM</h3>
+    <p>Example:</p>
+    <pre><code class="language-sql">SELECT AVG(salary) AS avg_sal,
+           SUM(salary) AS total_sal
+    FROM   employees
+    WHERE  job_id LIKE &#x27;%REP%&#x27;;</code></pre>
+    <ul>
+    <li><code>AVG</code> and <code>SUM</code> consider only <strong>non‑NULL</strong> <code>salary</code> values.</li>
+    <li>If some salaries were <code>NULL</code>, they simply don’t participate.</li>
+    </ul>
+    <h3>2.2 MIN and MAX</h3>
+    <p>Work on <strong>numbers, text, and dates</strong>.</p>
+    <pre><code class="language-sql">SELECT MIN(salary) AS lowest_pay,
+           MAX(salary) AS highest_pay
+    FROM   employees;
+    
+    SELECT MIN(last_name) AS first_name_alpha,
+           MAX(last_name) AS last_name_alpha
+    FROM   employees;
+    
+    SELECT MIN(hire_date) AS earliest_hire,
+           MAX(hire_date) AS latest_hire
+    FROM   employees;</code></pre>
+    <ul>
+    <li>For text, “minimum” and “maximum” are alphabetical.</li>
+    <li>For dates, they’re earliest and latest in time.</li>
+    </ul>
+    <h3>2.3 COUNT</h3>
+    <p>Two important forms:</p>
+    <ul>
+    <li><code>COUNT(*)</code> – count <strong>all rows</strong> (including rows where some columns are <code>NULL</code>).</li>
+    <li><code>COUNT(expr)</code> – count rows where <code>expr</code> is <strong>not NULL</strong>.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">-- Total employees
+    SELECT COUNT(*) AS total_emps
+    FROM   employees;               -- e.g., 107
+    
+    -- How many employees have a commission
+    SELECT COUNT(commission_pct) AS commission_emps
+    FROM   employees;               -- NULL values ignored</code></pre>
+    <p>If you want to count only unique values, add <code>DISTINCT</code>.</p>
+    <hr>
+    <h2>3. DISTINCT and NULLs in Group Functions</h2>
+    <p><code>DISTINCT</code> with aggregates lets you ignore duplicate values.</p>
+    <p>Example – distinct department IDs:</p>
+    <pre><code class="language-sql">SELECT COUNT(department_id)          AS dept_count_incl_nulls,
+           COUNT(DISTINCT department_id) AS distinct_depts
+    FROM   employees;</code></pre>
+    <ul>
+    <li><code>COUNT(department_id)</code> returns the number of <strong>non‑NULL</strong> department IDs (e.g., 106).</li>
+    <li><code>COUNT(DISTINCT department_id)</code> returns the number of <strong>unique, non‑NULL</strong> department IDs (e.g., 11).</li>
+    </ul>
+    <p>If you query the values directly:</p>
+    <pre><code class="language-sql">SELECT DISTINCT department_id
+    FROM   employees;</code></pre>
+    <p>You may see 12 rows including one <code>NULL</code>, which explains why <code>COUNT(DISTINCT department_id)</code> returned 11.</p>
+    <h3>3.1 Forcing NULLs into the party with NVL / IFNULL</h3>
+    <p>By default, aggregates ignore <code>NULL</code>s. To include them, substitute a placeholder value first.</p>
+    <p>Example – average commission <strong>only</strong> across employees who earn one:</p>
+    <pre><code class="language-sql">SELECT AVG(commission_pct) AS avg_comm_sales_only
+    FROM   employees;</code></pre>
+    <p>Example – average commission across <strong>all employees</strong> (non‑sales treated as 0):</p>
+    <pre><code class="language-sql">SELECT AVG(NVL(commission_pct, 0)) AS avg_comm_all
+    FROM   employees;</code></pre>
+    <p>MySQL version:</p>
+    <pre><code class="language-sql">SELECT AVG(IFNULL(commission_pct, 0)) AS avg_comm_all
+    FROM   employees;</code></pre>
+    <p>Now every employee contributes to the average, even those with no commission.</p>
+    <hr>
+    <h2>4. GROUP BY – Turning a Single Result into Many Named Groups</h2>
+    <p>Without grouping, aggregates collapse all rows into <strong>one</strong> result.</p>
+    <pre><code class="language-sql">-- Grand total salary cost
+    SELECT SUM(salary) AS total_salary
+    FROM   employees;</code></pre>
+    <p>To see totals <strong>per department</strong>, you add <code>GROUP BY</code>:</p>
+    <pre><code class="language-sql">SELECT department_id,
+           SUM(salary) AS total_sal
+    FROM   employees
+    GROUP  BY department_id;</code></pre>
+    <p>Rules:</p>
+    <ul>
+    <li>Every column or expression in the <code>SELECT</code> list that <strong>is not</strong> an aggregate<br><strong>must appear</strong> in the <code>GROUP BY</code> clause.</li>
+    <li>Otherwise, you get errors like <code>not a GROUP BY expression</code> or <code>not a single-group group function</code>.</li>
+    </ul>
+    <p>Example error case:</p>
+    <pre><code class="language-sql">SELECT department_id,
+           SUM(salary)
+    FROM   employees;
+    -- ERROR: not a single-group group function</code></pre>
+    <p>Fix with <code>GROUP BY department_id</code>.</p>
+    <h3>4.1 GROUP BY without selecting the grouping column</h3>
+    <p>Odd but legal: you can group by something you don’t display.</p>
+    <pre><code class="language-sql">SELECT AVG(salary) AS avg_sal
+    FROM   employees
+    GROUP  BY department_id;</code></pre>
+    <p>This returns one average per department, but without showing which department is which. It’s allowed; it’s just not very helpful unless you’re using the result as a subquery.</p>
+    <h3>4.2 Grouping by multiple columns</h3>
+    <p>You can group on more than one column.</p>
+    <pre><code class="language-sql">SELECT department_id,
+           manager_id,
+           SUM(salary) AS total_sal
+    FROM   employees
+    GROUP  BY department_id, manager_id;</code></pre>
+    <p>Now you get <strong>sum of salaries per (department, manager)</strong> pair.</p>
+    <p>If you forget to include <code>manager_id</code> in the <code>GROUP BY</code> here, Oracle will complain loudly.</p>
+    <hr>
+    <h2>5. HAVING – Filtering Groups After Aggregation</h2>
+    <p><code>WHERE</code> filters <strong>rows</strong> before grouping. <code>HAVING</code> filters <strong>groups</strong> after aggregation.</p>
+    <p>Example – total salary per department, but only show departments where total salary &gt; 7000:</p>
+    <pre><code class="language-sql">SELECT department_id,
+           SUM(salary) AS total_sal
+    FROM   employees
+    GROUP  BY department_id
+    HAVING SUM(salary) &gt; 7000;</code></pre>
+    <p>Execution order (conceptually):</p>
+    <ol>
+    <li><code>FROM</code> – choose the table.</li>
+    <li><code>WHERE</code> – filter individual rows.</li>
+    <li><code>GROUP BY</code> – form groups.</li>
+    <li>Aggregate functions – compute <code>SUM</code>, <code>AVG</code>, etc. per group.</li>
+    <li><code>HAVING</code> – filter groups based on aggregated values.</li>
+    <li><code>ORDER BY</code> – sort the final result.</li>
+    </ol>
+    <h3>5.1 You can’t use group functions in WHERE</h3>
+    <p>This fails:</p>
+    <pre><code class="language-sql">SELECT department_id,
+           SUM(salary)
+    FROM   employees
+    WHERE  SUM(salary) &gt; 7000
+    GROUP  BY department_id;
+    -- ERROR: group function is not allowed here</code></pre>
+    <p>Because <code>WHERE</code> happens <strong>before</strong> grouping, it can’t see <code>SUM(salary)</code> yet.</p>
+    <p>Instead, filter rows in <code>WHERE</code>, and filter aggregated results in <code>HAVING</code>.</p>
+    <p>Example combining both:</p>
+    <pre><code class="language-sql">SELECT job_id,
+           SUM(salary) AS total_sal
+    FROM   employees
+    WHERE  job_id NOT LIKE &#x27;%REP%&#x27;         -- remove reps entirely
+    GROUP  BY job_id
+    HAVING SUM(salary) &gt; 20000            -- only big totals
+    ORDER  BY total_sal DESC;</code></pre>
+    <ul>
+    <li><code>WHERE</code> removes reps before any grouping.</li>
+    <li><code>GROUP BY</code> aggregates remaining rows by <code>job_id</code>.</li>
+    <li><code>HAVING</code> keeps only job groups with <code>SUM(salary) &gt; 20000</code>.</li>
+    </ul>
+    <hr>
+    <h2>6. Nesting Group Functions (But Only a Little)</h2>
+    <p>You can nest group functions, but Oracle limits the depth to <strong>two</strong>.</p>
+    <p>Example – average of department averages (conceptual):</p>
+    <pre><code class="language-sql">SELECT AVG(avg_sal)
+    FROM (
+      SELECT department_id,
+             AVG(salary) AS avg_sal
+      FROM   employees
+      GROUP  BY department_id
+    );</code></pre>
+    <p>Within a <strong>single</strong> <code>SELECT</code>, you can nest aggregates like:</p>
+    <pre><code class="language-sql">SELECT MAX(AVG(salary))
+    FROM   employees
+    GROUP  BY department_id;</code></pre>
+    <p>But if you nest more deeply (e.g., <code>SUM(MAX(AVG(...)))</code>), Oracle will complain: <code>group function is nested too deeply</code>.</p>
+    <p>For anything complex, it’s usually clearer to compute one aggregate layer in a subquery, then aggregate that.</p>
+    <hr>
+    <h2>7. MySQL Grouping and Aggregation</h2>
+    <p>Everything you’ve seen conceptually also exists in MySQL with nearly identical syntax:</p>
+    <pre><code class="language-sql">SELECT department_id,
+           AVG(salary) AS avg_sal,
+           COUNT(*)    AS emp_count
+    FROM   employees
+    GROUP  BY department_id
+    HAVING AVG(salary) &gt; 8000
+    ORDER  BY avg_sal DESC;</code></pre>
+    <ul>
+    <li>Aggregates ignore <code>NULL</code>s.</li>
+    <li><code>IFNULL</code> can be used to substitute values before aggregating.</li>
+    <li><code>GROUP BY</code> and <code>HAVING</code> rules are the same.</li>
+    </ul>
+    <p>Just watch for MySQL‑specific default behaviors around <code>ONLY_FULL_GROUP_BY</code> mode; stricter settings require explicit <code>GROUP BY</code> on all non‑aggregates, which aligns with Oracle’s rules.</p>
+    <hr>
+    <h2>8. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Use group functions (<code>COUNT</code>, <code>MAX</code>, <code>MIN</code>, <code>SUM</code>, <code>AVG</code>, and friends) to summarize data.</li>
+    <li>Explain how aggregates handle <code>NULL</code> values, and use <code>NVL</code> / <code>IFNULL</code> to include them when needed.</li>
+    <li>Write queries with <code>GROUP BY</code> to produce per‑group results.</li>
+    <li>Use <code>HAVING</code> to include or exclude groups based on aggregated values.</li>
+    <li>Recognize when grouping rules require you to add columns to the <code>GROUP BY</code> clause.</li>
+    </ul>
+    <p>In short, you can now make the jump from “tell me about every employee” to “tell me about each <strong>department</strong> / manager / job as a whole”—which is how you accidentally become the person everyone asks for reports.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="05_Using_Conversion_Functions_and_Conditional_Expressions.html">&larr; previous</a>
+    <a href="06_Reporting_Aggregated_Data_Using_Group_Functions.md">view source markdown</a>
+    <a href="07_Displaying_Data_from_Multiple_Tables_Using_Joins.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

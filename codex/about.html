@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sunrise">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Codex Edition</title>
+<meta name="description" content="Why this alternate codex website exists and how it is designed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/codex.css">
+</head>
+<body data-page="about">
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="page-bg" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span>CODEX</span>
+    <small>alt universe build</small>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="guides.html">Guides</a>
+    <a href="resources.html">Resources</a>
+    <a href="explorer.html">Mirror</a>
+    <a href="visitors.html">Visitors</a>
+    <a href="about.html" aria-current="page">About</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="pill-btn" type="button" data-command-open>Command Palette</button>
+    <button class="pill-btn" type="button" data-theme-cycle>Theme: Sunrise</button>
+  </div>
+</header>
+
+<main id="content" class="content-wrap">
+  <section class="hero hero-compact reveal">
+    <p class="eyebrow">manifesto</p>
+    <h1>What This Version Optimizes For</h1>
+    <p class="lede">Speed, clarity, and personality. No gray sludge. No passive design.</p>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>Design Rules</h2>
+      <p>The constraints that shaped this build.</p>
+    </div>
+
+    <div class="card-grid">
+      <article class="feature-card">
+        <h3>Strong visual identity</h3>
+        <p>Bold typography, warm palette, and atmospheric gradients that still keep text readable.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Practical first</h3>
+        <p>Guides, commands, and links are easier to access than decorative content.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Keyboard friendly</h3>
+        <p>Command palette on <code>Ctrl/Cmd + K</code>, focus-safe controls, and clear interaction states.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Mobile-ready</h3>
+        <p>Layouts collapse cleanly and keep touch targets large enough to be usable.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>How the Alternate Site Is Structured</h2>
+      <p>Codex now has both a styled front-end and a full mirrored copy of the original website.</p>
+    </div>
+    <div class="card-grid">
+      <article class="feature-card">
+        <h3>Codex UI layer</h3>
+        <p>Custom pages in <code>codex/*.html</code> for bold navigation, filtering, and fast discovery.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Full mirror copy</h3>
+        <p>Main-site content is copied into <code>codex/mirror</code> so every original page is available here too.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Explorer index</h3>
+        <p><a href="explorer.html">Mirror Explorer</a> reads the sitemap and gives searchable access to all mirrored routes.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Isolation preserved</h3>
+        <p>All changes remain inside <code>codex/</code>; the main website files are untouched.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>Recommended External Links</h2>
+      <p>Platforms and references worth keeping open in a pinned tab.</p>
+    </div>
+
+    <div class="link-grid">
+      <a class="link-tile" href="https://github.com/trending" target="_blank" rel="noopener">
+        <span class="link-tag">Discovery</span>
+        <strong>GitHub Trending</strong>
+        <small>Quick pulse check on useful projects and tooling shifts.</small>
+      </a>
+      <a class="link-tile" href="https://awesomeopensource.com/" target="_blank" rel="noopener">
+        <span class="link-tag">Tools</span>
+        <strong>Awesome Open Source</strong>
+        <small>Category-driven project discovery without social media noise.</small>
+      </a>
+      <a class="link-tile" href="https://roadmap.sh/" target="_blank" rel="noopener">
+        <span class="link-tag">Learning</span>
+        <strong>roadmap.sh</strong>
+        <small>Structured skill maps when you need direction, not hype.</small>
+      </a>
+      <a class="link-tile" href="https://missing.csail.mit.edu/" target="_blank" rel="noopener">
+        <span class="link-tag">Foundations</span>
+        <strong>The Missing Semester</strong>
+        <small>One of the best practical intros to developer tooling.</small>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Codex edition lives entirely in <code>/codex</code>. Main site remains unchanged.</p>
+</footer>
+
+<div class="palette-backdrop" id="commandPalette" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+    <div class="palette-head">
+      <h2 id="paletteTitle">Command Palette</h2>
+      <button type="button" class="close-btn" data-command-close>Esc</button>
+    </div>
+    <input id="commandInput" type="text" autocomplete="off" placeholder="Type: home, guides, resources, theme..." aria-label="Command search">
+    <ul id="commandList"></ul>
+  </div>
+</div>
+
+<script src="js/app.js" defer></script>
+</body>
+</html>

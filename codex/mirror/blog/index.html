@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog - swf.wtf</title>
+<meta name="description" content="Build logs and notes from projects on swf.wtf.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/blog/"> <meta property="og:title" content="Blog - swf.wtf"> <meta property="og:description" content="Build logs and notes from projects on swf.wtf."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/blog/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Blog - swf.wtf"> <meta name="twitter:description" content="Build logs and notes from projects on swf.wtf."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Blog - swf.wtf","url":"https://swf.wtf/blog/","description":"Build logs and notes from projects on swf.wtf."}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../assets/css/site.css">
+<style>
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 1.1rem 0;
+    background: rgba(8, 11, 15, 0.92);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-name {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    letter-spacing: -0.03em;
+  }
+
+  .site-name span { color: var(--muted); }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    margin-left: 1.15rem;
+    letter-spacing: 0.08em;
+    transition: color 0.15s;
+  }
+
+  nav a:hover { color: var(--accent); }
+
+  .listing {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+
+  .eyebrow {
+    color: var(--accent3);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.65rem;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: var(--font-mono);
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    line-height: 1.18;
+    margin-bottom: 0.7rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    max-width: 700px;
+    margin-bottom: 1.6rem;
+    line-height: 1.7;
+  }
+
+  .top {
+    display: inline-block;
+    margin-bottom: 1.4rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .top:hover { color: var(--accent); }
+
+  .post-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 0.4rem;
+  }
+
+  .post-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: block;
+  }
+
+  .post-card:hover {
+    border-color: rgba(0, 255, 157, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.36);
+  }
+
+  .post-card.featured {
+    border-color: rgba(0, 255, 157, 0.35);
+    background: linear-gradient(180deg, rgba(0, 255, 157, 0.06), var(--surface));
+  }
+
+  .post-meta {
+    color: var(--accent3);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.55rem;
+    text-transform: uppercase;
+  }
+
+  .post-title {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    margin-bottom: 0.45rem;
+  }
+
+  .post-desc {
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+</style>
+<link rel="stylesheet" href="../assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="../">swf<span>.wtf</span></a>
+    <nav>
+      <a href="../#writing">writing</a>
+      <a href="../guides/?v=20260226">guides</a>
+      <a href="../about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main class="listing">
+  <a class="top" href="../">&larr; home</a>
+  <div class="eyebrow">Build Logs</div>
+  <h1>Blog</h1>
+  <p class="subtitle">Posts, build logs, and behind-the-scenes notes from projects on swf.wtf.</p>
+
+  <div class="post-list">
+    <a class="post-card featured" href="../blog/pirate-copilot-website/">
+      <div class="post-meta">Latest Post | Feb 24, 2026 | Build Log</div>
+      <div class="post-title">Pirate Copilot: Building a Website with AI Without Losing the Plot</div>
+      <div class="post-desc">A practical breakdown of what AI helped with, where it did not, and how the project was shipped without letting generated code drive architecture.</div>
+    </a>
+    <a class="post-card" href="../blog/how-i-set-up-swf-wtf/">
+      <div class="post-meta">Feb 20, 2026 | Meta</div>
+      <div class="post-title">How I set up swf.wtf in one morning</div>
+      <div class="post-desc">The full setup story: domain, GitHub Pages, DNS, email forwarding, and why a static site with clear constraints beat overengineering.</div>
+    </a>
+  </div>
+</main>
+<script defer src="../assets/js/site.js"></script>
+<script defer src="../assets/js/codex-mirror.js"></script>
+</body>
+</html>

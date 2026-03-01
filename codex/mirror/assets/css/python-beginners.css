@@ -1,0 +1,346 @@
+:root {
+  --py-bg2: #101722;
+  --py-bg3: #162334;
+  --py-border: #29425d;
+  --py-text: #d5e7f8;
+  --py-muted: #88a5c2;
+  --py-accent: #ffd43b;
+  --py-accent2: #75b8ff;
+  --py-accent3: #55d18a;
+}
+
+body {
+  background: var(--bg);
+  color: var(--py-text);
+}
+
+header {
+  border-bottom: 1px solid var(--py-border);
+  padding: 1.1rem 0;
+  background: rgba(8, 11, 15, 0.92);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-name {
+  color: var(--py-accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  letter-spacing: -0.03em;
+}
+
+.site-name span {
+  color: var(--py-muted);
+}
+
+nav a {
+  color: var(--py-muted);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  margin-left: 1.2rem;
+  letter-spacing: 0.08em;
+  transition: color 0.15s;
+}
+
+nav a:hover {
+  color: var(--py-accent);
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2.5rem 1.2rem 5rem;
+}
+
+.post-meta {
+  color: var(--py-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  align-items: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tag {
+  border: 1px solid var(--py-border);
+  padding: 0.15rem 0.4rem;
+}
+
+.tag.green {
+  color: var(--py-accent3);
+  border-color: rgba(85, 209, 138, 0.45);
+}
+
+h1 {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 3.8vw, 2.5rem);
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.03em;
+}
+
+h1 .dim {
+  color: var(--py-muted);
+  font-weight: 400;
+}
+
+.subtitle {
+  color: var(--py-muted);
+  font-size: 1rem;
+  margin-bottom: 1.6rem;
+  max-width: 680px;
+}
+
+.terminal-intro {
+  background: #0c1521;
+  border: 1px solid var(--py-border);
+  border-left: 3px solid var(--py-accent);
+  padding: 1.2rem 1.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.95;
+  margin-bottom: 2.2rem;
+}
+
+.prompt {
+  color: var(--py-accent);
+}
+
+.cmd-text {
+  color: var(--py-accent2);
+}
+
+.output {
+  color: var(--py-muted);
+  padding-left: 1rem;
+}
+
+.toc {
+  background: var(--py-bg2);
+  border: 1px solid var(--py-border);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--py-muted);
+  margin-bottom: 0.65rem;
+}
+
+.toc a {
+  display: block;
+  color: var(--py-text);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  padding: 0.19rem 0;
+  transition: color 0.15s;
+}
+
+.toc a::before {
+  content: '-> ';
+  color: var(--py-muted);
+}
+
+.toc a:hover {
+  color: var(--py-accent);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--py-border);
+  margin: 2rem 0;
+}
+
+h2 {
+  font-family: var(--font-mono);
+  color: var(--py-accent);
+  font-size: 1rem;
+  margin: 2.2rem 0 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+h2::before {
+  content: '## ';
+  color: #3e5773;
+}
+
+h3 {
+  font-family: var(--font-mono);
+  color: var(--py-accent2);
+  font-size: 0.84rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+p {
+  color: var(--py-text);
+  line-height: 1.75;
+  margin-bottom: 0.95rem;
+}
+
+.code-block {
+  background: #0d1826;
+  border: 1px solid var(--py-border);
+  border-left: 3px solid var(--py-accent2);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  position: relative;
+  overflow-x: auto;
+}
+
+.code-block.compact {
+  margin: 0.7rem 0 0;
+}
+
+.code-block .label {
+  position: absolute;
+  right: 0.7rem;
+  top: 0.48rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--py-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.code-block pre {
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  line-height: 1.85;
+  color: var(--py-text);
+}
+
+.cmd {
+  color: var(--py-accent2);
+}
+
+.str {
+  color: #8ee59d;
+}
+
+.cmt {
+  color: var(--py-muted);
+}
+
+.callout {
+  background: var(--py-bg2);
+  border: 1px solid var(--py-border);
+  border-left: 3px solid var(--py-accent);
+  padding: 0.95rem 1.1rem;
+  margin: 1.25rem 0;
+  line-height: 1.7;
+}
+
+.callout.warn {
+  border-left-color: #ff6b6b;
+}
+
+.callout.info {
+  border-left-color: var(--py-accent2);
+}
+
+.callout-title {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--py-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.36rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.panel {
+  background: var(--py-bg2);
+  border: 1px solid var(--py-border);
+  padding: 1rem;
+}
+
+.practice-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.practice-list li {
+  background: #101d2d;
+  border: 1px solid var(--py-border);
+  padding: 0.72rem 0.85rem;
+  line-height: 1.65;
+}
+
+kbd,
+code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: #1a2c43;
+  border: 1px solid #355478;
+  border-radius: 4px;
+  color: #b9d9ff;
+  padding: 0.08rem 0.32rem;
+}
+
+footer {
+  border-top: 1px solid var(--py-border);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.6rem 1.2rem 2.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--py-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+footer a {
+  color: var(--py-accent2);
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: var(--py-accent);
+}
+
+@media (max-width: 760px) {
+  nav a {
+    margin-left: 0.7rem;
+    font-size: 0.67rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

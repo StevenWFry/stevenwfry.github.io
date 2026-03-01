@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sunrise">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex Resources</title>
+<meta name="description" content="Useful docs, channels, tools, and references for Linux and software development.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/codex.css">
+</head>
+<body data-page="resources">
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="page-bg" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span>CODEX</span>
+    <small>alt universe build</small>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="guides.html">Guides</a>
+    <a href="resources.html" aria-current="page">Resources</a>
+    <a href="explorer.html">Mirror</a>
+    <a href="visitors.html">Visitors</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="pill-btn" type="button" data-command-open>Command Palette</button>
+    <button class="pill-btn" type="button" data-theme-cycle>Theme: Sunrise</button>
+  </div>
+</header>
+
+<main id="content" class="content-wrap">
+  <section class="hero hero-compact reveal">
+    <p class="eyebrow">resource vault</p>
+    <h1>Bookmarks That Pull Their Weight</h1>
+    <p class="lede">Filter by category and jump straight to trustworthy references.</p>
+  </section>
+
+  <section class="section reveal">
+    <div class="toolbar">
+      <div class="filter-wrap" aria-label="Filter by category">
+        <button type="button" class="filter-chip active" data-category="all">all</button>
+        <button type="button" class="filter-chip" data-category="docs">docs</button>
+        <button type="button" class="filter-chip" data-category="video">video</button>
+        <button type="button" class="filter-chip" data-category="tools">tools</button>
+        <button type="button" class="filter-chip" data-category="learning">learning</button>
+      </div>
+    </div>
+
+    <p class="result-count" id="resourceCount">Loading resources...</p>
+    <div class="link-grid" id="resourceGrid"></div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>Mirrored Site Shortcuts</h2>
+      <p>Direct links into copied core pages, blog posts, and project pages.</p>
+    </div>
+    <div class="resource-inline">
+      <a href="mirror/index.html">mirror home</a>
+      <a href="mirror/blog/index.html">mirror blog index</a>
+      <a href="mirror/blog/how-i-set-up-swf-wtf/index.html">mirror setup post</a>
+      <a href="mirror/blog/pirate-copilot-website/index.html">mirror pirate post</a>
+      <a href="mirror/pirate-copilot/index.html">mirror pirate site</a>
+      <a href="mirror/now.html">mirror /now</a>
+      <a href="explorer.html">open full mirror explorer →</a>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>Fast Starter Stack</h2>
+      <p>If you had one hour to set up a serious learning environment.</p>
+    </div>
+
+    <div class="code-block">
+      <pre><code># Fedora baseline
+sudo dnf update -y
+sudo dnf install -y git curl zsh fzf ripgrep neovim tmux
+
+# Create learning workspace
+mkdir -p ~/lab/{notes,projects,snippets}
+cd ~/lab</code></pre>
+      <button type="button" class="copy-inline" data-copy-target>copy</button>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Curated for practical dev work. Add to this vault as your standards evolve.</p>
+</footer>
+
+<div class="palette-backdrop" id="commandPalette" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+    <div class="palette-head">
+      <h2 id="paletteTitle">Command Palette</h2>
+      <button type="button" class="close-btn" data-command-close>Esc</button>
+    </div>
+    <input id="commandInput" type="text" autocomplete="off" placeholder="Type: docs, videos, guides, top..." aria-label="Command search">
+    <ul id="commandList"></ul>
+  </div>
+</div>
+
+<script src="js/app.js" defer></script>
+<script src="js/resources.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyprland on Base Arch Linux - swf.wtf</title>
+<meta name="description" content="Install Hyprland on a base Arch Linux system: GPU driver checks, core packages, portal setup, minimal config, and first boot validation.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/hyprland-base-arch/"> <meta property="og:title" content="Hyprland on Base Arch Linux - swf.wtf"> <meta property="og:description" content="Install Hyprland on a base Arch Linux system: GPU driver checks, core packages, portal setup, minimal config, and first boot validation."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/hyprland-base-arch/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Hyprland on Base Arch Linux - swf.wtf"> <meta name="twitter:description" content="Install Hyprland on a base Arch Linux system: GPU driver checks, core packages, portal setup, minimal config, and first boot validation."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hyprland on Base Arch Linux - swf.wtf","description":"Install Hyprland on a base Arch Linux system: GPU driver checks, core packages, portal setup, minimal config, and first boot validation.","url":"https://swf.wtf/guides/hyprland-base-arch/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/arch-linux-install-beginners.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="../../">swf<span>.wtf</span></a>
+    <nav>
+      <a href="../../#writing">writing</a>
+      <a href="../../guides/?v=20260226">guides</a>
+      <a href="../../about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="post-meta">
+    <span>Feb 26, 2026</span>
+    <span class="tag green">guide</span>
+    <span class="tag">arch</span>
+    <span class="tag">hyprland</span>
+    <span class="tag">wayland</span>
+  </div>
+
+  <h1>Hyprland on Base Arch Linux.<br><span class="dim">// from tty to usable desktop.</span></h1>
+  <p class="subtitle">This guide assumes you already have a working base Arch install (network, users, bootloader done). We install Hyprland and enough core tools to make it daily-usable without pulling in someone else's full dotfiles stack.</p>
+
+  <div class="terminal-intro">
+    <div><span class="prompt">#</span> <span class="cmd-text">sudo pacman -Syu</span></div>
+    <div class="output">sync and update base system</div>
+    <div><span class="prompt">#</span> <span class="cmd-text">sudo pacman -S --needed hyprland waybar wofi kitty</span></div>
+    <div class="output">install compositor and core desktop tools</div>
+    <div><span class="prompt">#</span> <span class="cmd-text">Hyprland</span></div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">// contents</div>
+    <a href="#before">Before you start</a>
+    <a href="#gpu">GPU and session prerequisites</a>
+    <a href="#packages">Install Hyprland stack</a>
+    <a href="#config">Create minimal Hyprland config</a>
+    <a href="#start">Start Hyprland from tty</a>
+    <a href="#dm">Optional: use SDDM</a>
+    <a href="#verify">First boot checks</a>
+    <a href="#troubleshoot">Common issues</a>
+    <a href="#sources">Sources</a>
+  </div>
+
+  <hr>
+
+  <h2 id="before">Before you start</h2>
+  <ul class="checklist">
+    <li>You are logged into a regular user on a completed base Arch system.</li>
+    <li><code>sudo</code> works for that user.</li>
+    <li>Internet is working.</li>
+    <li>You are comfortable editing config files in Neovim.</li>
+    <li>If this is your first Wayland setup, do this on a VM or non-critical machine first.</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="callout-title">// expectation check</div>
+    Hyprland is a compositor, not a full desktop environment. You need to install and configure your own bar, launcher, notifications, lock screen, and wallpaper tools.
+  </div>
+
+  <hr>
+
+  <h2 id="gpu">GPU and session prerequisites</h2>
+  <p>Install the driver stack that matches your hardware before debugging Hyprland itself.</p>
+
+  <div class="code-block">
+    <span class="label">driver examples</span>
+    <pre><span class="cmt"># Intel / AMD (Mesa stack)</span>
+<span class="cmd">sudo pacman -S --needed mesa vulkan-icd-loader</span>
+
+<span class="cmt"># AMD Vulkan userspace</span>
+<span class="cmd">sudo pacman -S --needed vulkan-radeon</span>
+
+<span class="cmt"># Intel Vulkan userspace</span>
+<span class="cmd">sudo pacman -S --needed vulkan-intel</span>
+
+<span class="cmt"># NVIDIA proprietary stack (if you use NVIDIA)</span>
+<span class="cmd">sudo pacman -S --needed nvidia nvidia-utils</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="packages">Install Hyprland stack</h2>
+  <p>This is a practical baseline: compositor, portal, bar, launcher, terminal, wallpaper, lock, idle, clipboard, screenshot, and audio/session pieces.</p>
+
+  <div class="code-block">
+    <span class="label">core packages</span>
+    <pre><span class="cmd">sudo pacman -Syu</span>
+
+<span class="cmd">sudo pacman -S --needed hyprland xdg-desktop-portal xdg-desktop-portal-hyprland</span>
+<span class="cmd">sudo pacman -S --needed waybar wofi kitty hyprpaper hyprlock hypridle hyprpolkitagent</span>
+<span class="cmd">sudo pacman -S --needed wl-clipboard grim slurp</span>
+<span class="cmd">sudo pacman -S --needed pipewire wireplumber pipewire-audio pavucontrol</span>
+<span class="cmd">sudo pacman -S --needed ttf-dejavu ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// portal note</div>
+    Screen sharing and many flatpak/app file picker flows rely on <code>xdg-desktop-portal</code> plus a backend like <code>xdg-desktop-portal-hyprland</code>.
+  </div>
+
+  <hr>
+
+  <h2 id="config">Create minimal Hyprland config</h2>
+  <p>Copy the packaged default config, then set terminal/launcher and startup services.</p>
+
+  <div class="code-block">
+    <span class="label">main config</span>
+    <pre><span class="cmd">mkdir -p ~/.config/hypr</span>
+<span class="cmd">cp /usr/share/hypr/hyprland.conf ~/.config/hypr/hyprland.conf</span>
+<span class="cmd">nvim ~/.config/hypr/hyprland.conf</span>
+
+<span class="cmt"># ensure these lines exist in hyprland.conf:</span>
+<span class="cmd">$terminal = kitty</span>
+<span class="cmd">$menu = wofi --show drun</span>
+<span class="cmd">bind = SUPER, Return, exec, $terminal</span>
+<span class="cmd">bind = SUPER, D, exec, $menu</span>
+<span class="cmd">exec-once = waybar</span>
+<span class="cmd">exec-once = hyprpaper</span>
+<span class="cmd">exec-once = hyprpolkitagent</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">wallpaper config</span>
+    <pre><span class="cmd">mkdir -p ~/Pictures/wallpapers</span>
+<span class="cmt"># put a wallpaper image at ~/Pictures/wallpapers/default.jpg first</span>
+<span class="cmd">nvim ~/.config/hypr/hyprpaper.conf</span>
+
+<span class="cmt"># hyprpaper.conf:</span>
+<span class="cmd">preload = ~/Pictures/wallpapers/default.jpg</span>
+<span class="cmd">wallpaper = ,~/Pictures/wallpapers/default.jpg</span>
+<span class="cmd">splash = false</span>
+<span class="cmd">ipc = on</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="start">Start Hyprland from tty</h2>
+  <p>Use tty launch first. It is the fastest way to debug without introducing display-manager variables.</p>
+
+  <div class="code-block">
+    <span class="label">manual start</span>
+    <pre><span class="cmd">Hyprland</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">optional auto-start on tty1</span>
+    <pre><span class="cmd">nvim ~/.zprofile</span>
+
+<span class="cmt"># add:</span>
+<span class="cmd">if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then</span>
+<span class="cmd">  exec Hyprland</span>
+<span class="cmd">fi</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="dm">Optional: use SDDM</h2>
+  <p>If you prefer a graphical login manager instead of tty launch:</p>
+
+  <div class="code-block">
+    <span class="label">sddm path</span>
+    <pre><span class="cmd">sudo pacman -S --needed sddm</span>
+<span class="cmd">sudo systemctl enable sddm</span>
+<span class="cmd">reboot</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// first setup recommendation</div>
+    Validate Hyprland from tty first, then add SDDM after your user config is known-good.
+  </div>
+
+  <hr>
+
+  <h2 id="verify">First boot checks</h2>
+
+  <div class="code-block">
+    <span class="label">sanity checks</span>
+    <pre><span class="cmd">echo $XDG_SESSION_TYPE</span> <span class="cmt"># should print wayland</span>
+<span class="cmd">hyprctl monitors</span>
+<span class="cmd">systemctl --user status xdg-desktop-portal.service xdg-desktop-portal-hyprland.service --no-pager</span>
+<span class="cmd">pactl info | grep \"Server Name\"</span>
+<span class="cmd">nmcli general status</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="troubleshoot">Common issues</h2>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">Black screen or immediate exit</div>
+      <div class="faq-a">Switch to tty, run <code>Hyprland</code> directly, then inspect logs with <code>journalctl --user -b --no-pager</code>. Most failures are driver/session/package gaps.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Screen sharing or picker issues</div>
+      <div class="faq-a">Confirm both portal packages are installed. Then restart user portals: <code>systemctl --user restart xdg-desktop-portal xdg-desktop-portal-hyprland</code>.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">No audio devices</div>
+      <div class="faq-a">Check PipeWire and WirePlumber user services and relogin: <code>systemctl --user status pipewire wireplumber --no-pager</code>.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Polkit prompts do not appear</div>
+      <div class="faq-a">Ensure <code>hyprpolkitagent</code> is installed and <code>exec-once = hyprpolkitagent</code> is present in <code>hyprland.conf</code>.</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h2 id="sources">Sources</h2>
+  <ul class="resource-list">
+    <li><a href="https://wiki.hypr.land/Getting-Started/Installation/" target="_blank" rel="noopener">Hyprland Installation</a></li>
+    <li><a href="https://archlinux.org/packages/extra/x86_64/hyprland/" target="_blank" rel="noopener">Arch package: hyprland</a></li>
+    <li><a href="https://archlinux.org/packages/extra/x86_64/xdg-desktop-portal-hyprland/" target="_blank" rel="noopener">Arch package: xdg-desktop-portal-hyprland</a></li>
+    <li><a href="https://github.com/hyprwm/hyprpaper" target="_blank" rel="noopener">Hyprpaper upstream</a></li>
+  </ul>
+
+</main>
+
+<footer>
+  <span>// swf.wtf - hyprland-base-arch</span>
+  <span><a href="../../guides/?v=20260226">more guides</a></span>
+</footer>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

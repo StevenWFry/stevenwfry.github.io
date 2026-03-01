@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arch Linux on VirtualBox (Omarchy-style, command by command) - swf.wtf</title>
+<meta name="description" content="Install Arch Linux on VirtualBox the same way Omarchy's installer does: Limine bootloader, LUKS encryption, Btrfs subvolumes, and archinstall JSON config.">
+<link rel="canonical" href="https://swf.wtf/guides/arch-linux-virtualbox-omarchy/">
+<meta property="og:title" content="Arch Linux on VirtualBox (Omarchy-style, command by command) - swf.wtf">
+<meta property="og:description" content="Install Arch Linux on VirtualBox the same way Omarchy's installer does: Limine bootloader, LUKS encryption, Btrfs subvolumes, and archinstall JSON config.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://swf.wtf/guides/arch-linux-virtualbox-omarchy/">
+<meta property="og:image" content="https://swf.wtf/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Arch Linux on VirtualBox (Omarchy-style, command by command) - swf.wtf">
+<meta name="twitter:description" content="Install Arch Linux on VirtualBox the same way Omarchy's installer does: Limine bootloader, LUKS encryption, Btrfs subvolumes, and archinstall JSON config.">
+<meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png">
+<meta name="twitter:site" content="@swfwtf">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Arch Linux on VirtualBox (Omarchy-style, command by command) - swf.wtf","description":"Install Arch Linux on VirtualBox the same way Omarchy's installer does: Limine bootloader, LUKS encryption, Btrfs subvolumes, and archinstall JSON config.","url":"https://swf.wtf/guides/arch-linux-virtualbox-omarchy/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/arch-linux-install-beginners.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="../../">swf<span>.wtf</span></a>
+    <nav>
+      <a href="../../#writing">writing</a>
+      <a href="../../guides/?v=20260226">guides</a>
+      <a href="../../about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="post-meta">
+    <span>Feb 26, 2026</span>
+    <span class="tag green">guide</span>
+    <span class="tag">arch</span>
+    <span class="tag">virtualbox</span>
+    <span class="tag">omarchy-style</span>
+  </div>
+
+  <h1>Arch Linux on VirtualBox, Omarchy-style.<br><span class="dim">// command by command, no installer UI.</span></h1>
+  <p class="subtitle">This mirrors the Omarchy ISO installer flow: <strong>2 GiB EFI</strong>, <strong>LUKS</strong>, <strong>Btrfs subvolumes</strong>, and <strong>Limine</strong> via <code>archinstall</code> JSON files.</p>
+
+  <div class="terminal-intro">
+    <div><span class="prompt">#</span> <span class="cmd-text">pacman -Sy --noconfirm archinstall jq openssl</span></div>
+    <div class="output">install tools in live ISO</div>
+    <div><span class="prompt">#</span> <span class="cmd-text">cat > user_configuration.json <<EOF ... EOF</span></div>
+    <div class="output">define Omarchy-style disk + boot + fs layout</div>
+    <div><span class="prompt">#</span> <span class="cmd-text">archinstall --config user_configuration.json --creds user_credentials.json</span></div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">// contents</div>
+    <a href="#before">Before you start</a>
+    <a href="#vm">VirtualBox settings</a>
+    <a href="#live">Boot live ISO and prep</a>
+    <a href="#vars">Set install variables</a>
+    <a href="#creds">Build credentials JSON</a>
+    <a href="#config">Build archinstall config JSON</a>
+    <a href="#install">Run install</a>
+    <a href="#firstboot">First boot checks</a>
+    <a href="#optional-omarchy">Optional: install Omarchy layer</a>
+    <a href="#troubleshoot">Troubleshooting</a>
+    <a href="#sources">Sources</a>
+  </div>
+
+  <hr>
+
+  <h2 id="before">Before you start</h2>
+  <ul class="checklist">
+    <li>This is destructive. It wipes the selected VM disk.</li>
+    <li>All commands are for the Arch ISO live shell as <code>root</code>.</li>
+    <li>Disk names on VirtualBox are usually <code>/dev/sda</code> or <code>/dev/vda</code>. Verify before running.</li>
+    <li>Goal is to reproduce Omarchy installer structure, but manually.</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="callout-title">// wipe warning</div>
+    If <code>DISK</code> points to the wrong device, your data is gone. Confirm with <code>lsblk</code> every time.
+  </div>
+
+  <hr>
+
+  <h2 id="vm">VirtualBox settings</h2>
+  <ul class="mini-list">
+    <li>Type: Linux, Version: Arch Linux (64-bit).</li>
+    <li>Enable EFI: <strong>Settings -> System -> Motherboard -> Enable EFI</strong>.</li>
+    <li>RAM: 8192 MB recommended.</li>
+    <li>CPU: 2 or more vCPUs.</li>
+    <li>Disk: 64 GB dynamic VDI recommended.</li>
+    <li>Attach latest Arch ISO as optical drive, then boot it.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="live">Boot live ISO and prep</h2>
+  <div class="code-block">
+    <span class="label">live environment</span>
+    <pre><span class="cmd">timedatectl set-ntp true</span>
+<span class="cmd">ip link</span>
+<span class="cmd">ping -c 3 archlinux.org</span>
+<span class="cmd">lsblk -d -e 7,11 -o NAME,SIZE,MODEL</span>
+
+<span class="cmd">pacman -Sy --noconfirm archinstall jq openssl</span>
+
+<span class="cmt"># If keyring errors appear on an older ISO, reset keyring:</span>
+<span class="cmd">killall gpg-agent</span>
+<span class="cmd">rm -rf /etc/pacman.d/gnupg</span>
+<span class="cmd">pacman-key --init</span>
+<span class="cmd">pacman-key --populate archlinux</span>
+<span class="cmd">pacman -Sy archlinux-keyring</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="vars">Set install variables</h2>
+  <p>This is the data Omarchy's configurator normally asks for interactively.</p>
+  <div class="code-block">
+    <span class="label">replace values first</span>
+    <pre><span class="cmd">export DISK="/dev/sda"</span>
+<span class="cmd">export HOSTNAME="archbox"</span>
+<span class="cmd">export USERNAME="steven"</span>
+<span class="cmd">export TIMEZONE="America/New_York"</span>
+<span class="cmd">export KEYBOARD="us"</span>
+
+<span class="cmd">lsblk "$DISK"</span>
+
+<span class="cmd">printf "Set install password: "</span>
+<span class="cmd">stty -echo; read PASSWORD; stty echo; echo</span>
+<span class="cmd">PASSWORD_HASH=$(printf '%s' "$PASSWORD" | openssl passwd -6 -stdin)</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="creds">Build credentials JSON</h2>
+  <p>Omarchy passes plaintext encryption password + hashed login passwords to <code>archinstall</code>.</p>
+  <div class="code-block">
+    <span class="label">user_credentials.json</span>
+    <pre><span class="cmd">password_escaped=$(echo -n "$PASSWORD" | jq -Rsa)</span>
+<span class="cmd">password_hash_escaped=$(echo -n "$PASSWORD_HASH" | jq -Rsa)</span>
+<span class="cmd">username_escaped=$(echo -n "$USERNAME" | jq -Rsa)</span>
+
+<span class="cmd">cat > user_credentials.json <<EOF</span>
+{
+  "encryption_password": $password_escaped,
+  "root_enc_password": $password_hash_escaped,
+  "users": [
+    {
+      "enc_password": $password_hash_escaped,
+      "groups": [],
+      "sudo": true,
+      "username": $username_escaped
+    }
+  ]
+}
+EOF</pre>
+  </div>
+
+  <hr>
+
+  <h2 id="config">Build archinstall config JSON</h2>
+  <p>This matches the Omarchy disk layout: 2 GiB EFI + encrypted Btrfs root + subvolumes.</p>
+  <div class="code-block">
+    <span class="label">size math from Omarchy configurator</span>
+    <pre><span class="cmd">disk_size=$(lsblk -bdno SIZE "$DISK")</span>
+<span class="cmd">mib=$((1024 * 1024))</span>
+<span class="cmd">gib=$((mib * 1024))</span>
+<span class="cmd">disk_size_in_mib=$((disk_size / mib * mib))</span>
+
+<span class="cmd">gpt_backup_reserve=$mib</span>
+<span class="cmd">boot_partition_start=$mib</span>
+<span class="cmd">boot_partition_size=$((2 * gib))</span>
+<span class="cmd">main_partition_start=$((boot_partition_start + boot_partition_size))</span>
+<span class="cmd">main_partition_size=$((disk_size_in_mib - main_partition_start - gpt_backup_reserve))</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">user_configuration.json</span>
+    <pre><span class="cmd">cat > user_configuration.json <<EOF</span>
+{
+  "archinstall-language": "English",
+  "audio_config": { "audio": "pipewire" },
+  "bootloader": "Limine",
+  "disk_config": {
+    "btrfs_options": {
+      "snapshot_config": { "type": "Snapper" }
+    },
+    "config_type": "default_layout",
+    "device_modifications": [
+      {
+        "device": "$DISK",
+        "partitions": [
+          {
+            "flags": ["boot", "esp"],
+            "fs_type": "fat32",
+            "mountpoint": "/boot",
+            "obj_id": "ea21d3f2-82bb-49cc-ab5d-6f81ae94e18d",
+            "size": { "unit": "B", "value": $boot_partition_size, "sector_size": { "unit": "B", "value": 512 } },
+            "start": { "unit": "B", "value": $boot_partition_start, "sector_size": { "unit": "B", "value": 512 } },
+            "status": "create",
+            "type": "primary"
+          },
+          {
+            "btrfs": [
+              { "mountpoint": "/", "name": "@" },
+              { "mountpoint": "/home", "name": "@home" },
+              { "mountpoint": "/var/log", "name": "@log" },
+              { "mountpoint": "/var/cache/pacman/pkg", "name": "@pkg" }
+            ],
+            "flags": [],
+            "fs_type": "btrfs",
+            "mount_options": ["compress=zstd"],
+            "mountpoint": null,
+            "obj_id": "8c2c2b92-1070-455d-b76a-56263bab24aa",
+            "size": { "unit": "B", "value": $main_partition_size, "sector_size": { "unit": "B", "value": 512 } },
+            "start": { "unit": "B", "value": $main_partition_start, "sector_size": { "unit": "B", "value": 512 } },
+            "status": "create",
+            "type": "primary"
+          }
+        ],
+        "wipe": true
+      }
+    ],
+    "disk_encryption": {
+      "encryption_type": "luks",
+      "iter_time": 2000,
+      "lvm_volumes": [],
+      "partitions": ["8c2c2b92-1070-455d-b76a-56263bab24aa"],
+      "encryption_password": $password_escaped
+    }
+  },
+  "hostname": "$HOSTNAME",
+  "kernels": ["linux"],
+  "locale_config": {
+    "kb_layout": "$KEYBOARD",
+    "sys_enc": "UTF-8",
+    "sys_lang": "en_US.UTF-8"
+  },
+  "mirror_config": {
+    "custom_repositories": [],
+    "custom_servers": [
+      { "url": "https://geo.mirror.pkgbuild.com/\$repo/os/\$arch" },
+      { "url": "https://mirror.rackspace.com/archlinux/\$repo/os/\$arch" }
+    ],
+    "mirror_regions": {},
+    "optional_repositories": []
+  },
+  "network_config": { "type": "iso" },
+  "ntp": true,
+  "packages": ["base-devel", "git", "networkmanager", "snapper", "btrfs-progs"],
+  "parallel_downloads": 8,
+  "services": ["NetworkManager"],
+  "swap": true,
+  "timezone": "$TIMEZONE"
+}
+EOF</pre>
+  </div>
+
+  <hr>
+
+  <h2 id="install">Run install</h2>
+  <div class="code-block">
+    <span class="label">install</span>
+    <pre><span class="cmd">archinstall --config user_configuration.json --creds user_credentials.json</span></pre>
+  </div>
+
+  <p>When it finishes, reboot and remove the ISO from the VM optical drive.</p>
+  <div class="code-block">
+    <span class="label">reboot</span>
+    <pre><span class="cmd">reboot</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="firstboot">First boot checks</h2>
+  <div class="code-block">
+    <span class="label">inside installed system</span>
+    <pre><span class="cmd">systemctl status NetworkManager</span>
+<span class="cmd">findmnt -n -o FSTYPE /</span>
+<span class="cmd">sudo btrfs subvolume list /</span>
+<span class="cmd">lsblk -f</span></pre>
+  </div>
+
+  <p>If <code>limine-update</code> exists, run it once after first full update:</p>
+  <div class="code-block">
+    <span class="label">boot entries refresh</span>
+    <pre><span class="cmd">sudo pacman -Syu --noconfirm</span>
+<span class="cmd">command -v limine-update && sudo limine-update</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="optional-omarchy">Optional: install Omarchy layer</h2>
+  <p>If you want full Omarchy after base Arch is up, run the official boot script:</p>
+  <div class="code-block">
+    <span class="label">optional</span>
+    <pre><span class="cmd">curl -fsSL https://raw.githubusercontent.com/basecamp/omarchy/master/boot.sh | bash</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// note</div>
+    This guide gives you the Omarchy installer disk/encryption/layout flow first. The optional command above adds the full Omarchy environment on top.
+  </div>
+
+  <hr>
+
+  <h2 id="troubleshoot">Troubleshooting</h2>
+  <ul class="mini-list">
+    <li><strong>No boot after install:</strong> confirm EFI is enabled in VirtualBox and ISO was detached after install.</li>
+    <li><strong>Wrong disk selected:</strong> reboot live ISO and verify with <code>lsblk -d -o NAME,SIZE,MODEL</code> before rerunning.</li>
+    <li><strong>archinstall complains about old mounts:</strong> run <code>findmnt -R /mnt &amp;&gt;/dev/null &amp;&amp; umount -R /mnt</code> first.</li>
+    <li><strong>Timezone not accepted:</strong> verify with <code>timedatectl list-timezones | rg -n "New_York"</code>.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="sources">Sources</h2>
+  <ul class="resource-list">
+    <li><a href="https://github.com/omacom-io/omarchy-iso/blob/master/configs/airootfs/root/configurator" target="_blank" rel="noopener">omacom-io/omarchy-iso: configurator</a></li>
+    <li><a href="https://github.com/omacom-io/omarchy-iso/blob/master/configs/airootfs/root/.automated_script.sh" target="_blank" rel="noopener">omacom-io/omarchy-iso: .automated_script.sh</a></li>
+    <li><a href="https://github.com/basecamp/omarchy/blob/master/install/login/limine-snapper.sh" target="_blank" rel="noopener">basecamp/omarchy: limine-snapper.sh</a></li>
+  </ul>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

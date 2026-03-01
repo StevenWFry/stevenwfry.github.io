@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16 – Retrieving Data by Using Subqueries (Because One `SELECT` Wasn’t Enough) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, plain single‑table queries are fine… if your data model was designed by a golden retriever. For actual systems, you’re going to need subqueries...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/16_Retrieving_Data_by_Using_Subqueries.html"> <meta property="og:title" content="16 – Retrieving Data by Using Subqueries (Because One `SELECT` Wasn’t Enough) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, plain single‑table queries are fine… if your data model was designed by a golden retriever. For actual systems, you’re going to need subqueries..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/16_Retrieving_Data_by_Using_Subqueries.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="16 – Retrieving Data by Using Subqueries (Because One `SELECT` Wasn’t Enough) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, plain single‑table queries are fine… if your data model was designed by a golden retriever. For actual systems, you’re going to need subqueries..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"16 – Retrieving Data by Using Subqueries (Because One `SELECT` Wasn’t Enough) - SQL Guide - swf.wtf","description":"And look, plain single‑table queries are fine… if your data model was designed by a golden retriever. For actual systems, you’re going to need subqueries...","url":"https://swf.wtf/guides/sql-guide/16_Retrieving_Data_by_Using_Subqueries.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>16 – Retrieving Data by Using Subqueries (Because One `SELECT` Wasn’t Enough)</h1>
+    <p>And look, plain single‑table queries are fine… if your data model was designed by a golden retriever. For actual systems, you’re going to need subqueries talking to other subqueries, sometimes about other subqueries. Th...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, plain single‑table queries are fine… if your data model was designed by a golden retriever. For actual systems, you’re going to need subqueries talking to other subqueries, sometimes about other subqueries. This lesson is where that madness becomes intentional.</p>
+    <p>After this chapter you should be able to:</p>
+    <ul>
+    <li>Write <strong>multiple‑column</strong> subqueries (pairwise vs non‑pairwise)</li>
+    <li>Use <strong>scalar</strong> subqueries anywhere a single value can go</li>
+    <li>Solve problems with <strong>correlated</strong> subqueries</li>
+    <li>Use <code>EXISTS</code> / <code>NOT EXISTS</code> like a grown‑up</li>
+    <li>Use the <code>WITH</code> clause (including recursive <code>WITH</code>) to keep big queries sane</li>
+    </ul>
+    <hr>
+    <h2>1. Subqueries as Data Sources</h2>
+    <p>You’ve already used subqueries in <code>WHERE</code> and <code>HAVING</code>. Here we lean into them as full‑blown data sources.</p>
+    <p>Example pattern:</p>
+    <pre><code class="language-sql">SELECT d.department_name,
+           v.avg_sal
+    FROM   departments d
+    NATURAL JOIN (
+      SELECT department_id, AVG(salary) AS avg_sal
+      FROM   employees
+      GROUP  BY department_id
+    ) v;</code></pre>
+    <p>Why do this?</p>
+    <ul>
+    <li>To prototype the query that will become a <strong>view</strong></li>
+    <li>To factor complex logic into a readable “inner result set”</li>
+    <li>To join base tables to pre‑aggregated or filtered subsets</li>
+    </ul>
+    <p>Think of the inner <code>SELECT</code> as a disposable view you didn’t have to <code>CREATE</code>.</p>
+    <hr>
+    <h2>2. Multiple‑Column Subqueries: Pairwise vs Non‑Pairwise</h2>
+    <p>Sometimes your condition depends on <strong>combinations</strong> of columns, not just one. That’s where multiple‑column subqueries show up.</p>
+    <h3>2.1 The “John and <em>that</em> John’s manager” problem</h3>
+    <p>Goal: &gt; “Find employees who work with John <strong>and</strong> are managed by John’s manager – but don’t show John.”</p>
+    <p>Interpretation 1 – <em>“any John, any manager”</em> (non‑pairwise):</p>
+    <pre><code class="language-sql">SELECT last_name, department_id, manager_id
+    FROM   employees
+    WHERE  department_id IN (
+             SELECT department_id
+             FROM   employees
+             WHERE  first_name = &#x27;John&#x27;
+           )
+    AND    manager_id IN (
+             SELECT manager_id
+             FROM   employees
+             WHERE  first_name = &#x27;John&#x27;
+           )
+    AND    first_name &lt;&gt; &#x27;John&#x27;;</code></pre>
+    <p>Here you separately:</p>
+    <ul>
+    <li>Grab all departments containing a “John”</li>
+    <li>Grab all managers of any “John”</li>
+    <li>Combine them like a Cartesian dating app</li>
+    </ul>
+    <p>Result: potentially more rows than intended, because any “John department” + any “John manager” is allowed.</p>
+    <h3>2.2 Pairwise comparison – “<em>that</em> John’s manager”</h3>
+    <p>Use a multi‑column subquery to keep department and manager <strong>paired</strong>:</p>
+    <pre><code class="language-sql">SELECT last_name, department_id, manager_id
+    FROM   employees e
+    WHERE  (department_id, manager_id) IN (
+             SELECT department_id, manager_id
+             FROM   employees
+             WHERE  first_name = &#x27;John&#x27;
+           )
+    AND    first_name &lt;&gt; &#x27;John&#x27;;</code></pre>
+    <p>Key idea: <code>(department_id, manager_id)</code> on the outer row must match one of the <code>(department_id, manager_id)</code> <em>pairs</em> returned by the subquery. No cross‑mixing.</p>
+    <p><strong>Takeaway:</strong></p>
+    <ul>
+    <li><code>(col1, col2) IN (SELECT col1, col2 …)</code> → <strong>pairwise</strong></li>
+    <li><code>col1 IN (SELECT col1 …) AND col2 IN (SELECT col2 …)</code> → <strong>non‑pairwise</strong>, more permissive</li>
+    </ul>
+    <hr>
+    <h2>3. Scalar Subqueries: Tiny Queries in Weird Places</h2>
+    <p>A <strong>scalar subquery</strong> returns exactly <strong>one row, one column</strong>. Oracle will then happily treat it like a single value.</p>
+    <p>You can use scalar subqueries:</p>
+    <ul>
+    <li>Inside <code>CASE</code> / <code>DECODE</code></li>
+    <li>In <code>SELECT</code>, <code>WHERE</code>, <code>ORDER BY</code>, <code>HAVING</code></li>
+    <li>In <code>UPDATE</code> <code>SET</code> and <code>WHERE</code> clauses</li>
+    <li>Basically anywhere an expression is allowed (except <code>GROUP BY</code>)</li>
+    </ul>
+    <h3>3.1 Scalar subquery in a <code>CASE</code> expression</h3>
+    <pre><code class="language-sql">SELECT employee_id,
+           last_name,
+           CASE 
+             WHEN department_id = (
+                    SELECT department_id
+                    FROM   departments
+                    WHERE  department_name = &#x27;Sales&#x27;
+                  )
+             THEN &#x27;Canada&#x27;
+             ELSE &#x27;USA&#x27;
+           END AS country_guess
+    FROM   employees;</code></pre>
+    <p>Here the inner query returns a single <code>department_id</code> (for Sales). The <code>CASE</code> reads like:</p>
+    <p>&gt; if this employee’s <code>department_id</code> equals <em>that</em> value, label ‘Canada’, else ‘USA’.</p>
+    <h3>3.2 Scalar subquery as a “derived column”</h3>
+    <p>Count employees per department without a <code>JOIN</code>:</p>
+    <pre><code class="language-sql">SELECT d.department_id,
+           d.department_name,
+           (SELECT COUNT(*)
+            FROM   employees e
+            WHERE  e.department_id = d.department_id) AS emp_count
+    FROM   departments d;</code></pre>
+    <p>For each department row, the scalar subquery:</p>
+    <ol>
+    <li>Uses <code>d.department_id</code> from the outer query</li>
+    <li>Counts employees in that department</li>
+    <li>Returns a single number as <code>emp_count</code></li>
+    </ol>
+    <p>Yes, it’s technically a correlated subquery too – welcome to overlapping terminology.</p>
+    <hr>
+    <h2>4. Correlated Subqueries: The Ping‑Pong Pattern</h2>
+    <p>Normal subquery: inner query runs once, outer query uses the result. <strong>Correlated</strong> subquery: outer row feeds into the inner query, over and over.</p>
+    <p>Process:</p>
+    <ol>
+    <li>Take a candidate row from the outer query</li>
+    <li>Plug its values into the subquery</li>
+    <li>Use subquery result to accept/reject the row</li>
+    <li>Repeat for the next outer row</li>
+    </ol>
+    <h3>4.1 Classic: managers vs non‑managers</h3>
+    <p>Non‑correlated version (manager list first):</p>
+    <pre><code class="language-sql">-- Managers
+    SELECT last_name
+    FROM   employees
+    WHERE  employee_id IN (
+             SELECT DISTINCT manager_id
+             FROM   employees
+             WHERE  manager_id IS NOT NULL
+           );</code></pre>
+    <p>Correlated + <code>EXISTS</code> version:</p>
+    <pre><code class="language-sql">-- Managers
+    SELECT e.last_name
+    FROM   employees e
+    WHERE  EXISTS (
+             SELECT 1
+             FROM   employees m
+             WHERE  m.manager_id  = e.employee_id
+           );</code></pre>
+    <p>Here:</p>
+    <ul>
+    <li>Outer row = candidate employee <code>e</code></li>
+    <li>Inner query asks, “does anyone have <code>e.employee_id</code> as their <code>manager_id</code>?”</li>
+    <li>If yes → row qualifies.</li>
+    </ul>
+    <p>Switch to <code>NOT EXISTS</code> for non‑managers:</p>
+    <pre><code class="language-sql">SELECT e.last_name
+    FROM   employees e
+    WHERE  NOT EXISTS (
+             SELECT 1
+             FROM   employees m
+             WHERE  m.manager_id = e.employee_id
+           );</code></pre>
+    <p>Unlike <code>NOT IN</code>, <code>NOT EXISTS</code> doesn’t lose its mind because of a <code>NULL</code> in the subquery.</p>
+    <h3>4.2 “More than the average salary for their department”</h3>
+    <pre><code class="language-sql">SELECT e.employee_id,
+           e.last_name,
+           e.department_id,
+           e.salary
+    FROM   employees e
+    WHERE  e.salary &gt;
+           (SELECT AVG(salary)
+            FROM   employees i
+            WHERE  i.department_id = e.department_id);</code></pre>
+    <p>Per outer row:</p>
+    <ul>
+    <li>Grab that employee’s <code>department_id</code></li>
+    <li>Compute the average salary for that department in the inner query</li>
+    <li>Return the row if <code>salary</code> exceeds that average</li>
+    </ul>
+    <p>This pattern generalises to “top earners per group”, “rows above group average”, and basically any “compare to group metric” logic without a self‑join.</p>
+    <hr>
+    <h2>5. <code>EXISTS</code> and <code>NOT EXISTS</code>: Boolean Subqueries</h2>
+    <p><code>EXISTS</code> doesn’t care <em>what</em> the subquery returns, only whether it returns <strong>at least one row</strong>.</p>
+    <p>Basic form:</p>
+    <pre><code class="language-sql">SELECT ...
+    FROM   outer_table o
+    WHERE  EXISTS (
+             SELECT 1
+             FROM   inner_table i
+             WHERE  i.some_col = o.some_col
+           );</code></pre>
+    <p>Notes:</p>
+    <ul>
+    <li><code>SELECT 1</code> could be <code>SELECT &#x27;x&#x27;</code> or <code>SELECT NULL</code> – it’s ignored.</li>
+    <li><code>EXISTS</code> stops at the <strong>first match</strong>, so it can be more efficient than <code>IN</code> on complex subqueries.</li>
+    </ul>
+    <p>Example from the lesson:</p>
+    <ul>
+    <li><code>EXISTS</code> → employees who <strong>are</strong> managers</li>
+    <li><code>NOT EXISTS</code> → employees who <strong>are not</strong> managers</li>
+    </ul>
+    <p>And crucially, <code>NOT EXISTS</code> behaves even if the inner query returns <code>NULL</code>s. <code>NOT IN</code> with a <code>NULL</code> in the subquery, on the other hand, is where logic goes to die.</p>
+    <hr>
+    <h2>6. The <code>WITH</code> Clause: CTEs So Your Query Doesn’t Look Like Fan Fiction</h2>
+    <p>And look, once your query gets past about 20 lines, you either:</p>
+    <ul>
+    <li>Break it up with <code>WITH</code> (common table expressions), or</li>
+    <li>End up with a single <code>SELECT</code> that no one will ever maintain again.</li>
+    </ul>
+    <h3>6.1 Non‑recursive <code>WITH</code></h3>
+    <p>Use <code>WITH</code> to name subqueries you want to reuse or just stop from visually melting your brain.</p>
+    <pre><code class="language-sql">WITH avg_sal_tab AS (
+      SELECT AVG(salary) AS avg_sal
+      FROM   employees
+    )
+    SELECT last_name,
+           salary,
+           (SELECT avg_sal FROM avg_sal_tab) AS avg_sal
+    FROM   employees
+    WHERE  salary &gt;
+           (SELECT avg_sal FROM avg_sal_tab);</code></pre>
+    <p>What actually happens:</p>
+    <ol>
+    <li><code>avg_sal_tab</code> is materialised in your session’s temp area (or cache).</li>
+    <li>Main query joins / references it like a tiny, temporary table.</li>
+    <li>Oracle can reuse that result instead of recomputing the average multiple times.</li>
+    </ol>
+    <h3>6.2 CTE with grouping per department</h3>
+    <p>From the example:</p>
+    <pre><code class="language-sql">WITH cnt_dept AS (
+      SELECT department_id,
+             COUNT(*) AS dept_count
+      FROM   employees
+      GROUP  BY department_id
+    )
+    SELECT e.employee_id,
+           e.salary / d.dept_count AS salary_per_head
+    FROM   employees e
+    JOIN   cnt_dept d
+      ON   e.department_id = d.department_id;</code></pre>
+    <p>For each employee, you divide their salary by the number of employees in their department (because nothing says “motivation” like seeing your salary diluted by your coworkers).</p>
+    <h3>6.3 Recursive <code>WITH</code></h3>
+    <p>Recursive CTEs let you walk hierarchies or paths without writing procedural loops.</p>
+    <p>Structure:</p>
+    <ul>
+    <li><strong>Anchor</strong> query: base rows</li>
+    <li><code>UNION ALL</code></li>
+    <li><strong>Recursive</strong> query: reuses the CTE name to build further levels</li>
+    </ul>
+    <p>Flight‑time example (simplified):</p>
+    <pre><code class="language-sql">WITH reachable_from (source, destination, total_time) AS (
+      -- Anchor: direct flights
+      SELECT source, destination, flight_time
+      FROM   flights
+    
+      UNION ALL
+    
+      -- Recursive: extend routes
+      SELECT rf.source,
+             f.destination,
+             rf.total_time + f.flight_time
+      FROM   reachable_from rf
+      JOIN   flights        f
+        ON   rf.destination = f.source
+    )
+    SELECT *
+    FROM   reachable_from;</code></pre>
+    <p>The result includes:</p>
+    <ul>
+    <li>Direct paths from <code>flights</code></li>
+    <li>Multi‑hop paths with accumulated <code>total_time</code></li>
+    </ul>
+    <p>This lets you answer questions like “how can I get from San Jose to Boston, and how long will it take, assuming planes connect and no one drops my luggage in Denver?”</p>
+    <hr>
+    <h2>What You Should Be Able To Do Now</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Write <strong>multiple‑column subqueries</strong>, and know when to use pairwise vs non‑pairwise comparisons</li>
+    <li>Drop <strong>scalar subqueries</strong> into <code>SELECT</code>, <code>CASE</code>, <code>UPDATE</code>, and enjoy the power</li>
+    <li>Use <strong>correlated subqueries</strong> to compare each row to group metrics or related data</li>
+    <li>Reach for <code>EXISTS</code> / <code>NOT EXISTS</code> instead of <code>IN</code> / <code>NOT IN</code> when dealing with complex or <code>NULL</code>‑laden subqueries</li>
+    <li>Use the <code>WITH</code> clause – including recursive <code>WITH</code> – to structure and speed up ugly queries</li>
+    </ul>
+    <p>In other words, you can now write the sort of queries that cause less experienced developers to say “wait, that’s legal?” – and yes, yes it is. Just don’t forget to format them.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="15_Managing_Schema_Objects.html">&larr; previous</a>
+    <a href="16_Retrieving_Data_by_Using_Subqueries.md">view source markdown</a>
+    <a href="17_Manipulating_Data_by_Using_Subqueries.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

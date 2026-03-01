@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sunrise">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex Guides</title>
+<meta name="description" content="Curated practical guides for Linux, terminal workflows, git safety, and AI-assisted coding.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/codex.css">
+</head>
+<body data-page="guides">
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="page-bg" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span>CODEX</span>
+    <small>alt universe build</small>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="guides.html" aria-current="page">Guides</a>
+    <a href="resources.html">Resources</a>
+    <a href="explorer.html">Mirror</a>
+    <a href="visitors.html">Visitors</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="pill-btn" type="button" data-command-open>Command Palette</button>
+    <button class="pill-btn" type="button" data-theme-cycle>Theme: Sunrise</button>
+  </div>
+</header>
+
+<main id="content" class="content-wrap">
+  <section class="hero hero-compact reveal">
+    <p class="eyebrow">guide library</p>
+    <h1>Guides That Save You From Dumb Mistakes</h1>
+    <p class="lede">Filter by level, search by topic, and jump straight into practical workflows.</p>
+  </section>
+
+  <section class="section reveal">
+    <div class="toolbar">
+      <label class="search-wrap" for="guideSearch">
+        <span>Search</span>
+        <input id="guideSearch" type="search" placeholder="ai agents, zsh, vm, git...">
+      </label>
+
+      <div class="filter-wrap" aria-label="Filter by level">
+        <button type="button" class="filter-chip active" data-level="all">all</button>
+        <button type="button" class="filter-chip" data-level="beginner">beginner</button>
+        <button type="button" class="filter-chip" data-level="intermediate">intermediate</button>
+        <button type="button" class="filter-chip" data-level="advanced">advanced</button>
+      </div>
+    </div>
+
+    <p class="result-count" id="guideCount">Loading guides...</p>
+    <div class="card-grid" id="guideGrid"></div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-head">
+      <h2>Full Mirrored Guide Library</h2>
+      <p>Every guide from the main site is copied under <code>codex/mirror/guides</code>, including the full SQL chapter set.</p>
+    </div>
+    <div class="resource-inline">
+      <a href="mirror/guides/index.html">mirror guides home</a>
+      <a href="mirror/guides/sql-guide/index.html">mirror sql guide index</a>
+      <a href="mirror/guides/coding-with-ai-agents/index.html">mirror ai agents guide</a>
+      <a href="mirror/guides/arch-linux-virtualbox-omarchy/index.html">mirror arch virtualbox</a>
+      <a href="explorer.html">search all mirrored pages →</a>
+    </div>
+  </section>
+
+  <section class="section reveal" id="guide-terminal">
+    <div class="section-head">
+      <h2>Guide: Terminal-First Dev Environment</h2>
+      <p>Fast shell, better defaults, fewer repetitive keystrokes.</p>
+    </div>
+    <article class="guide-block">
+      <h3>1) Install core tools</h3>
+      <div class="code-block">
+        <pre><code>sudo dnf install -y zsh fzf ripgrep fd-find bat eza zoxide tmux git-delta</code></pre>
+        <button type="button" class="copy-inline" data-copy-target>copy</button>
+      </div>
+
+      <h3>2) Add aliases that actually help</h3>
+      <div class="code-block">
+        <pre><code>alias ls='eza --icons'
+alias ll='eza -la --icons'
+alias cat='bat'
+alias c='clear'
+eval "$(zoxide init zsh)"</code></pre>
+        <button type="button" class="copy-inline" data-copy-target>copy</button>
+      </div>
+
+      <h3>3) Use this daily loop</h3>
+      <p><strong>Find</strong> with <code>rg</code>, <strong>jump</strong> with <code>z</code>, <strong>split</strong> sessions in <code>tmux</code>, and review diffs with <code>delta</code>.</p>
+    </article>
+  </section>
+
+  <section class="section reveal" id="guide-ai-workflow">
+    <div class="section-head">
+      <h2>Guide: AI Agent Workflow That Stays Sane</h2>
+      <p>Use the right tool for the right mode so quality stays high.</p>
+    </div>
+    <article class="guide-block">
+      <ol class="step-list">
+        <li><strong>Plan in chat mode:</strong> define requirements, constraints, and edge cases.</li>
+        <li><strong>Execute in workspace mode:</strong> give controlled file access and explicit tasks.</li>
+        <li><strong>Run terminal agent loops:</strong> implement, test, iterate, commit.</li>
+        <li><strong>Final human review:</strong> correctness, security, style, and docs.</li>
+      </ol>
+
+      <div class="code-block">
+        <pre><code># prompt skeleton
+Goal:
+Constraints:
+Acceptance tests:
+Files expected to change:
+Risk checklist:</code></pre>
+        <button type="button" class="copy-inline" data-copy-target>copy</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="section reveal" id="guide-git-safety">
+    <div class="section-head">
+      <h2>Guide: Git Safety Nets Before Big Changes</h2>
+      <p>Never lose work because of one bad command.</p>
+    </div>
+    <article class="guide-block">
+      <div class="code-block">
+        <pre><code>git status
+git switch -c chore/safe-refactor
+git add -A
+git commit -m "checkpoint before refactor"
+
+git reflog --date=local | head -n 10</code></pre>
+        <button type="button" class="copy-inline" data-copy-target>copy</button>
+      </div>
+      <p>If you break something, recover with <code>git reflog</code> and reset to a known good commit.</p>
+    </article>
+  </section>
+
+  <section class="section reveal" id="guide-vm-lab">
+    <div class="section-head">
+      <h2>Guide: Linux VM Lab for Skill Building</h2>
+      <p>A cheap way to practice dangerous commands safely.</p>
+    </div>
+    <article class="guide-block">
+      <ol class="step-list">
+        <li>Create two VMs: one stable distro, one rolling distro.</li>
+        <li>Snapshot baseline after first boot and updates.</li>
+        <li>Practice package installs, broken configs, and recovery.</li>
+        <li>Write a short log after each failure: cause, fix, prevention.</li>
+      </ol>
+      <p>That habit compounds fast. Within a month, troubleshooting becomes pattern recognition instead of panic.</p>
+    </article>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Guide vault from the Codex edition. Built for speed and practical outcomes.</p>
+</footer>
+
+<div class="palette-backdrop" id="commandPalette" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+    <div class="palette-head">
+      <h2 id="paletteTitle">Command Palette</h2>
+      <button type="button" class="close-btn" data-command-close>Esc</button>
+    </div>
+    <input id="commandInput" type="text" autocomplete="off" placeholder="Type: home, resources, theme, vm..." aria-label="Command search">
+    <ul id="commandList"></ul>
+  </div>
+</div>
+
+<script src="js/app.js" defer></script>
+<script src="js/guides.js" defer></script>
+</body>
+</html>

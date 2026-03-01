@@ -1,0 +1,328 @@
+/* Shared nav for SQL guide pages */
+nav {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+}
+
+nav .inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+nav a {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--muted);
+  transition: color 0.2s;
+  cursor: none;
+}
+
+nav a:hover { color: var(--accent); }
+nav .logo { color: var(--accent) !important; font-weight: 600; }
+
+/* Generic layout */
+.sql-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 56px 24px 88px;
+}
+
+.sql-header {
+  margin-bottom: 36px;
+  animation: fadeIn 0.4s ease both;
+}
+
+.sql-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.sql-header h1 {
+  font-family: var(--font-mono);
+  font-size: clamp(1.9rem, 5vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.sql-header p {
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.sql-header p strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.sql-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sql-pill {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 99px;
+  color: var(--accent3);
+  border: 1px solid rgba(255,214,10,0.25);
+  background: rgba(255,214,10,0.07);
+}
+
+.sql-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 30px 0 40px;
+}
+
+/* Landing page lesson cards */
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 14px;
+}
+
+.lesson-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(14,19,24,0.95) 0%, rgba(11,15,20,0.95) 100%);
+  padding: 16px 18px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  cursor: none;
+}
+
+.lesson-card:hover {
+  border-color: rgba(0,255,157,0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.28);
+}
+
+.lesson-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lesson-title {
+  color: var(--text);
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.lesson-summary {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.lesson-cta {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  color: var(--accent3);
+  text-transform: uppercase;
+}
+
+.sql-links {
+  margin-top: 28px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.sql-links a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--dim);
+  letter-spacing: 0.05em;
+  transition: color 0.2s, border-color 0.2s;
+  cursor: none;
+}
+
+.sql-links a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Chapter pages */
+.chapter {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(14,19,24,0.75);
+  padding: 28px 30px;
+}
+
+.chapter h2,
+.chapter h3,
+.chapter h4 {
+  font-family: var(--font-mono);
+  line-height: 1.35;
+}
+
+.chapter h2 {
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 34px 0 14px;
+  color: var(--accent);
+}
+
+.chapter h2:first-child { margin-top: 0; }
+
+.chapter h3 {
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  margin: 22px 0 12px;
+  color: #9ad8ff;
+}
+
+.chapter h4 {
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  margin: 18px 0 10px;
+  color: #97d2b8;
+}
+
+.chapter p {
+  color: #c2d4e0;
+  font-size: 1rem;
+  line-height: 1.82;
+  margin-bottom: 16px;
+}
+
+.chapter ul,
+.chapter ol {
+  margin: 0 0 18px 22px;
+  color: #c2d4e0;
+}
+
+.chapter li {
+  margin-bottom: 8px;
+  line-height: 1.7;
+}
+
+.chapter hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+
+.chapter a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,255,157,0.28);
+  transition: border-color 0.2s;
+  cursor: none;
+}
+
+.chapter a:hover { border-color: var(--accent); }
+
+.chapter code {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--accent3);
+  background: rgba(20,26,34,0.9);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.chapter pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 16px 0 22px;
+}
+
+.chapter pre code {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #a8f6ce;
+  font-size: 0.8rem;
+  line-height: 1.62;
+}
+
+.chapter-nav {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chapter-nav a {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--dim);
+  letter-spacing: 0.06em;
+  transition: color 0.2s, border-color 0.2s;
+  cursor: none;
+}
+
+.chapter-nav a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.sql-footer {
+  margin-top: 34px;
+  color: var(--dim);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 700px) {
+  .sql-page {
+    padding-top: 42px;
+  }
+
+  .chapter {
+    padding: 20px 18px;
+  }
+
+  nav .inner {
+    padding: 0 16px;
+  }
+}

@@ -1,0 +1,460 @@
+:root {
+  --vim-bg: #0a0f16;
+  --vim-bg2: #111a24;
+  --vim-bg3: #152232;
+  --vim-border: #25384d;
+  --vim-text: #d5e6f7;
+  --vim-muted: #7f9ab6;
+  --vim-accent: #22d3a6;
+  --vim-accent2: #7fd1ff;
+  --vim-accent3: #ffb454;
+}
+
+body {
+  background: var(--bg);
+  color: var(--vim-text);
+}
+
+header {
+  border-bottom: 1px solid var(--vim-border);
+  padding: 1.1rem 0;
+  background: rgba(10, 15, 22, 0.92);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-name {
+  color: var(--vim-accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  letter-spacing: -0.03em;
+}
+
+.site-name span {
+  color: var(--vim-muted);
+}
+
+nav a {
+  color: var(--vim-muted);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  margin-left: 1.2rem;
+  letter-spacing: 0.08em;
+  transition: color 0.15s;
+}
+
+nav a:hover {
+  color: var(--vim-accent);
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2.5rem 1.2rem 5rem;
+}
+
+.post-meta {
+  color: var(--vim-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  align-items: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tag {
+  border: 1px solid var(--vim-border);
+  padding: 0.15rem 0.4rem;
+}
+
+.tag.green {
+  color: var(--vim-accent);
+  border-color: rgba(34, 211, 166, 0.45);
+}
+
+h1 {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 3.8vw, 2.5rem);
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.03em;
+}
+
+h1 .dim {
+  color: var(--vim-muted);
+  font-weight: 400;
+}
+
+.subtitle {
+  color: var(--vim-muted);
+  font-size: 1rem;
+  margin-bottom: 1.6rem;
+  max-width: 680px;
+}
+
+.terminal-intro {
+  background: #09101a;
+  border: 1px solid var(--vim-border);
+  border-left: 3px solid var(--vim-accent);
+  padding: 1.2rem 1.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.95;
+  margin-bottom: 2.2rem;
+}
+
+.prompt {
+  color: var(--vim-accent);
+}
+
+.cmd-text {
+  color: var(--vim-accent2);
+}
+
+.output {
+  color: var(--vim-muted);
+  padding-left: 1rem;
+}
+
+.toc {
+  background: var(--vim-bg2);
+  border: 1px solid var(--vim-border);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--vim-muted);
+  margin-bottom: 0.65rem;
+}
+
+.toc a {
+  display: block;
+  color: var(--vim-text);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  padding: 0.19rem 0;
+  transition: color 0.15s;
+}
+
+.toc a::before {
+  content: '-> ';
+  color: var(--vim-muted);
+}
+
+.toc a:hover {
+  color: var(--vim-accent);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--vim-border);
+  margin: 2rem 0;
+}
+
+h2 {
+  font-family: var(--font-mono);
+  color: var(--vim-accent);
+  font-size: 1rem;
+  margin: 2.2rem 0 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+h2::before {
+  content: '## ';
+  color: #39526b;
+}
+
+h3 {
+  font-family: var(--font-mono);
+  color: var(--vim-accent2);
+  font-size: 0.84rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+p {
+  color: var(--vim-text);
+  line-height: 1.75;
+  margin-bottom: 0.95rem;
+}
+
+.code-block {
+  background: #0a121d;
+  border: 1px solid var(--vim-border);
+  border-left: 3px solid var(--vim-accent2);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  position: relative;
+  overflow-x: auto;
+}
+
+.code-block.compact {
+  margin: 0.7rem 0 0;
+}
+
+.code-block .label {
+  position: absolute;
+  right: 0.7rem;
+  top: 0.48rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--vim-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.code-block pre {
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  line-height: 1.85;
+  color: var(--vim-text);
+}
+
+.cmd {
+  color: var(--vim-accent);
+}
+
+.cmt {
+  color: var(--vim-muted);
+}
+
+.callout {
+  background: var(--vim-bg2);
+  border: 1px solid var(--vim-border);
+  border-left: 3px solid var(--vim-accent3);
+  padding: 0.95rem 1.1rem;
+  margin: 1.25rem 0;
+  line-height: 1.7;
+}
+
+.callout.warn {
+  border-left-color: #ff6b6b;
+}
+
+.callout.info {
+  border-left-color: var(--vim-accent2);
+}
+
+.callout-title {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--vim-accent3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.36rem;
+}
+
+.key-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--vim-border);
+  margin: 1rem 0;
+}
+
+.key-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.key-table th,
+.key-table td {
+  border: 1px solid var(--vim-border);
+  padding: 0.62rem 0.72rem;
+  text-align: left;
+  font-size: 0.84rem;
+}
+
+.key-table th {
+  background: var(--vim-bg3);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--vim-accent2);
+  text-transform: uppercase;
+}
+
+.key-table td {
+  background: #0c141f;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.panel {
+  background: var(--vim-bg2);
+  border: 1px solid var(--vim-border);
+  padding: 1rem;
+}
+
+.practice-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.practice-list li {
+  background: #0d1622;
+  border: 1px solid var(--vim-border);
+  padding: 0.72rem 0.85rem;
+  line-height: 1.65;
+}
+
+.resource-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.resource-list li {
+  background: #0d1622;
+  border: 1px solid var(--vim-border);
+  padding: 0.72rem 0.85rem;
+}
+
+.resource-list a {
+  color: var(--vim-accent2);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  line-height: 1.65;
+  word-break: break-word;
+}
+
+.resource-list a:hover {
+  color: var(--vim-accent);
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+  margin: 1rem 0 0.85rem;
+}
+
+.video-card {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: #0a121d;
+  border: 1px solid var(--vim-border);
+}
+
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-card a {
+  color: var(--vim-accent2);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.video-card a:hover {
+  color: var(--vim-accent);
+}
+
+.inline-link {
+  color: var(--vim-accent2);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(127, 209, 255, 0.45);
+}
+
+.inline-link:hover {
+  color: var(--vim-accent);
+  border-bottom-color: rgba(34, 211, 166, 0.45);
+}
+
+kbd,
+code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: #182534;
+  border: 1px solid #2e445c;
+  border-radius: 4px;
+  color: #b4dbff;
+  padding: 0.08rem 0.32rem;
+}
+
+footer {
+  border-top: 1px solid var(--vim-border);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.6rem 1.2rem 2.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--vim-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+footer a {
+  color: var(--vim-accent2);
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: var(--vim-accent);
+}
+
+@media (max-width: 760px) {
+  nav a {
+    margin-left: 0.7rem;
+    font-size: 0.67rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
+}

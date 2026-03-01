@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf</title>
+<meta name="description" content="A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/coding-with-ai-agents/"> <meta property="og:title" content="The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf"> <meta property="og:description" content="A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/coding-with-ai-agents/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf"> <meta name="twitter:description" content="A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Absolute Guide to Coding with Claude AI, Claude Code, and Codex — swf.wtf","description":"A guide to the three-headed AI hydra of modern development: Claude AI for thinking, Claude Code for doing, and Codex for when you want a second opinion from the competition.","url":"https://swf.wtf/guides/coding-with-ai-agents/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/coding-with-ai-agents.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<div class="post-container">
+  <nav class="post-nav">
+    <a href="../../">← swf.wtf</a>
+    <span class="nav-right">Feb 2026</span>
+  </nav>
+
+  <header class="post-header">
+    <div class="post-meta">
+      <span>guide</span>
+      <span>ai-assisted coding</span>
+      <span>~18 min read</span>
+    </div>
+    <h1 class="post-title">The Absolute Guide to Coding with Claude AI, Claude Code, and OpenAI Codex</h1>
+    <p class="post-subtitle">Or: How I Learned to Stop Worrying and Let Three Different AIs Argue About My Code</p>
+    <div class="difficulty-bar">
+      <span>Difficulty:</span>
+      <span class="level">████░░░░░░</span>
+      <span>Mild to medium existential crisis</span>
+    </div>
+  </header>
+
+  <div class="toc">
+    <div class="toc-title">$ tree ./this-post</div>
+    <a href="#wtf">WTF are all these tools?</a>
+    <a href="#claude-ai">Claude AI — the thinker</a>
+    <a href="#claude-code">Claude Code — the doer</a>
+    <a href="#codex">OpenAI Codex — the competition</a>
+    <a href="#together">Using them together (the spicy part)</a>
+    <a href="#workflows">Real workflows that actually work</a>
+    <a href="#tips">Tips from someone who's broken things</a>
+    <a href="#closing">Closing thoughts from a mortal</a>
+  </div>
+
+  <article class="post-body">
+
+    <h2 id="wtf">WTF Are All These Tools?</h2>
+
+    <p>Look, I get it. You open Twitter — sorry, <em>X</em>, the website formerly known as a functioning social media platform — and every third post is someone claiming they built an entire SaaS company in forty-five minutes using nothing but vibes and a terminal window. Half of them are lying. The other half are telling the truth, and that's somehow more terrifying.</p>
+
+    <p>The AI-assisted coding landscape in 2026 looks roughly like a buffet at a Las Vegas casino: there are too many options, half of them will make you sick, and the guy next to you is absolutely certain he's found the winning strategy. So let's cut through the noise.</p>
+
+    <p>We're going to talk about three tools:</p>
+
+    <p><strong>Claude AI</strong> — the conversational interface at <code>claude.ai</code>. This is where you go to think, plan, ask questions, and have Claude write code snippets you can paste into your project. And with <strong>Claude Cowork</strong>, it can also work directly in a connected project workspace. Think of it as the architect that can now pick up tools when needed.</p>
+
+    <p><strong>Claude Code</strong> — Anthropic's CLI-based agentic coding tool. This one lives in your terminal, reads your actual codebase, and makes changes directly. This is the construction crew.</p>
+
+    <p><strong>OpenAI Codex CLI</strong> — the competition's equivalent. OpenAI's terminal agent, built in Rust, doing roughly the same thing but with different opinions about how to do it. This is the rival construction crew that uses metric where the other uses imperial.</p>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And now this</div>
+      <p>Yes, I'm aware that recommending you use products from two competing AI companies simultaneously is a bit like telling someone to bring both their ex and their current partner to the same dinner party. But hear me out — it's not as unhinged as it sounds. These tools genuinely complement each other in ways that neither company would ever admit in a press release.</p>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Claude AI</th>
+          <th>Claude Code</th>
+          <th>Codex CLI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Interface</td>
+          <td>Web / mobile / desktop</td>
+          <td>Terminal / IDE</td>
+          <td>Terminal / IDE / desktop app</td>
+        </tr>
+        <tr>
+          <td>Reads your codebase</td>
+          <td>Paste-only in plain chat; full repo context with Claude Cowork</td>
+          <td>Yes, the whole thing</td>
+          <td>Yes, the whole thing</td>
+        </tr>
+        <tr>
+          <td>Makes file changes</td>
+          <td>Not in plain chat; yes with Claude Cowork (permissioned)</td>
+          <td>Yes, directly</td>
+          <td>Yes, directly</td>
+        </tr>
+        <tr>
+          <td>Runs commands</td>
+          <td>Not in plain chat; yes with Claude Cowork</td>
+          <td>Yes (bash, git, tests)</td>
+          <td>Yes (bash, git, tests)</td>
+        </tr>
+        <tr>
+          <td>Best for</td>
+          <td>Planning by default; workspace execution with Claude Cowork</td>
+          <td>Execution, refactoring</td>
+          <td>Execution, code review</td>
+        </tr>
+        <tr>
+          <td>Pricing</td>
+          <td>Free tier / Pro / Max</td>
+          <td>Included with Pro/Max or API</td>
+          <td>ChatGPT Plus/Pro or API</td>
+        </tr>
+        <tr>
+          <td>Vibes</td>
+          <td>Thoughtful librarian</td>
+          <td>Competent contractor</td>
+          <td>Enthusiastic intern with a Rust fetish</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="claude-ai">Claude AI — The Thinker</h2>
+
+    <p>Claude AI — the chat interface, the one you're probably reading this guide through right now (hi, Claude, yes I know you're in there) — is best understood as the <em>planning and research phase</em> of your workflow. But with <strong>Claude Cowork</strong>, it can also execute directly in a workspace when you want that mode.</p>
+
+    <p>You still go to <code>claude.ai</code> primarily to <em>figure out what to build</em>. This is where you hash out architecture decisions, debug your understanding of a problem, ask "what's the difference between a WebSocket and a Server-Sent Event and should I care," and get genuinely useful explanations that don't make you feel like you're reading a textbook written by someone who actively dislikes the reader.</p>
+
+    <h3>What Claude AI Is Great At</h3>
+
+    <p><strong>Rubber duck debugging, but the duck talks back.</strong> You paste in an error, describe your setup, and Claude walks through the problem with you. Unlike Stack Overflow, it won't close your question as a duplicate of something from 2014 that uses a deprecated API.</p>
+
+    <p><strong>Architecture planning.</strong> "I need to add auth to this Express app, what are my options?" Claude gives you the trade-offs, not just the code. It'll tell you when JWT is overkill, when session cookies are fine, and when you should probably just use an auth provider because life is short and token rotation is forever.</p>
+
+    <p><strong>Learning new concepts.</strong> Claude is unreasonably good at explaining things at whatever level you're at. You can say "explain Kubernetes to me like I'm an Oracle DBA who mostly lives in terminals" and it'll actually do that instead of starting from "a container is a lightweight virtual machine."</p>
+
+    <div class="callout tip">
+      <div class="callout-label">$ pro-tip</div>
+      <p>When using Claude AI for code planning, be specific about your stack. Don't just say "build me a login page." Say "I'm running Express 4 with EJS templates, PostgreSQL, and I want session-based auth with bcrypt. I'm deploying to a VPS running Fedora." The more context you front-load, the less back-and-forth you'll waste.</p>
+    </div>
+
+    <p><strong>Code review by conversation.</strong> Paste a function in and ask "what's wrong with this?" or "how would a senior developer improve this?" Claude will point out things like missing error handling, opportunities for early returns, and the fact that you have a variable called <code>temp2</code> which, let's be honest, you were never going to rename.</p>
+
+    <h3>Where Claude AI Still Has Limits</h3>
+
+    <p>In plain chat mode, Claude AI still doesn't have live filesystem access and can't run your tests unless you provide context manually. Claude Cowork changes that by letting Claude work in a connected, permissioned workspace. So the practical rule is simple: use plain chat for thinking, and switch to Cowork when you want direct repo access and execution.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">$ quick mode picker</div>
+      <p><strong>Use plain chat</strong> for architecture, trade-offs, and prompt-driven planning. <strong>Use Claude Cowork</strong> when you want Claude in a connected workspace with repo access and controlled execution. <strong>Use Claude Code</strong> when you want full terminal-native, multi-file implementation loops inside your local project.</p>
+    </div>
+
+    <h2 id="claude-code">Claude Code — The Doer</h2>
+
+    <p>Claude Code is where things get real. This is Anthropic's agentic coding tool that runs in your terminal — or inside VS Code, Cursor, Windsurf, or JetBrains — and has actual access to your files, your git history, and your entire questionable collection of <code>TODO: fix later</code> comments.</p>
+
+    <p>You install it, navigate to your project directory, type <code>claude</code>, and suddenly you have a pair programmer who has read every file in your repo faster than you can say "I should really update that README."</p>
+
+    <h3>Installation</h3>
+
+    <pre data-lang="bash"><code># macOS
+brew install claude-code
+
+# Linux / WSL
+curl -fsSL https://claude.ai/install-cli | sh
+
+# Then just:
+cd your-project
+claude</code></pre>
+
+    <p>That's it. You'll authenticate with your Claude account (Pro, Max, Team, or Enterprise — or an API key if you're going that route), and then you're talking to Claude in your terminal. It's like SSH-ing into a conversation.</p>
+
+    <h3>The CLAUDE.md File (Your AI's Briefing Document)</h3>
+
+    <p>Here's the thing nobody tells you upfront: Claude Code is only as good as the context you give it. And the single most powerful piece of context is a file called <code>CLAUDE.md</code> that you drop in your project root.</p>
+
+    <p>Think of it as a briefing document. You wouldn't bring a new contractor onto a job site and say "figure it out." You'd hand them the blueprints. <code>CLAUDE.md</code> is your blueprints.</p>
+
+    <pre data-lang="markdown"><code># CLAUDE.md
+
+## Project overview
+This is a personal blog built with static HTML, hosted on GitHub Pages
+at swf.wtf. Terminal/hacker aesthetic. No frameworks, no build step.
+
+## Tech stack
+- Plain HTML/CSS/JS
+- JetBrains Mono + Space Grotesk fonts
+- GitHub Pages for hosting
+- ImprovMX for email forwarding
+
+## Code style
+- Use CSS variables for all colours (defined in :root)
+- Mobile-first responsive design
+- No external JS dependencies
+- Semantic HTML, accessibility matters
+
+## Known quirks
+- Custom cursor follows mouse via JS
+- Scanline overlay is CSS-only, don't remove it
+- There's a Konami code easter egg, leave it alone</code></pre>
+
+    <p>You can also have a global <code>~/.claude/CLAUDE.md</code> that applies to all your projects — great for things like "I prefer Fedora, use dnf not apt" or "I like my functions small and my variable names descriptive."</p>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And now this</div>
+      <p>The fact that we now live in a world where you write documentation for your AI assistant so it can better understand how to write documentation for your code is the kind of recursive absurdity that, frankly, I think we all just need to sit with for a moment. We've built tools that need instruction manuals so they can write instruction manuals. We're one step away from the AI asking for its own CLAUDE.md about how to interpret your CLAUDE.md. This is fine. Everything is fine.</p>
+    </div>
+
+    <h3>What Claude Code Actually Does</h3>
+
+    <p>Once it's in your project, Claude Code can:</p>
+
+    <p><strong>Read and understand your entire codebase.</strong> Not just the file you're looking at — the whole repo. It greps, it globs, it follows imports. It's like having a colleague who actually reads the whole PR instead of just approving it.</p>
+
+    <p><strong>Make multi-file edits.</strong> "Rename the User model to Account and update all references." Claude Code does this across your entire project, including tests, imports, and that one file in <code>/scripts</code> that nobody remembers writing.</p>
+
+    <p><strong>Run your tests and fix what breaks.</strong> You can say "run the test suite and fix any failures" and it'll actually do that. It runs the tests, reads the output, figures out what's wrong, fixes the code, and runs the tests again. This is called a feedback loop and it's disturbingly effective.</p>
+
+    <p><strong>Handle git workflows.</strong> Write commit messages, create branches, even submit PRs if you've got the GitHub MCP integration set up. You can say "commit this with a good message" and it'll write something better than "fixed stuff" which is, statistically, what 40% of your commits say right now.</p>
+
+    <h3>Key Commands You'll Actually Use</h3>
+
+    <pre data-lang="bash"><code># Start a session
+claude
+
+# Resume where you left off
+claude --continue
+
+# Resume a named session
+claude --resume payment-integration
+
+# Use a specific model
+claude --model opus       # most powerful
+claude --model sonnet     # faster, cheaper
+claude --model haiku      # fastest, cheapest
+
+# Non-interactive mode (great for scripts)
+claude --print "explain the auth flow in this repo"
+
+# Plan mode — Claude thinks before acting
+# (Shift+Tab inside a session)</code></pre>
+
+    <h3>Subagents — Claude's Little Helpers</h3>
+
+    <p>This is one of the features most people miss. Claude Code can spawn <strong>subagents</strong> — specialised instances that handle specific tasks in isolation, so your main conversation doesn't get bloated with context.</p>
+
+    <p>You can define custom agents for things like code review, debugging, or documentation. They run in their own context window, do their thing, and return a summary. It's delegation, but for AI. You're managing AI middle managers now. Congratulations, that's either the future or a Black Mirror episode.</p>
+
+    <pre data-lang="bash"><code># Define agents inline
+claude --agents '{
+  "code-reviewer": {
+    "description": "Expert code reviewer",
+    "prompt": "Focus on security and best practices.",
+    "tools": ["Read", "Grep", "Glob", "Bash"],
+    "model": "sonnet"
+  }
+}'</code></pre>
+
+    <h3>MCP — Model Context Protocol</h3>
+
+    <p>MCP is how Claude Code connects to external tools. Think of it as a universal adapter for AI. Without MCP, Claude can only read files and run bash commands. <em>With</em> MCP, it can query your database, create GitHub issues, check Sentry for errors, post to Slack, and interact with basically any API you throw at it.</p>
+
+    <p>There are now over 300 MCP integrations. Setting one up is as simple as:</p>
+
+    <pre data-lang="bash"><code># Add a GitHub MCP server
+claude mcp add github
+
+# Add any MCP server interactively
+claude mcp add</code></pre>
+
+    <div class="callout tip">
+      <div class="callout-label">$ pro-tip</div>
+      <p>The MCP ecosystem went from 100,000 downloads to over 8 million in about five months. That's 80x growth. The plugin ecosystem is real, it's growing fast, and it's worth exploring what's available for your stack.</p>
+    </div>
+
+    <h2 id="codex">OpenAI Codex CLI — The Competition</h2>
+
+    <p>Now, you might be thinking: "Steve, you've got a whole section of this guide dedicated to a competitor's product on what is ostensibly a Claude-centric blog post. What are you doing?"</p>
+
+    <p>Great question. The answer is: being honest. And honesty, in the world of AI tooling discourse, is apparently a radical act.</p>
+
+    <p>OpenAI's Codex CLI does roughly the same thing as Claude Code — it's a terminal-based agent that reads your codebase, makes changes, runs commands, and generally acts like a very fast colleague who never needs coffee. It's built in Rust (because of course it is), it's open source, and it runs locally.</p>
+
+    <h3>Installation</h3>
+
+    <pre data-lang="bash"><code># Install via npm
+npm i -g @openai/codex
+
+# Or via Homebrew (macOS)
+brew install --cask codex
+
+# Run it
+cd your-project
+codex</code></pre>
+
+    <p>You authenticate with your ChatGPT account or an OpenAI API key. ChatGPT Plus, Pro, Business, Edu, and Enterprise plans all include Codex access.</p>
+
+    <h3>Codex's Three Modes</h3>
+
+    <p>This is where Codex does something a bit different. It has three explicit approval modes:</p>
+
+    <p><strong>Suggest</strong> — Codex proposes changes and commands but does nothing without your explicit approval. The "I trust you but I'm watching" mode.</p>
+
+    <p><strong>Auto Edit</strong> — Codex can modify files on its own but still asks before running shell commands. The "I trust you with the code but not with <code>rm -rf</code>" mode.</p>
+
+    <p><strong>Full Auto</strong> — Codex does whatever it thinks is right. The "I either trust you completely or I have a really good git history and a reckless attitude" mode.</p>
+
+    <div class="callout warning">
+      <div class="callout-label">⚠ heads up</div>
+      <p>Codex will actually warn you before entering Auto Edit or Full Auto if your directory isn't under version control. This is the machine learning equivalent of your car beeping at you to put on a seatbelt. Listen to it.</p>
+    </div>
+
+    <h3>Codex Also Has MCP</h3>
+
+    <p>Like Claude Code, Codex supports MCP integrations. You configure them in <code>~/.codex/config.toml</code> and they spin up automatically when you start a session. Codex can even <em>run as</em> an MCP server itself, which means you could theoretically embed Codex inside another agent. We're getting into inception territory here and I'm choosing not to think too hard about it.</p>
+
+    <h3>The Desktop App</h3>
+
+    <p>OpenAI recently launched a Codex desktop app (currently macOS only), which turns Codex into a kind of command center for managing multiple AI agents working on your code simultaneously. You can have several agents working in isolated git worktrees on the same repo without conflicts. It's like having a team of developers who never argue about tabs vs. spaces because they each get their own copy of the codebase to ruin independently.</p>
+
+    <h2 id="together">Using Them Together (The Spicy Part)</h2>
+
+    <p>Right. Here's where things get interesting. Because the genuinely powerful workflow isn't picking one of these tools. It's using them together like a deeply dysfunctional but highly productive relay team.</p>
+
+    <div class="workflow-box">
+      <div class="workflow-step claude">Claude AI<br><small>Plan & Research</small></div>
+      <span class="workflow-arrow">→</span>
+      <div class="workflow-step codex">Codex<br><small>Detail & Spec</small></div>
+      <span class="workflow-arrow">→</span>
+      <div class="workflow-step cc">Claude Code<br><small>Execute</small></div>
+      <span class="workflow-arrow">→</span>
+      <div class="workflow-step codex">Codex<br><small>Review</small></div>
+    </div>
+
+    <h3>The Plan → Execute → Review Workflow</h3>
+
+    <p>This is the one that's actually changing how people work. Here's the loop:</p>
+
+    <p><strong>1. Plan with Claude AI (or Codex).</strong> Start with the conversational interface. Hash out what you want to build. Ask questions. Get architecture suggestions. Have Claude or Codex ask <em>you</em> clarifying questions until the plan is tight. One excellent technique: tell the AI "ask me questions until you're 95% confident you can create a perfect implementation plan." You'll be surprised how many edge cases surface.</p>
+
+    <p><strong>2. Execute with Claude Code.</strong> Take that plan — copy-paste it, honestly, it works — and hand it to Claude Code in your terminal. Claude Code has your codebase context, so it knows where things go and how your project is structured. It implements the plan surgically.</p>
+
+    <p><strong>3. Review with Codex (or vice versa).</strong> Take the git diff from Claude Code's implementation and hand it to Codex for review. Having a <em>different</em> AI model review the code catches things that the implementing model might have been blind to. It's like having a second pair of eyes, except the eyes belong to a different company's neural network.</p>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And now this</div>
+      <p>I want to be clear about what I'm suggesting here: I am asking you to use two competing AI companies' products as a system of checks and balances against each other. This is like hiring two accountants from rival firms and having each one audit the other's work. It shouldn't work. It absolutely works. We live in remarkable times.</p>
+    </div>
+
+    <h3>The Parallel Agents Workflow</h3>
+
+    <p>Here's the more advanced version: run multiple agents simultaneously. Not just serially — <em>in parallel</em>.</p>
+
+    <p>Open two or three terminal windows. Give each one a different task on a different branch or worktree. Claude Code in one window is implementing the API endpoint while Codex in another is writing the frontend component. You're the project manager checking in on each one, reviewing their work, and merging when things look good.</p>
+
+    <pre data-lang="bash"><code># Terminal 1 — Claude Code handles backend
+cd ~/project
+git worktree add ../project-backend feature/api-endpoint
+cd ../project-backend
+claude
+
+# Terminal 2 — Codex handles frontend
+cd ~/project
+git worktree add ../project-frontend feature/ui-component
+cd ../project-frontend
+codex
+
+# Terminal 3 — you, drinking coffee, reviewing diffs
+cd ~/project
+git log --oneline --graph --all</code></pre>
+
+    <p>This is what people mean by "the parallel coding agent lifestyle." It sounds ridiculous. It is slightly ridiculous. It also saves hours on feature development when the tasks are cleanly separable.</p>
+
+    <h3>The "Second Opinion" Technique</h3>
+
+    <p>Found a bug you can't crack? Have Claude Code investigate. Then, without sharing Claude's analysis, ask Codex to investigate the same bug independently. Compare their diagnoses. If they converge on the same root cause, you can be pretty confident. If they disagree, congratulations — you've just found the interesting part of the problem.</p>
+
+    <p>This is particularly effective for security reviews. Have Claude Code scan for vulnerabilities, then have Codex do the same. Different models have different blind spots.</p>
+
+    <h2 id="workflows">Real Workflows That Actually Work</h2>
+
+    <h3>Workflow 1: The New Feature</h3>
+
+    <pre data-lang="text"><code>1. Open Claude AI → "I need to add dark mode toggle to my site.
+   My CSS uses custom properties already. What's the cleanest approach?"
+
+2. Claude AI suggests localStorage for preference persistence,
+   a CSS class toggle, and prefers-color-scheme media query as default
+
+3. Open terminal → cd your-project → claude
+
+4. "Implement a dark mode toggle. Store preference in localStorage.
+   Respect prefers-color-scheme as default. Add a toggle button in
+   the nav. Here's the plan: [paste Claude AI's plan]"
+
+5. Claude Code reads your CSS, finds your :root variables,
+   creates the dark theme variables, adds the toggle logic,
+   and updates your HTML
+
+6. Review the diff → git add → git commit → done</code></pre>
+
+    <h3>Workflow 2: The Bug Hunt</h3>
+
+    <pre data-lang="text"><code>1. Open terminal → claude --continue (resume your session)
+
+2. "Users report the contact form submits but no email arrives.
+    Investigate."
+
+3. Claude Code greps for the form handler, reads the email config,
+   checks environment variables, and finds the SMTP credentials
+   are pointing to a dev server
+
+4. "Fix it and add a test that verifies the email config
+    in production"
+
+5. Claude Code fixes the config, writes the test, runs it,
+   confirms it passes</code></pre>
+
+    <h3>Workflow 3: The Code Review</h3>
+
+    <pre data-lang="text"><code>1. Finish a feature branch
+
+2. Terminal 1: claude
+   "Review the diff between main and feature/auth-system.
+    Focus on security, error handling, and edge cases."
+
+3. Terminal 2: codex
+   "Review this diff: [paste git diff]
+    Look for performance issues and potential race conditions."
+
+4. Synthesise both reviews → fix issues → merge</code></pre>
+
+    <h3>Workflow 4: The Legacy Codebase Onboarding</h3>
+
+    <pre data-lang="text"><code>1. cd scary-old-project && claude
+
+2. "Explain the architecture of this project. What does each
+    top-level directory do? Where's the entry point?"
+
+3. Claude Code explores the repo, reads configs, follows imports,
+   and gives you a map of the codebase
+
+4. "Now show me the authentication flow, step by step"
+
+5. You now understand in 10 minutes what would have taken
+   a day of spelunking</code></pre>
+
+    <div class="callout opinion">
+      <div class="callout-label">☞ hot take</div>
+      <p>The legacy codebase use case is, in my opinion, the single most underrated application of these tools. Everyone talks about vibe coding greenfield projects. Nobody talks about the sheer joy of pointing an AI at a ten-year-old Java monolith and saying "explain this to me like I just inherited it and the person who wrote it has left the company." That's not a hypothetical. That's a Tuesday for a lot of us.</p>
+    </div>
+
+    <h2 id="tips">Tips from Someone Who's Broken Things</h2>
+
+    <p><strong>Always be in a git repo.</strong> Both Claude Code and Codex modify files directly. If you're not under version control, you're working without a net. <code>git init</code> costs nothing. Regret costs everything.</p>
+
+    <p><strong>Commit before you ask the AI to change things.</strong> Create a clean checkpoint. If the AI makes a mess (and it will, occasionally, with great confidence), you can <code>git checkout .</code> and pretend it never happened.</p>
+
+    <p><strong>Keep your context window clean.</strong> Claude Code's context fills up during long sessions. When things start feeling sluggish or repetitive, start a new session. Think of it like clearing your browser tabs — cathartic and good for performance.</p>
+
+    <p><strong>Use Plan Mode.</strong> In Claude Code, hit <code>Shift+Tab</code> to enable Plan Mode. Claude thinks through a multi-step plan before executing anything. In Codex, the <code>--suggest</code> flag does similar duty. Planning prevents the "I refactored your entire auth system when you asked me to fix a typo" scenario.</p>
+
+    <p><strong>Write good CLAUDE.md / AGENTS.md files.</strong> These are the highest-leverage thing you can do. Ten minutes writing a good project description saves hours of correcting AI assumptions.</p>
+
+    <p><strong>Don't be afraid to reject changes.</strong> The AI proposes, you dispose. If a change looks wrong, say "no, undo that, here's why." The AI doesn't have feelings. It doesn't go home and tell its spouse about the developer who kept rejecting its PRs. (Probably.)</p>
+
+    <p><strong>Name your sessions.</strong> In Claude Code, use <code>/rename</code> early. "payment-integration" is findable later. "explain this function" is not. Future you will thank present you.</p>
+
+    <p><strong>Use the @-mention for files.</strong> In Claude Code, type <code>@</code> to fuzzy-search files and include them directly in your prompt. Way faster than copy-pasting or hoping Claude will find the right file.</p>
+
+    <h2 id="closing">Closing Thoughts from a Mortal</h2>
+
+    <p>Here's the thing nobody in the AI hype machine wants to say out loud: these tools are really, genuinely useful, <em>and</em> they are not magic, <em>and</em> they will sometimes confidently produce code that is subtly wrong in ways that take you longer to debug than if you'd written it yourself.</p>
+
+    <p>All three of those things are true simultaneously. Welcome to the nuance zone.</p>
+
+    <p>The developers who are getting the most out of AI coding tools in 2026 are not the ones who type "build me a startup" into a terminal and expect magic. They're the ones who treat the AI like a junior developer with perfect memory and zero judgment — someone who needs clear instructions, benefits from code review, and occasionally needs to be told "no, that's not what I meant, let me rephrase."</p>
+
+    <p>Claude AI is your thinking partner. Claude Code is your execution engine. Codex is your second opinion. Together, they form a workflow that's genuinely faster than working alone — not because the AI is smarter than you, but because it's faster than you at the boring parts, and the boring parts are 70% of the job.</p>
+
+    <p>The 30% that matters — the architecture decisions, the "should we build this at all" questions, the taste and judgment calls — that's still you. That's always going to be you. The AI can build what you describe, but only you can decide what's worth building.</p>
+
+    <p>Now go write a <code>CLAUDE.md</code> file. Your AI is waiting for its briefing.</p>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And finally tonight</div>
+      <p>If you've read this far, you are exactly the kind of person who reads documentation for fun. I respect that deeply. You probably also have opinions about terminal emulators and have, at some point, spent an afternoon choosing a monospace font. You're my people. Now close this tab and go build something.</p>
+    </div>
+
+  </article>
+
+  <footer class="post-footer">
+    <div class="post-footer-sig">// Steven William Fry — Feb 2026</div>
+    <a href="../../" class="back-link">← back to all posts</a>
+  </footer>
+</div>
+
+<script defer src="../../assets/js/coding-with-ai-agents.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How I set up swf.wtf in one morning — swf.wtf</title>
+<meta name="description" content="A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/blog/how-i-set-up-swf-wtf/"> <meta property="og:title" content="How I set up swf.wtf in one morning — swf.wtf"> <meta property="og:description" content="A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/blog/how-i-set-up-swf-wtf/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="How I set up swf.wtf in one morning — swf.wtf"> <meta name="twitter:description" content="A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How I set up swf.wtf in one morning — swf.wtf","description":"A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch.","url":"https://swf.wtf/blog/how-i-set-up-swf-wtf/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/how-i-set-up-swf-wtf.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../">← all posts</a>
+  </div>
+</nav>
+
+<article>
+  <header class="post-header">
+    <div class="post-meta">
+      <span>Feb 20, 2026</span>
+      <span>·</span>
+      <span>6 min read</span>
+      <span class="tag">meta</span>
+      <span class="tag">linux</span>
+      <span class="tag">web</span>
+    </div>
+    <h1>How I set up swf.wtf in one morning</h1>
+    <p class="subtitle">A mildly embarrassing account of how I built a personal website, bought a ridiculous domain, and somehow got email working before lunch.</p>
+  </header>
+
+  <hr class="divider">
+
+  <div class="post-body">
+
+    <p>I want to be upfront about something: I have owned <code>stevenfry.ca</code> for years and done absolutely nothing with it. Not a single post. Not a landing page. Not even a tasteful "under construction" GIF from 1997. It just sat there, silently judging me, auto-renewing every year like a gym membership I was too guilty to cancel.</p>
+
+    <p>So naturally, my solution was to buy a second domain.</p>
+
+    <h2>The Domain</h2>
+
+    <p>My initials are SWF. If you were born before 2010 you'll recognise that as the file extension for Adobe Flash — that beautiful, chaotic, now-dead technology that gave us browser games, skip intros, and at least 40% of our collective early internet trauma. I did not plan this. The universe simply provided.</p>
+
+    <p><strong>swf.wtf</strong> was available. Of course it was. I bought it immediately before I could talk myself out of it. Seven dollars well spent. The <code>.wtf</code> TLD is doing a lot of heavy lifting here — it's playful, it's self-aware, and it perfectly captures my general relationship with technology: enthusiastic confusion.</p>
+
+    <h2>The Website</h2>
+
+    <p>I wanted something dark, terminal-flavoured, and fast — basically what my Fedora desktop looks like after an Omakub-style makeover. No frameworks, no build steps, no <code>node_modules</code> folder large enough to collapse into a black hole. Just HTML and CSS.</p>
+
+    <p>The whole thing is static files hosted on <strong>GitHub Pages</strong>, which is free and takes about four minutes to set up if you already have a GitHub account. Push your files to a repo, flip a switch in Settings, and you're live. It's embarrassingly easy and I'm annoyed it took me this long to do it.</p>
+
+    <p>The homepage has a blinking block cursor that follows your mouse around, which I am disproportionately proud of. It's about twelve lines of JavaScript and it makes the whole thing feel like a terminal. Sometimes the smallest details are the most satisfying.</p>
+
+    <div class="callout">
+      <strong>Side note:</strong> there's also a Konami code easter egg on the homepage. ↑↑↓↓←→←→BA. I'm not going to tell you what it does. Go find out.
+    </div>
+
+    <h2>Connecting the Domain</h2>
+
+    <p>This is the part where I confidently typed things into DNS records and then anxiously refreshed for twenty minutes to see if anything broke. The short version: you add four A records pointing at GitHub's servers, a CNAME record pointing <code>www</code> at your GitHub Pages URL, and a <code>CNAME</code> file in your repo telling GitHub which domain to expect. Then you wait.</p>
+
+    <p>I was on GoDaddy, which has a DNS interface that looks like it was designed by someone who has heard of user experience but disagrees with it philosophically. There was an existing <code>www</code> CNAME pointing at the wrong place, a "Parked" A record doing nothing useful, and approximately one too many things to delete before it all worked. But it did work. Within the hour, <code>swf.wtf</code> was resolving to my GitHub Pages site with HTTPS and everything. Very professional. Very me.</p>
+
+    <h2>The Email</h2>
+
+    <p>Look, <code>steven@swf.wtf</code> is objectively a great email address and I wasn't going to let it go to waste. The challenge: I did not want to pay for a full mailbox or learn how email servers work at any meaningful depth.</p>
+
+    <p>Enter <strong>ImprovMX</strong> — a free email forwarding service that takes about five minutes to configure. You add two MX records to your DNS, tell ImprovMX where to forward emails, and suddenly anything sent to your fancy domain lands in your regular inbox. It's like call forwarding but for your identity.</p>
+
+    <p>I also set up Gmail's "Send mail as" feature so I can reply <em>from</em> <code>steven@swf.wtf</code> without leaving Gmail. This required generating an App Password in Google, which is the kind of thing that sounds scary but is actually just a slightly longer password that you copy-paste once and never think about again. Total setup time: about ten minutes, including the two minutes I spent reading instructions I didn't need.</p>
+
+    <h2>The Setup Guide</h2>
+
+    <p>The whole reason this website exists is that I'd been tinkering with Fedora 43, trying to get it looking and feeling like <strong>Omakub</strong> — DHH's opinionated Ubuntu setup that I'm mildly obsessed with. Omakub doesn't run on Fedora, so I spent a while reverse-engineering what it does and finding Fedora-native equivalents for everything.</p>
+
+    <p>The result is an <a href="../../guides/fedora-setup/">interactive checklist</a> covering terminal setup, GNOME theming, app installations, and dotfiles. Every item has the relevant command you can copy straight to your terminal. It's the guide I wish had existed when I started. It's also, somewhat accidentally, the first real piece of content on this website.</p>
+
+    <h2>Total Time: One Morning</h2>
+
+    <p>Start to finish — domain purchase, site build, DNS configuration, email forwarding, Gmail alias — about three hours. A significant chunk of that was me second-guessing the domain name, then buying it anyway.</p>
+
+    <p>The moral of the story, if there is one, is that the activation energy for "personal website with a cool domain and a working email address" is genuinely quite low in 2026. Lower than I expected. Lower than the years of inertia suggested. <code>stevenfry.ca</code> sat untouched for ages not because it was hard, but because I kept waiting until I had something worth saying.</p>
+
+    <p>Turns out "I set up a website this morning" is something worth saying. It's not much, but it's a start. More posts to come — probably about Linux, definitely about terminals, occasionally about things I've broken and then fixed by reading the Arch Wiki even though I'm not on Arch.</p>
+
+    <p><em>Welcome to swf.wtf.</em></p>
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-footer-sig">// Steven William Fry — Feb 20, 2026</div>
+    <a href="../../" class="back-link">← back to all posts</a>
+  </footer>
+</article>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>
+

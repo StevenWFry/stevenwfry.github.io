@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>21 – Managing Data in Different Time Zones (Or: Your Timestamps Are Lying to You) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, storing dates without time zones is like scheduling a global meeting and only writing “9 AM” in the invite. Whose 9 AM? Where? On which planet?...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/20_Managing_Data_in_Different_Time_Zones.html"> <meta property="og:title" content="21 – Managing Data in Different Time Zones (Or: Your Timestamps Are Lying to You) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, storing dates without time zones is like scheduling a global meeting and only writing “9 AM” in the invite. Whose 9 AM? Where? On which planet?..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/20_Managing_Data_in_Different_Time_Zones.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="21 – Managing Data in Different Time Zones (Or: Your Timestamps Are Lying to You) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, storing dates without time zones is like scheduling a global meeting and only writing “9 AM” in the invite. Whose 9 AM? Where? On which planet?..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"21 – Managing Data in Different Time Zones (Or: Your Timestamps Are Lying to You) - SQL Guide - swf.wtf","description":"And look, storing dates without time zones is like scheduling a global meeting and only writing “9 AM” in the invite. Whose 9 AM? Where? On which planet?...","url":"https://swf.wtf/guides/sql-guide/20_Managing_Data_in_Different_Time_Zones.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>21 – Managing Data in Different Time Zones (Or: Your Timestamps Are Lying to You)</h1>
+    <p>And look, storing dates without time zones is like scheduling a global meeting and only writing “9 AM” in the invite. Whose 9 AM? Where? On which planet? This lesson is about not doing that.</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, storing dates without time zones is like scheduling a global meeting and only writing “9 AM” in the invite. <em>Whose</em> 9 AM? Where? On which planet? This lesson is about not doing that.</p>
+    <p>After this chapter you should be able to:</p>
+    <ul>
+    <li>Use datetime data types that store fractional seconds and time zones</li>
+    <li>Store the <strong>difference</strong> between two datetime values using <code>INTERVAL</code> types</li>
+    <li>Use key datetime functions like <code>CURRENT_DATE</code>, <code>CURRENT_TIMESTAMP</code>, <code>LOCALTIMESTAMP</code>, <code>EXTRACT</code>, <code>FROM_TZ</code>, and the various <code>INTERVAL</code> helpers</li>
+    </ul>
+    <hr>
+    <h2>1. Session Time Zone vs Database Time Zone</h2>
+    <p>Scenario:</p>
+    <ul>
+    <li>Rick is in Australia happily ordering from “OracleKart”.</li>
+    <li>The servers are in the US.</li>
+    <li>The order timestamp needs to reflect <strong>Rick’s local time</strong>, not “whatever time the server happens to be on.”</li>
+    </ul>
+    <p>Key idea: Oracle maintains:</p>
+    <ul>
+    <li>A <strong>database time zone</strong> – where the database lives</li>
+    <li>A <strong>session time zone</strong> – where <em>you</em> live (or at least where your client pretends you live)</li>
+    </ul>
+    <p>You can set the session time zone:</p>
+    <pre><code class="language-sql">ALTER SESSION SET TIME_ZONE = &#x27;-07:00&#x27;;  -- absolute offset
+    ALTER SESSION SET TIME_ZONE = DBTIMEZONE;
+    ALTER SESSION SET TIME_ZONE = LOCAL;
+    ALTER SESSION SET TIME_ZONE = &#x27;Australia/Sydney&#x27;;  -- named region</code></pre>
+    <p>Then inspect:</p>
+    <pre><code class="language-sql">SELECT dbtimezone, sessiontimezone
+    FROM   dual;</code></pre>
+    <p>Database time zone = server’s reality. Session time zone = user’s reality. You need both.</p>
+    <hr>
+    <h2>2. <code>SYSDATE</code> vs <code>CURRENT_DATE</code>, <code>CURRENT_TIMESTAMP</code>, <code>LOCALTIMESTAMP</code></h2>
+    <p>This is where people get confused and blame Oracle when it was really their choice of function all along.</p>
+    <ul>
+    <li><code>SYSDATE</code></li>
+    <li>Type: <code>DATE</code></li>
+    <li>Source: <strong>database server</strong> clock (no session time zone involved)</li>
+    <li><code>CURRENT_DATE</code></li>
+    <li>Type: <code>DATE</code></li>
+    <li>Source: <strong>user session</strong> time zone</li>
+    <li><code>CURRENT_TIMESTAMP</code></li>
+    <li>Type: <code>TIMESTAMP WITH TIME ZONE</code></li>
+    <li>Source: <strong>user session</strong> time zone, with fractional seconds + zone</li>
+    <li><code>LOCALTIMESTAMP</code></li>
+    <li>Type: <code>TIMESTAMP</code></li>
+    <li>Source: <strong>user session</strong> time zone, <strong>without</strong> time zone field</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">ALTER SESSION SET NLS_DATE_FORMAT = &#x27;DD-MON-YYYY HH24:MI:SS&#x27;;
+    ALTER SESSION SET TIME_ZONE = &#x27;-07:00&#x27;;
+    
+    SELECT SYSDATE          AS sysdate,
+           CURRENT_DATE     AS current_date,
+           CURRENT_TIMESTAMP,
+           LOCALTIMESTAMP
+    FROM   dual;</code></pre>
+    <p>Change the session time zone:</p>
+    <pre><code class="language-sql">ALTER SESSION SET TIME_ZONE = &#x27;+08:00&#x27;;</code></pre>
+    <p>Run the same <code>SELECT</code> again:</p>
+    <ul>
+    <li><code>SYSDATE</code> stays tied to the server’s time zone</li>
+    <li><code>CURRENT_DATE</code>, <code>CURRENT_TIMESTAMP</code>, <code>LOCALTIMESTAMP</code> jump to the new <strong>session</strong> time zone</li>
+    </ul>
+    <p>Which is exactly what you want when Rick in Sydney is talking to a database in California.</p>
+    <hr>
+    <h2>3. Datetime Data Types: Beyond <code>DATE</code></h2>
+    <h3>3.1 <code>TIMESTAMP</code></h3>
+    <p>Fields:</p>
+    <ul>
+    <li><code>YEAR</code>, <code>MONTH</code>, <code>DAY</code></li>
+    <li><code>HOUR</code>, <code>MINUTE</code>, <code>SECOND</code></li>
+    <li>Fractional seconds (up to 9 digits)</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">TIMESTAMP &#x27;2016-03-06 11:00:00.123456&#x27;</code></pre>
+    <h3>3.2 <code>TIMESTAMP WITH TIME ZONE</code></h3>
+    <p>All of <code>TIMESTAMP</code> <strong>plus</strong>:</p>
+    <ul>
+    <li><code>TIMEZONE_HOUR</code>, <code>TIMEZONE_MINUTE</code></li>
+    <li>Or <code>TIMEZONE_REGION</code> (e.g. <code>Europe/London</code>)</li>
+    </ul>
+    <p>Example:</p>
+    <pre><code class="language-sql">TIMESTAMP &#x27;2016-03-06 11:00:00.123456 -08:00&#x27;</code></pre>
+    <h3>3.3 <code>TIMESTAMP WITH LOCAL TIME ZONE</code></h3>
+    <ul>
+    <li>Internally stored in the <strong>database time zone</strong></li>
+    <li>Automatically converted to the <strong>session time zone</strong> on SELECT</li>
+    <li>Displays like a <code>TIMESTAMP</code>, but values are “localised” per session</li>
+    </ul>
+    <p>This is great for “always show this time in the user’s local zone” semantics.</p>
+    <hr>
+    <h2>4. Example: <code>WEB_ORDERS</code> with Timed Delivery</h2>
+    <p>Imagine an online store:</p>
+    <pre><code class="language-sql">CREATE TABLE web_orders (
+      order_id      NUMBER,
+      order_date    TIMESTAMP WITH TIME ZONE,
+      delivery_time TIMESTAMP WITH LOCAL TIME ZONE
+    );</code></pre>
+    <p>Insert using current session’s date/time:</p>
+    <pre><code class="language-sql">INSERT INTO web_orders (order_id, order_date, delivery_time)
+    VALUES (
+      1,
+      CURRENT_TIMESTAMP,
+      CURRENT_TIMESTAMP + INTERVAL &#x27;2&#x27; DAY  -- deliver in two days
+    );</code></pre>
+    <p>Query:</p>
+    <pre><code class="language-sql">SELECT order_id,
+           order_date,
+           delivery_time
+    FROM   web_orders;</code></pre>
+    <p><code>order_date</code> shows the exact instant + time zone. <code>delivery_time</code> is stored in database time zone, but displays in your <strong>session</strong> time zone.</p>
+    <hr>
+    <h2>5. <code>INTERVAL</code> Data Types: Storing Differences, Not Points</h2>
+    <p>Two families:</p>
+    <ul>
+    <li><code>INTERVAL YEAR TO MONTH</code> – year/month differences</li>
+    <li><code>INTERVAL DAY TO SECOND</code> – day/time differences (with fractional seconds)</li>
+    </ul>
+    <h3>5.1 <code>INTERVAL YEAR TO MONTH</code></h3>
+    <p>Example table:</p>
+    <pre><code class="language-sql">CREATE TABLE warranty (
+      product_id    NUMBER,
+      warranty_time INTERVAL YEAR(3) TO MONTH
+    );</code></pre>
+    <p>Insert:</p>
+    <pre><code class="language-sql">INSERT INTO warranty VALUES (123, INTERVAL &#x27;8&#x27; MONTH);
+    INSERT INTO warranty VALUES (155, INTERVAL &#x27;200&#x27; YEAR(3));
+    INSERT INTO warranty VALUES (678, INTERVAL &#x27;200-11&#x27; YEAR(3) TO MONTH);</code></pre>
+    <p>Result:</p>
+    <pre><code class="language-sql">SELECT * FROM warranty;
+    -- 123  +00-08
+    -- 155  +200-00
+    -- 678  +200-11</code></pre>
+    <h3>5.2 <code>INTERVAL DAY TO SECOND</code></h3>
+    <p>Example table:</p>
+    <pre><code class="language-sql">CREATE TABLE lab (
+      experiment_id NUMBER,
+      test_time     INTERVAL DAY(2) TO SECOND
+    );</code></pre>
+    <p>Insert:</p>
+    <pre><code class="language-sql">INSERT INTO lab VALUES (100012, INTERVAL &#x27;90&#x27; DAY);
+    INSERT INTO lab VALUES (56098, INTERVAL &#x27;6 03:30:16&#x27; DAY TO SECOND);</code></pre>
+    <p>Result:</p>
+    <pre><code class="language-sql">SELECT * FROM lab;
+    -- 100012  +90 00:00:00
+    -- 56098   +06 03:30:16</code></pre>
+    <p>These types are ideal when you care about “how long” rather than “what exact timestamp.”</p>
+    <hr>
+    <h2>6. Useful Datetime Functions</h2>
+    <h3>6.1 <code>EXTRACT</code></h3>
+    <p>Pull a specific field (year, month, etc.) from a datetime:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date,
+           EXTRACT(YEAR  FROM hire_date) AS hire_year,
+           EXTRACT(MONTH FROM hire_date) AS hire_month
+    FROM   employees;</code></pre>
+    <p>Filter by year:</p>
+    <pre><code class="language-sql">SELECT last_name, hire_date
+    FROM   employees
+    WHERE  EXTRACT(YEAR FROM hire_date) &gt; 2007;</code></pre>
+    <h3>6.2 <code>SESSIONTIMEZONE</code>, <code>DBTIMEZONE</code>, and <code>TZ_OFFSET</code></h3>
+    <p>Find out what your session thinks the time zone is:</p>
+    <pre><code class="language-sql">SELECT sessiontimezone, dbtimezone
+    FROM   dual;</code></pre>
+    <p>Get offset for a named region:</p>
+    <pre><code class="language-sql">SELECT tz_offset(&#x27;US/Eastern&#x27;)    AS us_eastern,
+           tz_offset(&#x27;Canada/Yukon&#x27;)  AS canada_yukon,
+           tz_offset(&#x27;Europe/London&#x27;) AS london
+    FROM   dual;</code></pre>
+    <h3>6.3 <code>FROM_TZ</code> and <code>TO_TIMESTAMP</code></h3>
+    <p>Convert a local timestamp to <code>TIMESTAMP WITH TIME ZONE</code>:</p>
+    <pre><code class="language-sql">SELECT FROM_TZ(
+             TO_TIMESTAMP(&#x27;06-MAR-2016 11:00:00&#x27;,
+                          &#x27;DD-MON-YYYY HH24:MI:SS&#x27;),
+             &#x27;Australia/North&#x27;
+           ) AS aussie_time
+    FROM   dual;</code></pre>
+    <p>Or just parse string → timestamp:</p>
+    <pre><code class="language-sql">SELECT TO_TIMESTAMP(&#x27;06-MAR-2016 11:00:00&#x27;,
+                        &#x27;DD-MON-YYYY HH24:MI:SS&#x27;) AS ts
+    FROM   dual;</code></pre>
+    <h3>6.4 <code>TO_YMINTERVAL</code> and <code>TO_DSINTERVAL</code></h3>
+    <p>Apply year/month or day/second offsets:</p>
+    <pre><code class="language-sql">-- Add 1 year 2 months
+    SELECT hire_date,
+           hire_date + TO_YMINTERVAL(&#x27;01-02&#x27;) AS plus_1y2m
+    FROM   employees;
+    
+    -- Add 100 days 10 hours
+    SELECT hire_date,
+           hire_date + TO_DSINTERVAL(&#x27;100 10:00:00&#x27;) AS plus_100d10h
+    FROM   employees;</code></pre>
+    <p>These functions are much clearer (and less error‑prone) than trying to remember “how many days is 18 months again?”</p>
+    <hr>
+    <h2>7. Daylight Saving Time (The Part Where Everything Gets Weird)</h2>
+    <p>Daylight saving time introduces two kinds of special moments:</p>
+    <ul>
+    <li><strong>Spring forward</strong>:</li>
+    <li>Time jumps from <code>01:59:59</code> to <code>03:00:00</code>.</li>
+    <li>Times from <code>02:00:00</code> to <code>02:59:59</code> <strong>do not exist</strong>.</li>
+    <li><strong>Fall back</strong>:</li>
+    <li>Time jumps from <code>02:00:00</code> back to <code>01:00:01</code>.</li>
+    <li>Times between <code>01:00:01</code> and <code>02:00:00</code> are <strong>ambiguous</strong> (you see them twice).</li>
+    </ul>
+    <p>If you store proper <code>TIMESTAMP WITH TIME ZONE</code> values, Oracle can distinguish between those two different <code>1:30 AM</code>s. If you just use <code>DATE</code> with no zone, good luck.</p>
+    <hr>
+    <h2>What You Should Be Able To Do Now</h2>
+    <p>By the end of this lesson you should be able to:</p>
+    <ul>
+    <li>Choose between <code>SYSDATE</code>, <code>CURRENT_DATE</code>, <code>CURRENT_TIMESTAMP</code>, and <code>LOCALTIMESTAMP</code> without guessing</li>
+    <li>Use <code>TIMESTAMP</code>, <code>TIMESTAMP WITH TIME ZONE</code>, and <code>TIMESTAMP WITH LOCAL TIME ZONE</code> appropriately</li>
+    <li>Store and use <code>INTERVAL YEAR TO MONTH</code> and <code>INTERVAL DAY TO SECOND</code> values</li>
+    <li>Use functions like <code>EXTRACT</code>, <code>TZ_OFFSET</code>, <code>FROM_TZ</code>, <code>TO_TIMESTAMP</code>, <code>TO_YMINTERVAL</code>, and <code>TO_DSINTERVAL</code> in real queries</li>
+    <li>Reason about how daylight saving and time zones affect stored and displayed dates</li>
+    </ul>
+    <p>In short, you can now timestamp things in a way that survives crossing time zones, DST changes, and users who insist on working from anywhere with decent Wi‑Fi. Which, given the state of the world, is pretty much everyone.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="19_Manipulating_Data_Using_Advanced_Queries.html">&larr; previous</a>
+    <a href="20_Managing_Data_in_Different_Time_Zones.md">view source markdown</a>
+    <a href="index.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 8 – Using Subqueries to Solve Queries (or: asking your query to ask another query) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, sometimes your WHERE clause doesn’t know enough to do its job. You want “everyone hired after Davies”, but you don’t actually know when Davies w...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/08_Using_Subqueries_to_Solve_Queries.html"> <meta property="og:title" content="Lesson 8 – Using Subqueries to Solve Queries (or: asking your query to ask another query) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, sometimes your WHERE clause doesn’t know enough to do its job. You want “everyone hired after Davies”, but you don’t actually know when Davies w..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/08_Using_Subqueries_to_Solve_Queries.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Lesson 8 – Using Subqueries to Solve Queries (or: asking your query to ask another query) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, sometimes your WHERE clause doesn’t know enough to do its job. You want “everyone hired after Davies”, but you don’t actually know when Davies w..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Lesson 8 – Using Subqueries to Solve Queries (or: asking your query to ask another query) - SQL Guide - swf.wtf","description":"And look, sometimes your WHERE clause doesn’t know enough to do its job. You want “everyone hired after Davies”, but you don’t actually know when Davies w...","url":"https://swf.wtf/guides/sql-guide/08_Using_Subqueries_to_Solve_Queries.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 8 – Using Subqueries to Solve Queries (or: asking your query to ask another query)</h1>
+    <p>And look, sometimes your WHERE clause doesn’t know enough to do its job. You want “everyone hired after Davies”, but you don’t actually know when Davies was hired. You could run one query, copy the date, paste it into a...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, sometimes your <code>WHERE</code> clause doesn’t know enough to do its job. You want “everyone hired after Davies”, but you don’t actually know when Davies was hired. You could run one query, copy the date, paste it into another query… or you could act like it’s the 21st century and use a <strong>subquery</strong>.</p>
+    <p>This lesson is about teaching queries to <strong>call other queries</strong>.</p>
+    <p>You will learn to:</p>
+    <ul>
+    <li>Define what a subquery is and where it can be used.</li>
+    <li>Describe problems that subqueries solve (including “I don’t know the value yet”).</li>
+    <li>Identify <strong>single‑row</strong>, <strong>multiple‑row</strong>, and <strong>multiple‑column</strong> subqueries.</li>
+    <li>Use appropriate operators with each type (<code>=</code>, <code>IN</code>, <code>ANY</code>, <code>ALL</code>, etc.).</li>
+    </ul>
+    <hr>
+    <h2>1. What Is a Subquery?</h2>
+    <p>A <strong>subquery</strong> is a query <strong>inside</strong> another query:</p>
+    <ul>
+    <li>The inner query = <strong>subquery</strong> (or <strong>inner query</strong>).</li>
+    <li>The outer query = <strong>main query</strong> (or <strong>outer query</strong>).</li>
+    <li>The subquery typically runs <strong>first</strong>, and its result is used by the outer query.</li>
+    </ul>
+    <p>Classic example: “employees hired after Davies” when you don’t know Davies’s hire date.</p>
+    <p>Step 1 – find Davies’s hire date:</p>
+    <pre><code class="language-sql">SELECT hire_date
+    FROM   employees
+    WHERE  last_name = &#x27;Davies&#x27;;</code></pre>
+    <p>Step 2 – use that result in the outer query:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date
+    FROM   employees
+    WHERE  hire_date &gt; (
+             SELECT hire_date
+             FROM   employees
+             WHERE  last_name = &#x27;Davies&#x27;
+           );</code></pre>
+    <ul>
+    <li>Subquery returns <code>29-JAN-2005</code> (for example).</li>
+    <li>Outer query returns everyone hired <strong>after</strong> that date.</li>
+    </ul>
+    <p>Guidelines:</p>
+    <ul>
+    <li>Enclose subqueries in <strong>parentheses</strong>.</li>
+    <li>Put the subquery on the <strong>right side</strong> of the comparison operator; it’s easier to read.</li>
+    <li>Use <strong>single‑row operators</strong> with subqueries that return <strong>one row</strong>.</li>
+    <li>Use <strong>multiple‑row operators</strong> with subqueries that can return <strong>more than one row</strong>.</li>
+    </ul>
+    <hr>
+    <h2>2. Single‑Row vs Multiple‑Row Subqueries</h2>
+    <h3>2.1 Single‑row subqueries</h3>
+    <p>A <strong>single‑row subquery</strong> returns <strong>exactly one row</strong>.</p>
+    <p>Single‑row comparison operators:</p>
+    <ul>
+    <li><code>=</code></li>
+    <li><code>&gt;</code></li>
+    <li><code>&gt;=</code></li>
+    <li><code>&lt;</code></li>
+    <li><code>&lt;=</code></li>
+    <li><code>&lt;&gt;</code> / <code>!=</code></li>
+    </ul>
+    <p>Example – people hired after Davies (single‑row subquery):</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date
+    FROM   employees
+    WHERE  hire_date &gt; (
+             SELECT hire_date
+             FROM   employees
+             WHERE  last_name = &#x27;Davies&#x27;
+           );</code></pre>
+    <p>If the subquery returns <strong>more than one</strong> row, you get an error like:</p>
+    <p>&gt; <code>ORA-01427: single-row subquery returns more than one row</code></p>
+    <p>…which is polite Oracle for “you used the wrong operator.”</p>
+    <h3>2.2 Multiple‑row subqueries</h3>
+    <p>A <strong>multiple‑row subquery</strong> can return <strong>several</strong> rows.</p>
+    <p>Multiple‑row comparison operators:</p>
+    <ul>
+    <li><code>IN</code> – equals <strong>any</strong> value in the list.</li>
+    <li><code>ANY</code> – compares using <code>=</code>, <code>&gt;</code>, <code>&lt;</code>, etc. to <strong>any</strong> value.</li>
+    <li><code>ALL</code> – compares using <code>&gt;</code>, <code>&lt;</code>, etc. to <strong>all</strong> values.</li>
+    </ul>
+    <p>Example – multiple Kings in the data:</p>
+    <pre><code class="language-sql">SELECT hire_date
+    FROM   employees
+    WHERE  last_name = &#x27;King&#x27;;
+    -- returns two hire dates</code></pre>
+    <p>Using a single‑row operator:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date
+    FROM   employees
+    WHERE  hire_date = (
+             SELECT hire_date
+             FROM   employees
+             WHERE  last_name = &#x27;King&#x27;
+           );</code></pre>
+    <p>This fails because the subquery returns two rows.</p>
+    <p>Fix with a multiple‑row operator, e.g. <code>IN</code>:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           hire_date
+    FROM   employees
+    WHERE  hire_date IN (
+             SELECT hire_date
+             FROM   employees
+             WHERE  last_name = &#x27;King&#x27;
+           );</code></pre>
+    <p><code>IN</code> is essentially shorthand for <code>= ANY</code>:</p>
+    <pre><code class="language-sql">WHERE hire_date = ANY (
+            SELECT hire_date
+            FROM   employees
+            WHERE  last_name = &#x27;King&#x27;
+         );</code></pre>
+    <hr>
+    <h2>3. Single‑Row Subqueries with Group Functions and HAVING</h2>
+    <p>Subqueries often pair with <strong>group functions</strong>.</p>
+    <p>Example – employees earning the <strong>minimum</strong> salary in the company:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  salary = (
+             SELECT MIN(salary)
+             FROM   employees
+           );</code></pre>
+    <p>Here the subquery returns a <strong>single value</strong> (the minimum salary), so <code>=</code> is valid.</p>
+    <h3>3.1 Using subqueries in HAVING</h3>
+    <p>You can use subqueries inside <code>HAVING</code> when comparing aggregates.</p>
+    <p>Example – show departments whose <strong>minimum salary</strong> is greater than the <strong>minimum salary in department 50</strong>:</p>
+    <pre><code class="language-sql">SELECT department_id,
+           MIN(salary) AS min_sal
+    FROM   employees
+    GROUP  BY department_id
+    HAVING MIN(salary) &gt; (
+             SELECT MIN(salary)
+             FROM   employees
+             WHERE  department_id = 50
+           );</code></pre>
+    <p>Here:</p>
+    <ul>
+    <li>Inner query returns one value: min salary in department 50.</li>
+    <li>Outer query compares each department’s <code>MIN(salary)</code> against it.</li>
+    </ul>
+    <h3>3.2 When a group subquery returns multiple rows</h3>
+    <p>If your subquery does <strong>its own</strong> <code>GROUP BY</code>, it may return <strong>several</strong> rows:</p>
+    <pre><code class="language-sql">SELECT MIN(salary)
+    FROM   employees
+    GROUP  BY department_id;</code></pre>
+    <p>Using this with <code>=</code> in a <code>WHERE</code> or <code>HAVING</code> will fail, because it’s now a <strong>multiple‑row</strong> subquery. You must use <code>IN</code>, <code>ANY</code>, or <code>ALL</code>.</p>
+    <p>For example:</p>
+    <pre><code class="language-sql">HAVING MIN(salary) IN (
+             SELECT MIN(salary)
+             FROM   employees
+             GROUP  BY department_id
+           );</code></pre>
+    <hr>
+    <h2>4. Multiple‑Row Subqueries: IN, ANY, ALL</h2>
+    <h3>4.1 IN (equals any value in the list)</h3>
+    <p><code>IN (subquery)</code> is the friendliest multiple‑row operator:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  salary IN (
+             SELECT salary
+             FROM   employees
+             WHERE  department_id = 50
+           );</code></pre>
+    <p>This finds employees whose salary matches <strong>any</strong> salary found in department 50.</p>
+    <h3>4.2 ANY</h3>
+    <p><code>&lt; ANY (subquery)</code> means “less than <strong>at least one</strong> of these values”.</p>
+    <p>Example – employees whose salary is less than <strong>any</strong> programmer salary:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  salary &lt; ANY (
+             SELECT salary
+             FROM   employees
+             WHERE  job_id = &#x27;IT_PROG&#x27;
+           )
+    AND    job_id &lt;&gt; &#x27;IT_PROG&#x27;;</code></pre>
+    <p>If programmer salaries are 9000, 6000, and 4200, then:</p>
+    <ul>
+    <li><code>salary &lt; ANY(...)</code> means salary &lt; 9000 <strong>or</strong> &lt; 6000 <strong>or</strong> &lt; 4200.</li>
+    <li>Effectively: salary &lt; 9000 (the maximum) – quite a broad condition.</li>
+    </ul>
+    <h3>4.3 ALL</h3>
+    <p><code>&lt; ALL (subquery)</code> means “less than <strong>every</strong> value in the list”.</p>
+    <p>Using the same set [9000, 6000, 4200]:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  salary &lt; ALL (
+             SELECT salary
+             FROM   employees
+             WHERE  job_id = &#x27;IT_PROG&#x27;
+           )
+    AND    job_id &lt;&gt; &#x27;IT_PROG&#x27;;</code></pre>
+    <ul>
+    <li><code>salary &lt; ALL(...)</code> means salary &lt; 9000 <strong>and</strong> &lt; 6000 <strong>and</strong> &lt; 4200.</li>
+    <li>Which collapses to “salary less than <strong>4200</strong>” – the <strong>minimum</strong> programmer salary.</li>
+    </ul>
+    <p>So:</p>
+    <ul>
+    <li><code>x &lt; ANY (list)</code> ≈ <code>x &lt; MAX(list)</code>.</li>
+    <li><code>x &lt; ALL (list)</code> ≈ <code>x &lt; MIN(list)</code>.</li>
+    </ul>
+    <p>The same logic applies for <code>&gt; ANY</code>, <code>&gt; ALL</code>, etc., just inverted.</p>
+    <hr>
+    <h2>5. Multiple‑Column Subqueries</h2>
+    <p>Sometimes you need to match <strong>combinations</strong> of columns.</p>
+    <p>Example: display all employees who have the <strong>lowest salary in their department</strong>.</p>
+    <p>You can do this with a multiple‑column subquery:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           department_id,
+           salary
+    FROM   employees
+    WHERE  (department_id, salary) IN (
+             SELECT department_id,
+                    MIN(salary)
+             FROM   employees
+             GROUP  BY department_id
+           );</code></pre>
+    <p>Here:</p>
+    <ul>
+    <li>The subquery returns <strong>pairs</strong>: <code>(department_id, min_salary_for_that_dept)</code>.</li>
+    <li>The outer query returns employees whose <code>(department_id, salary)</code> pair matches one of those.</li>
+    </ul>
+    <p>This is a <strong>pairwise</strong> comparison: both columns must match together.</p>
+    <p>Multiple‑column subqueries can also appear in the <code>FROM</code> clause as inline views, but the main idea is exactly this: let the subquery produce “interesting combinations,” then match against them.</p>
+    <hr>
+    <h2>6. Subqueries and NULL: The NOT IN Trap</h2>
+    <p>Subqueries that return <code>NULL</code> values can behave badly with certain operators—especially <code>NOT IN</code>.</p>
+    <p>Example – find employees who are managers:</p>
+    <pre><code class="language-sql">SELECT DISTINCT manager_id
+    FROM   employees;</code></pre>
+    <p>This list often includes a <code>NULL</code> (for non‑managed employees).</p>
+    <p>Now, to list employees <strong>who are managers</strong>:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           employee_id
+    FROM   employees
+    WHERE  employee_id IN (
+             SELECT DISTINCT manager_id
+             FROM   employees
+           );</code></pre>
+    <p>Works fine.</p>
+    <p>But if you try to find employees who are <strong>not</strong> managers:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           employee_id
+    FROM   employees
+    WHERE  employee_id NOT IN (
+             SELECT DISTINCT manager_id
+             FROM   employees
+           );</code></pre>
+    <p>…and the subquery returns a <code>NULL</code>, <strong>no rows</strong> are returned. Why?</p>
+    <p>Because SQL three‑valued logic plus <code>NOT IN</code> and <code>NULL</code> combine into a tiny disaster:</p>
+    <ul>
+    <li><code>x NOT IN (1, 2, NULL)</code> is neither clearly true nor false, so it effectively becomes unknown.</li>
+    </ul>
+    <p><strong>Fix:</strong> filter out <code>NULL</code> in the subquery:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           employee_id
+    FROM   employees
+    WHERE  employee_id NOT IN (
+             SELECT DISTINCT manager_id
+             FROM   employees
+             WHERE  manager_id IS NOT NULL
+           );</code></pre>
+    <p>Now the <code>NOT IN</code> list has no nulls, and you get the expected non‑manager employees.</p>
+    <p>Moral: if you use <code>NOT IN (subquery)</code>, <strong>always check</strong> whether the subquery can return <code>NULL</code>.</p>
+    <hr>
+    <h2>7. When Subqueries Return No Rows</h2>
+    <p>If a subquery returns <strong>no rows</strong>, the comparison usually evaluates to <strong>FALSE</strong> and the outer query returns no rows either.</p>
+    <p>Example – looking for a job that doesn’t exist:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  job_id = (
+             SELECT job_id
+             FROM   employees
+             WHERE  job_title = &#x27;ARCHITECT&#x27;   -- not present
+           );</code></pre>
+    <p>The inner query returns nothing, the outer condition becomes false/unknown, and you get no rows.</p>
+    <p>This is often a logic bug (“we mis‑typed the filter”), but sometimes exactly what you want.</p>
+    <hr>
+    <h2>8. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Define a subquery and explain how the inner/outer queries relate.</li>
+    <li>Choose <strong>single‑row</strong> vs <strong>multiple‑row</strong> operators based on what the subquery returns.</li>
+    <li>Use <code>IN</code>, <code>ANY</code>, and <code>ALL</code> correctly for multiple‑row subqueries.</li>
+    <li>Write multiple‑column subqueries for pairwise comparisons (e.g., lowest salary per department).</li>
+    <li>Use subqueries in <code>WHERE</code> and <code>HAVING</code> to compare against aggregated values.</li>
+    <li>Avoid common pitfalls, especially <code>NOT IN</code> with <code>NULL</code> values.</li>
+    </ul>
+    <p>You can now write queries that <strong>figure out their own criteria</strong> instead of waiting for a human to copy‑paste values, which is both more powerful and less error‑prone—unless, of course, you forget that <code>NULL</code> exists.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="07_Displaying_Data_from_Multiple_Tables_Using_Joins.html">&larr; previous</a>
+    <a href="08_Using_Subqueries_to_Solve_Queries.md">view source markdown</a>
+    <a href="09_Using_Set_Operators.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>

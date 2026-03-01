@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 3 – Restricting and Sorting Data (or: teaching your queries to have standards) - SQL Guide - swf.wtf</title>
+<meta name="description" content="And look, a SELECT that returns every row in a table is technically correct, but it’s also the database equivalent of shouting “EVERYBODY IN HERE” and bei...">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/sql-guide/03_Restricting_and_Sorting_Data.html"> <meta property="og:title" content="Lesson 3 – Restricting and Sorting Data (or: teaching your queries to have standards) - SQL Guide - swf.wtf"> <meta property="og:description" content="And look, a SELECT that returns every row in a table is technically correct, but it’s also the database equivalent of shouting “EVERYBODY IN HERE” and bei..."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/sql-guide/03_Restricting_and_Sorting_Data.html"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Lesson 3 – Restricting and Sorting Data (or: teaching your queries to have standards) - SQL Guide - swf.wtf"> <meta name="twitter:description" content="And look, a SELECT that returns every row in a table is technically correct, but it’s also the database equivalent of shouting “EVERYBODY IN HERE” and bei..."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Lesson 3 – Restricting and Sorting Data (or: teaching your queries to have standards) - SQL Guide - swf.wtf","description":"And look, a SELECT that returns every row in a table is technically correct, but it’s also the database equivalent of shouting “EVERYBODY IN HERE” and bei...","url":"https://swf.wtf/guides/sql-guide/03_Restricting_and_Sorting_Data.html","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../../assets/css/sql-guide.css">
+<link rel="stylesheet" href="../../assets/css/codex-mirror.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="../../" class="logo">swf.wtf</a>
+    <a href="../../guides/sql-guide/">&larr; sql guide</a>
+  </div>
+</nav>
+
+<main class="sql-page">
+  <header class="sql-header">
+    <div class="sql-eyebrow">SQL Guide Chapter</div>
+    <h1>Lesson 3 – Restricting and Sorting Data (or: teaching your queries to have standards)</h1>
+    <p>And look, a SELECT that returns every row in a table is technically correct, but it’s also the database equivalent of shouting “EVERYBODY IN HERE” and being surprised when you get trampled. In real life you almost alway...</p>
+    <div class="sql-meta">
+      <span class="sql-pill">oracle 19c</span>
+      <span class="sql-pill">mysql notes</span>
+      <span class="sql-pill">study chapter</span>
+    </div>
+  </header>
+
+  <article class="chapter">
+    <p>And look, a <code>SELECT</code> that returns every row in a table is technically correct, but it’s also the database equivalent of shouting “EVERYBODY IN HERE” and being surprised when you get trampled. In real life you almost always want <strong>some</strong> rows, in <strong>some</strong> order.</p>
+    <p>In this lesson you will learn to:</p>
+    <ul>
+    <li>Limit which rows are returned using the <code>WHERE</code> clause.</li>
+    <li>Use comparison operators, ranges, lists, and pattern matching.</li>
+    <li>Handle <code>NULL</code> conditions properly.</li>
+    <li>Combine conditions with <code>AND</code>, <code>OR</code>, and <code>NOT</code> (without confusing yourself).</li>
+    <li>Sort results using <code>ORDER BY</code> on columns, aliases, and positions.</li>
+    <li>Use row limiting (<code>FETCH</code> / <code>LIMIT</code>) for “Top‑N” style reports.</li>
+    <li>Add flexibility with substitution variables (<code>&amp;</code> / <code>&amp;&amp;</code>) and MySQL user variables.</li>
+    </ul>
+    <hr>
+    <h2>1. The WHERE Clause: Because “everyone” is rarely the right answer</h2>
+    <p>Previously, you wrote queries like:</p>
+    <pre><code class="language-sql">SELECT employee_id,
+           last_name,
+           job_id,
+           department_id
+    FROM   employees;</code></pre>
+    <p>That returns <em>every</em> employee. But if you only want employees in <strong>department 90</strong>, you add a <strong>filter</strong>:</p>
+    <pre><code class="language-sql">SELECT employee_id,
+           last_name,
+           job_id,
+           department_id
+    FROM   employees
+    WHERE  department_id = 90;</code></pre>
+    <p>Key points:</p>
+    <ul>
+    <li><code>WHERE</code> comes <strong>after</strong> <code>FROM</code>.</li>
+    <li>The condition must evaluate to <strong>TRUE</strong> for a row to be returned.</li>
+    <li>Character and date literals must be in <strong>single quotes</strong>:</li>
+    </ul>
+    <pre><code class="language-sql">  WHERE last_name = &#x27;Whalen&#x27;
+      WHERE hire_date = DATE &#x27;2015-01-01&#x27;</code></pre>
+    <p>Default date display formats:</p>
+    <ul>
+    <li>Oracle: <code>DD-MON-RR</code> (with the <code>RR</code> year format doing “rounded century” magic).</li>
+    <li>MySQL: <code>YYYY-MM-DD</code>.</li>
+    </ul>
+    <p>Also: data values are often <strong>case‑sensitive</strong>. If <code>Whalen</code> is stored as <code>Whalen</code> (InitCap), searching for <code>&#x27;whalen&#x27;</code> may <strong>not</strong> match, depending on collation. SQL keywords can be lazy about case; your data cannot.</p>
+    <hr>
+    <h2>2. Comparison Operators: Making the database pick a side</h2>
+    <p>You can filter on:</p>
+    <ul>
+    <li><code>=</code>  equal to</li>
+    <li><code>&gt;</code>  greater than</li>
+    <li><code>&gt;=</code> greater than or equal to</li>
+    <li><code>&lt;</code>  less than</li>
+    <li><code>&lt;=</code> less than or equal to</li>
+    <li><code>&lt;&gt;</code> or <code>!=</code> not equal</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">-- Salary less than or equal to 3000
+    SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  salary &lt;= 3000;
+    
+    -- Find a specific last name
+    SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  last_name = &#x27;Abel&#x27;;</code></pre>
+    <p>So yes, this is where you start drawing arbitrary salary lines in the sand.</p>
+    <hr>
+    <h2>3. Ranges with BETWEEN (and NOT BETWEEN)</h2>
+    <p>To filter within a range, use <code>BETWEEN</code>:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  salary BETWEEN 10000 AND 17000;</code></pre>
+    <p>Important:</p>
+    <ul>
+    <li><code>BETWEEN</code> is <strong>inclusive</strong> – it includes 10000 and 17000.</li>
+    <li>The <strong>lower bound</strong> must be on the left, upper bound on the right.</li>
+    </ul>
+    <p>To exclude the range, use <code>NOT</code>:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  salary NOT BETWEEN 10000 AND 17000;</code></pre>
+    <p>Same idea in Oracle and MySQL; the math is equally unforgiving in both.</p>
+    <hr>
+    <h2>4. Lists with IN (and NOT IN)</h2>
+    <p>If you want rows that match <strong>one of several</strong> values, you can either chain <code>OR</code>s like it’s 1995…</p>
+    <pre><code class="language-sql">WHERE department_id = 20 OR department_id = 90</code></pre>
+    <p>…or you can use <code>IN</code>:</p>
+    <pre><code class="language-sql">WHERE department_id IN (20, 90);
+    
+    -- More values? Just add them
+    WHERE department_id IN (20, 50, 90);</code></pre>
+    <p>To get everyone <strong>except</strong> those departments:</p>
+    <pre><code class="language-sql">WHERE department_id NOT IN (20, 50, 90);</code></pre>
+    <p>The database understands “in this group” more gracefully than most people do.</p>
+    <hr>
+    <h2>5. Pattern Matching with LIKE, Wildcards, and ESCAPE</h2>
+    <p>Sometimes you don’t know exactly what you’re looking for, just the <strong>shape</strong> of it. That’s <code>LIKE</code>.</p>
+    <p>Wildcards:</p>
+    <ul>
+    <li><code>%</code> – zero or more characters.</li>
+    <li><code>_</code> – exactly one character.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">-- Last names starting with capital H
+    WHERE last_name LIKE &#x27;H%&#x27;;
+    
+    -- Last names containing capital H anywhere
+    WHERE last_name LIKE &#x27;%H%&#x27;;
+    
+    -- Last names where the third character is &#x27;n&#x27;
+    WHERE last_name LIKE &#x27;__n%&#x27;;</code></pre>
+    <p>Now, what if the data itself contains an underscore or percent sign, like job IDs <code>SA_REP</code>?</p>
+    <p>By default, <code>_</code> and <code>%</code> are wildcards. To treat them as <strong>literal characters</strong>, use the <code>ESCAPE</code> clause:</p>
+    <pre><code class="language-sql">WHERE job_id LIKE &#x27;SA\_%&#x27; ESCAPE &#x27;\&#x27;;</code></pre>
+    <p>Here:</p>
+    <ul>
+    <li><code>\_</code> means “actual underscore” instead of “any single character.”</li>
+    <li><code>%</code> still acts as “zero or more characters.”</li>
+    </ul>
+    <p>The pattern tools are powerful. They’re also how you accidentally discover everyone named “King” when you weren’t emotionally ready for that.</p>
+    <hr>
+    <h2>6. Testing for NULL</h2>
+    <p>To find rows <strong>with</strong> or <strong>without</strong> values, use <code>IS NULL</code> and <code>IS NOT NULL</code>.</p>
+    <p>Example – employees without a manager:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           manager_id
+    FROM   employees
+    WHERE  manager_id IS NULL;</code></pre>
+    <p>This usually gives you the top of the org chart (e.g., King) – the person who reports to no one.</p>
+    <p>Employees <strong>with</strong> a manager:</p>
+    <pre><code class="language-sql">WHERE manager_id IS NOT NULL;</code></pre>
+    <p>Never use <code>= NULL</code> or <code>&lt;&gt; NULL</code>. SQL will quietly evaluate those to unknown, and you’ll get <strong>no rows</strong> and lots of confusion.</p>
+    <hr>
+    <h2>7. Logical Operators: AND, OR, NOT (and how they actually behave)</h2>
+    <p>You can combine conditions using:</p>
+    <ul>
+    <li><code>AND</code> – returns TRUE only if <strong>both</strong> conditions are TRUE.</li>
+    <li><code>OR</code>  – returns TRUE if <strong>either</strong> condition is TRUE.</li>
+    <li><code>NOT</code> – reverses the result.</li>
+    </ul>
+    <p>Examples:</p>
+    <pre><code class="language-sql">-- Salary = 10000 OR department = 90
+    SELECT last_name,
+           salary,
+           department_id
+    FROM   employees
+    WHERE  salary = 10000
+       OR  department_id = 90;</code></pre>
+    <ul>
+    <li>This returns anyone making 10000 <strong>plus</strong> anyone in department 90.</li>
+    </ul>
+    <pre><code class="language-sql">-- Salary = 24000 AND department = 90
+    WHERE salary = 24000
+      AND department_id = 90;</code></pre>
+    <ul>
+    <li>This returns employees who meet <strong>both</strong> conditions.</li>
+    </ul>
+    <p><code>NOT</code> flips truth:</p>
+    <pre><code class="language-sql">-- Employees who DO have a manager
+    WHERE NOT manager_id IS NULL;
+    
+    -- Employees whose job_id is none of these
+    WHERE job_id NOT IN (&#x27;AD_PRES&#x27;, &#x27;AD_VP&#x27;, &#x27;AD_ASST&#x27;);</code></pre>
+    <h3>7.1 Operator precedence and parentheses</h3>
+    <p>Precedence (highest to lowest):</p>
+    <ol>
+    <li><code>NOT</code></li>
+    <li><code>AND</code></li>
+    <li><code>OR</code></li>
+    </ol>
+    <p>So this:</p>
+    <pre><code class="language-sql">WHERE salary &gt;= 10000
+      AND job_id LIKE &#x27;%MAN%&#x27;;</code></pre>
+    <p>…does what you expect. But once you mix <code>AND</code> and <code>OR</code>, it gets tricky.</p>
+    <p>Example 1:</p>
+    <pre><code class="language-sql">WHERE department_id = 80
+      AND salary &gt; 10000
+       OR department_id = 60;</code></pre>
+    <p>Interpreted as:</p>
+    <pre><code class="language-sql">WHERE (department_id = 80 AND salary &gt; 10000)
+       OR department_id = 60;</code></pre>
+    <p>Example 2 (with parentheses):</p>
+    <pre><code class="language-sql">WHERE (department_id IN (60, 80))
+      AND salary &gt; 10000;</code></pre>
+    <p>Completely different result set.</p>
+    <p>Moral: when mixing <code>AND</code> and <code>OR</code>, <strong>always use parentheses</strong>, unless you enjoy subtle, production‑grade bugs.</p>
+    <hr>
+    <h2>8. Sorting with ORDER BY</h2>
+    <p>By default, queries return rows in whatever order the database finds convenient—often “deeply unhelpful.” Use <code>ORDER BY</code> to fix that.</p>
+    <p>Syntax:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           manager_id,
+           department_id
+    FROM   employees
+    ORDER BY manager_id;</code></pre>
+    <ul>
+    <li>Default sort order is <strong>ascending</strong> (<code>ASC</code>).</li>
+    <li>You can specify explicitly:</li>
+    </ul>
+    <pre><code class="language-sql">  ORDER BY manager_id ASC;
+      ORDER BY manager_id DESC;</code></pre>
+    <p>Using multiple sort keys:</p>
+    <pre><code class="language-sql">ORDER BY department_id ASC,
+             manager_id   DESC;</code></pre>
+    <ul>
+    <li>First sorted by department.</li>
+    <li>Within each department, managers are sorted highest to lowest.</li>
+    </ul>
+    <p>You can also sort by <strong>column position</strong> (less readable, but works):</p>
+    <pre><code class="language-sql">-- Sort by the 2nd column, then 3rd
+    ORDER BY 2 ASC,
+             3 DESC;</code></pre>
+    <p>Or by <strong>alias</strong>:</p>
+    <pre><code class="language-sql">SELECT last_name AS lname,
+           salary
+    FROM   employees
+    ORDER BY lname;</code></pre>
+    <p>If you used double quotes in the alias (<code>&quot;LName&quot;</code>), you must use the same case and quotes in <code>ORDER BY</code>.</p>
+    <p>NULLs typically sort:</p>
+    <ul>
+    <li>Last for ascending order.</li>
+    <li>First for descending order.</li>
+    </ul>
+    <p>(Exact behavior can vary by DB and settings.)</p>
+    <hr>
+    <h2>9. Row Limiting: Top‑N and Pagination</h2>
+    <p>Sometimes you only want the <strong>top few</strong> rows—highest salaries, latest hires, etc.</p>
+    <h3>9.1 Oracle row limiting with FETCH</h3>
+    <p>Example – top 5 salaries:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary
+    FROM   employees
+    ORDER BY salary DESC
+    FETCH FIRST 5 ROWS ONLY;</code></pre>
+    <p>With ties:</p>
+    <pre><code class="language-sql">FETCH FIRST 2 ROWS WITH TIES;</code></pre>
+    <ul>
+    <li>If the 2nd and 3rd rows have the same salary, both are returned.</li>
+    </ul>
+    <p>Pagination with offset:</p>
+    <pre><code class="language-sql">ORDER BY salary DESC
+    OFFSET 5 ROWS
+    FETCH NEXT 5 ROWS ONLY;</code></pre>
+    <ul>
+    <li>Skips the first 5 rows and returns the next 5.</li>
+    </ul>
+    <p>You can also limit by <strong>percentage</strong>:</p>
+    <pre><code class="language-sql">FETCH FIRST 5 PERCENT ROWS ONLY;</code></pre>
+    <p>On a 107‑row table, 5% ≈ 6 rows.</p>
+    <h3>9.2 MySQL LIMIT</h3>
+    <p>MySQL uses <code>LIMIT</code> instead:</p>
+    <pre><code class="language-sql">-- First 7 rows
+    SELECT last_name, salary
+    FROM   employees
+    ORDER BY salary DESC
+    LIMIT 7;
+    
+    -- Skip first 5, return next 7
+    SELECT last_name, salary
+    FROM   employees
+    ORDER BY salary DESC
+    LIMIT 7 OFFSET 5;</code></pre>
+    <p>Same idea, different syntax.</p>
+    <hr>
+    <h2>10. Substitution Variables (Oracle): Making Queries Ask Questions</h2>
+    <p>Sometimes you don’t want to hard‑code a value; you want the <strong>user</strong> to supply it at runtime. Enter <strong>substitution variables</strong>.</p>
+    <p>They start with:</p>
+    <ul>
+    <li><code>&amp;variable_name</code> – prompt the user each time it’s encountered.</li>
+    <li><code>&amp;&amp;variable_name</code> – prompt <strong>once</strong>, then reuse the value for the rest of the session.</li>
+    </ul>
+    <p>Example – prompt for department:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           salary,
+           department_id
+    FROM   employees
+    WHERE  department_id = &amp;dept_id;</code></pre>
+    <p>When executed, SQL Developer/SQL*Plus prompts:</p>
+    <p>&gt; Enter value for dept_id:</p>
+    <p>Type <code>90</code>, and the query runs with <code>WHERE department_id = 90</code>.</p>
+    <h3>10.1 Single vs double ampersand</h3>
+    <p>Using the same variable twice:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           &amp;column_name
+    FROM   employees
+    ORDER BY &amp;column_name;</code></pre>
+    <p>With a <strong>single</strong> <code>&amp;</code>, you’ll be prompted <strong>twice</strong>.</p>
+    <p>With <code>&amp;&amp;</code> on the first occurrence:</p>
+    <pre><code class="language-sql">SELECT last_name,
+           &amp;&amp;column_name
+    FROM   employees
+    ORDER BY &amp;column_name;</code></pre>
+    <ul>
+    <li>Prompted once.</li>
+    <li>The value is remembered for the rest of the session.</li>
+    </ul>
+    <p>To clear it:</p>
+    <pre><code class="language-sql">UNDEFINE column_name;</code></pre>
+    <h3>10.2 Quotes for character and date input</h3>
+    <p>If your variable is used where a <strong>string</strong> or <strong>date</strong> is expected, surround the variable with single quotes:</p>
+    <pre><code class="language-sql">WHERE last_name = &#x27;&amp;last_name&#x27;;
+    
+    WHERE hire_date = DATE &#x27;&amp;hire_date&#x27;;</code></pre>
+    <p>Numbers do <strong>not</strong> need quotes.</p>
+    <h3>10.3 VERIFY and ECHO</h3>
+    <p>In SQL*Plus / script-style output you can:</p>
+    <ul>
+    <li><code>SET VERIFY ON</code> – shows the original statement and the version with substituted values.</li>
+    <li><code>SET ECHO ON</code> – prints each command before its output.</li>
+    </ul>
+    <p>Both are useful for figuring out what actually ran, especially when multiple variables are involved.</p>
+    <hr>
+    <h2>11. MySQL User Variables</h2>
+    <p>MySQL doesn’t use <code>&amp;</code> substitution; it uses <strong>user-defined variables</strong> with <code>@</code>.</p>
+    <p>Example:</p>
+    <pre><code class="language-sql">SET @employee_num = 200;
+    
+    SELECT last_name,
+           salary
+    FROM   employees
+    WHERE  employee_id = @employee_num;</code></pre>
+    <p>You assign them with <code>SET</code> or in queries, and refer to them using <code>@variable_name</code>.</p>
+    <hr>
+    <h2>12. What You Should Now Be Able to Do</h2>
+    <p>By the end of this lesson, you should be able to:</p>
+    <ul>
+    <li>Limit rows with <code>WHERE</code> using comparison, range, list, pattern, and <code>NULL</code> conditions.</li>
+    <li>Combine conditions safely with <code>AND</code>, <code>OR</code>, and <code>NOT</code>, using parentheses to control precedence.</li>
+    <li>Sort results using <code>ORDER BY</code> with columns, aliases, and positions.</li>
+    <li>Use row limiting (<code>FETCH</code> in Oracle, <code>LIMIT</code> in MySQL) for Top‑N and pagination.</li>
+    <li>Use substitution variables (<code>&amp;</code>, <code>&amp;&amp;</code>, <code>DEFINE</code>, <code>UNDEFINE</code>) in Oracle to make queries interactive.</li>
+    <li>Use MySQL user variables to parameterize conditions.</li>
+    </ul>
+    <p>You now have enough control to ask the database <em>exactly</em> who you want and <em>exactly</em> how you want them sorted—which, to be clear, is both extremely useful and exactly how bad dashboards are born.</p>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="02_Retrieving_Data_Using_the_SQL_SELECT_Statement.html">&larr; previous</a>
+    <a href="03_Restricting_and_Sorting_Data.md">view source markdown</a>
+    <a href="04_Using_Single-Row_Functions_to_Customize_Output.html">next &rarr;</a>
+  </div>
+
+  <div class="sql-footer">// sql-guide generated from markdown notes</div>
+</main>
+
+<script defer src="../../assets/js/site.js"></script>
+
+<script defer src="../../assets/js/codex-mirror.js"></script>
+</body>
+</html>
