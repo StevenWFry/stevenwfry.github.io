@@ -15,21 +15,37 @@
   }
 
   if (document.body && document.body.dataset.konami === 'true') {
-    const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
-    let ki = 0;
+    const konamiHue = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+    const konamiCodex = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyA', 'KeyB'];
+    const maxLen = Math.max(konamiHue.length, konamiCodex.length);
+    const history = [];
+
+    const endsWithSequence = (sequence) => {
+      if (history.length < sequence.length) return false;
+      for (let i = 0; i < sequence.length; i += 1) {
+        if (history[history.length - sequence.length + i] !== sequence[i]) {
+          return false;
+        }
+      }
+      return true;
+    };
 
     document.addEventListener('keydown', (e) => {
-      if (e.code === konami[ki]) {
-        ki += 1;
-        if (ki === konami.length) {
-          document.body.style.filter = 'hue-rotate(180deg)';
-          setTimeout(() => {
-            document.body.style.filter = '';
-          }, 2000);
-          ki = 0;
-        }
-      } else {
-        ki = 0;
+      history.push(e.code);
+      if (history.length > maxLen) {
+        history.shift();
+      }
+
+      if (endsWithSequence(konamiHue)) {
+        document.body.style.filter = 'hue-rotate(180deg)';
+        setTimeout(() => {
+          document.body.style.filter = '';
+        }, 2000);
+        return;
+      }
+
+      if (endsWithSequence(konamiCodex)) {
+        window.location.href = '/codex/index.html';
       }
     });
   }
