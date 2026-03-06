@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drupal Administration for Beginners - swf.wtf</title>
+<meta name="description" content="A practical beginner guide to Drupal administration: content modeling, users and permissions, views, updates, backups, and daily operating habits.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/drupal-admin-beginners/"> <meta property="og:title" content="Drupal Administration for Beginners - swf.wtf"> <meta property="og:description" content="A practical beginner guide to Drupal administration: content modeling, users and permissions, views, updates, backups, and daily operating habits."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/drupal-admin-beginners/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Drupal Administration for Beginners - swf.wtf"> <meta name="twitter:description" content="A practical beginner guide to Drupal administration: content modeling, users and permissions, views, updates, backups, and daily operating habits."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Drupal Administration for Beginners - swf.wtf","description":"A practical beginner guide to Drupal administration: content modeling, users and permissions, views, updates, backups, and daily operating habits.","url":"https://swf.wtf/guides/drupal-admin-beginners/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="/assets/css/coding-with-ai-agents.css">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<div class="post-container">
+  <nav class="post-nav">
+    <a href="/">&larr; swf.wtf</a>
+    <span class="nav-right">Mar 2026</span>
+  </nav>
+
+  <header class="post-header">
+    <div class="post-meta">
+      <span>Mar 6, 2026</span>
+      <span>guide</span>
+      <span>drupal</span>
+      <span>beginner admin</span>
+    </div>
+    <h1 class="post-title">Drupal Administration for Beginners</h1>
+    <p class="post-subtitle">Or: how to keep a Drupal site alive, useful, and not one plugin update away from chaos.</p>
+    <div class="difficulty-bar">
+      <span>Difficulty:</span>
+      <span class="level">#####-----</span>
+      <span>Beginner-friendly, production-aware</span>
+    </div>
+  </header>
+
+  <div class="toc">
+    <div class="toc-title">$ tree ./drupal-admin-guide</div>
+    <a href="#admin-job">What Drupal administration really means</a>
+    <a href="#first-day">First-day setup checklist</a>
+    <a href="#content-model">Content types, fields, and taxonomy</a>
+    <a href="#users-roles">Users, roles, and permissions</a>
+    <a href="#menus-blocks">Menus, blocks, and layout basics</a>
+    <a href="#views">Views without panic</a>
+    <a href="#updates-backups">Updates, backups, and deployment flow</a>
+    <a href="#drush">Drush commands you will actually use</a>
+    <a href="#hardening">Security and reliability habits</a>
+    <a href="#weekly">Your weekly admin routine</a>
+    <a href="#closing">Closing notes from the trenches</a>
+  </div>
+
+  <article class="post-body">
+
+    <h2 id="admin-job">What Drupal administration really means</h2>
+
+    <p>Drupal administration is less "clicking random settings until the site looks acceptable" and more operating a small system. You are managing structure, permissions, publishing flow, and change safety.</p>
+
+    <p>Your job is to make sure editors can publish content cleanly, users only see what they should see, and updates do not turn the homepage into an accidental performance-art piece.</p>
+
+    <p>The core admin pillars are simple:</p>
+
+    <pre data-lang="text"><code>1. Model content correctly
+2. Assign least-privilege permissions
+3. Build predictable listing pages with Views
+4. Keep updates and backups disciplined
+5. Document your decisions so future-you is not confused</code></pre>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And now this</div>
+      <p>Drupal is powerful in the same way a chainsaw is powerful. Very useful in trained hands. Deeply regrettable in untrained hands. This guide is your safety briefing before we hand you the metaphorical chainsaw.</p>
+    </div>
+
+    <h2 id="first-day">First-day setup checklist</h2>
+
+    <p>If you inherited an existing Drupal site, do this in order before touching design or features.</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Why it matters</th>
+          <th>Where</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Confirm backup exists</td>
+          <td>You need rollback before any change</td>
+          <td>Host panel or backup service</td>
+        </tr>
+        <tr>
+          <td>Rotate admin credentials</td>
+          <td>Unknown old passwords are risk</td>
+          <td>People, account settings</td>
+        </tr>
+        <tr>
+          <td>Review installed modules</td>
+          <td>Unused modules increase attack surface</td>
+          <td>Extend</td>
+        </tr>
+        <tr>
+          <td>Audit roles and permissions</td>
+          <td>Prevents accidental overreach</td>
+          <td>People, roles, permissions</td>
+        </tr>
+        <tr>
+          <td>Check update status</td>
+          <td>Outdated core/modules cause security issues</td>
+          <td>Reports, Available updates</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warning">
+      <div class="callout-label">Heads up</div>
+      <p>Never make significant production edits without a backup and an immediate way to restore. "We can probably recreate it" is not a disaster-recovery strategy.</p>
+    </div>
+
+    <h3>Minimal Drush sanity checks</h3>
+
+    <pre data-lang="bash"><code># Confirm Drush is available
+drush --version
+
+# Check current status (Drupal, DB, PHP, bootstrap)
+drush status
+
+# See pending database updates
+drush updatedb:status
+
+# See config differences (if using config management)
+drush config:status</code></pre>
+
+    <h2 id="content-model">Content types, fields, and taxonomy</h2>
+
+    <p>If content is modeled poorly, every other admin task becomes pain. Spend time here and the rest of the site gets easier.</p>
+
+    <h3>Think in content types first</h3>
+
+    <pre data-lang="text"><code>Article
+- title
+- summary
+- body
+- hero image
+- publish date
+- tags
+
+Event
+- title
+- start datetime
+- end datetime
+- location
+- registration link
+- organizer</code></pre>
+
+    <p>Do not overload one content type with dozens of optional fields to "save time." That only saves time until week two, when editors start guessing which fields matter.</p>
+
+    <h3>Taxonomy for controlled vocabulary</h3>
+
+    <p>Use taxonomy when you want reusable categories like topics, departments, product lines, or regions. Avoid free-text where controlled terms are needed for filtering and consistent navigation.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">Pro tip</div>
+      <p>Every time someone says "we can just type it manually," ask if that value will ever be filtered, sorted, or reported. If yes, make it structured.</p>
+    </div>
+
+    <h2 id="users-roles">Users, roles, and permissions</h2>
+
+    <p>Drupal permissions are granular, which is great until everyone gets everything. Start with least privilege and escalate only when justified.</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>Typical access</th>
+          <th>Should not have</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Content editor</td>
+          <td>Create/edit own content, media usage</td>
+          <td>Module install, site config</td>
+        </tr>
+        <tr>
+          <td>Content manager</td>
+          <td>Publish/unpublish, edit all content</td>
+          <td>Critical infrastructure settings</td>
+        </tr>
+        <tr>
+          <td>Site admin</td>
+          <td>Configuration, users, workflows</td>
+          <td>Direct production shell if avoidable</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre data-lang="bash"><code># List roles
+drush role:list
+
+# List permissions for a role
+drush role:perm:list editor
+
+# Create a new role
+drush role:create content_reviewer "Content Reviewer"</code></pre>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And now this</div>
+      <p>If every user is basically an administrator, you do not have a permission model. You have a trust fall with your production site, and gravity always wins.</p>
+    </div>
+
+    <h2 id="menus-blocks">Menus, blocks, and layout basics</h2>
+
+    <p>Most beginner admin frustration is "why is this page not showing what I expected." Usually the answer is one of three things: wrong menu link, block visibility rules, or path mismatch.</p>
+
+    <p>For blocks, always verify:</p>
+
+    <pre data-lang="text"><code>- Region placement (header/sidebar/footer)
+- Visibility by path
+- Visibility by content type
+- Visibility by role
+- Theme-specific block placement</code></pre>
+
+    <p>That last one matters because each theme has its own region map. A block in one theme region does not automatically appear where you imagine in another theme.</p>
+
+    <h2 id="views">Views without panic</h2>
+
+    <p>Views is the engine behind many listing pages in Drupal. If your team needs "latest news," "events by month," or "resources filtered by topic," Views is likely the correct answer.</p>
+
+    <h3>Basic Views build recipe</h3>
+
+    <pre data-lang="text"><code>1. Choose source: Content
+2. Filter by content type
+3. Filter by published = true
+4. Sort by created date descending
+5. Pick display format (teaser/table/grid)
+6. Expose filters only when users actually need them
+7. Save and test with real content</code></pre>
+
+    <div class="callout opinion">
+      <div class="callout-label">Hot take</div>
+      <p>Expose fewer filters than you think. A page with twelve filter widgets and zero clear intent is not "flexible." It is a scavenger hunt.</p>
+    </div>
+
+    <h2 id="updates-backups">Updates, backups, and deployment flow</h2>
+
+    <p>Do not update core and modules directly in production at 4:55 PM on a Friday. Your future self deserves better weekends than that.</p>
+
+    <h3>Safe update flow</h3>
+
+    <pre data-lang="bash"><code># 1) Pull latest code in dev/stage
+git pull origin main
+
+# 2) Update dependencies
+composer update drupal/core-* --with-all-dependencies
+composer update drupal/* --with-all-dependencies
+
+# 3) Apply database updates
+drush updatedb -y
+
+# 4) Import config if your team uses config sync
+drush config:import -y
+
+# 5) Clear caches
+drush cache:rebuild
+
+# 6) Run smoke checks, then deploy to production
+git add composer.json composer.lock
+git commit -m "chore: update drupal core and modules"
+git push origin main</code></pre>
+
+    <div class="callout warning">
+      <div class="callout-label">Non-negotiable</div>
+      <p>Back up files and database before updates. If rollback is manual and undocumented, rollback is not real.</p>
+    </div>
+
+    <h2 id="drush">Drush commands you will actually use</h2>
+
+    <pre data-lang="bash"><code># Clear caches
+drush cr
+
+# One-time login link for admin
+drush uli
+
+# Run pending database updates
+drush updb -y
+
+# Import/export configuration
+drush cim -y
+drush cex -y
+
+# Enable/disable modules
+drush en pathauto -y
+drush pm:uninstall color -y
+
+# Put site in maintenance mode on/off
+drush sset system.maintenance_mode 1
+drush sset system.maintenance_mode 0
+
+# Check watchdog logs
+drush watchdog:show</code></pre>
+
+    <h2 id="hardening">Security and reliability habits</h2>
+
+    <p>Security is mostly consistent process, not heroics. Put these habits on repeat:</p>
+
+    <pre data-lang="text"><code>- Keep core and modules patched
+- Remove unused modules/themes
+- Enforce strong passwords and MFA where possible
+- Review admin accounts monthly
+- Use HTTPS everywhere
+- Keep automated backups and test restores
+- Separate dev/stage/prod environments</code></pre>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And now this</div>
+      <p>Every team says "we should clean up old modules someday." Someday is not a date on the calendar. Put it on the calendar, or someday becomes the incident report.</p>
+    </div>
+
+    <h2 id="weekly">Your weekly admin routine</h2>
+
+    <p>If you only adopt one thing from this guide, make it a repeatable cadence.</p>
+
+    <pre data-lang="text"><code>Monday
+- Check update status
+- Review recent error logs
+
+Wednesday
+- Review new user accounts and role changes
+- Validate top-traffic pages and forms
+
+Friday
+- Confirm backups completed
+- Capture config/code changes for deployment notes
+- Plan next update window</code></pre>
+
+    <h2 id="closing">Closing notes from the trenches</h2>
+
+    <p>Beginner Drupal administration is not about memorizing every admin page. It is about building a stable operating rhythm and avoiding preventable mistakes.</p>
+
+    <p>Model content intentionally. Keep permissions tight. Treat updates as a process, not a gamble. Use Drush for repeatability. And write down what you changed.</p>
+
+    <p>Do that for a month and you will be dramatically more effective than most teams running on ad hoc hero mode.</p>
+
+    <div class="oliver-aside">
+      <div class="aside-label">And finally tonight</div>
+      <p>Drupal will absolutely reward discipline. It will also punish improvisation with theatrical flair. Respect the process, and the CMS behaves. Ignore it, and suddenly your homepage is a blank canvas of regret.</p>
+    </div>
+
+  </article>
+
+  <footer class="post-footer">
+    <div class="post-footer-sig">// Steven William Fry - Mar 2026</div>
+    <a href="/guides/" class="back-link">&larr; back to guides</a>
+  </footer>
+</div>
+
+<script defer src="/assets/js/coding-with-ai-agents.js"></script>
+
+</body>
+</html>
