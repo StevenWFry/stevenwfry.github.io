@@ -325,7 +325,7 @@ header {
 .post-item:nth-child(6) { animation-delay: 0.8s; }
 
 .post-item:hover .post-item-title { color: var(--accent); }
-.post-item:hover { padding-left: 8px; }
+.post-item:hover { transform: translateX(8px); }
 
 .post-item-date {
   font-family: var(--font-mono);
@@ -405,6 +405,13 @@ header {
   color: var(--muted);
 }
 
+/* Stagger link cards within each grid */
+.link-card:nth-child(1) { animation-delay: 0.60s; }
+.link-card:nth-child(2) { animation-delay: 0.66s; }
+.link-card:nth-child(3) { animation-delay: 0.72s; }
+.link-card:nth-child(4) { animation-delay: 0.78s; }
+.link-card:nth-child(5) { animation-delay: 0.84s; }
+
 /* Special "featured project" card */
 .link-card.featured-project {
   border-color: rgba(0,255,157,0.2);
@@ -427,7 +434,7 @@ header {
   font-size: 0.6rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--muted);
   margin-bottom: 10px;
 }
 
