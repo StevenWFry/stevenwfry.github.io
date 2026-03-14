@@ -44,32 +44,6 @@
     </div>
   </header>
 
-  <!-- Visitor info block -->
-  <div class="nf-card visitor-card">
-    <div class="nf-inner visitor-inner">
-      <div class="visitor-top">
-        <div class="nf-head"><span class="nf-user">visitor</span><span class="nf-at">@</span><span class="nf-host">swf.wtf</span></div>
-        <button type="button" class="visitor-refresh-btn" id="visitor-refresh-btn">refresh</button>
-      </div>
-      <p class="visitor-desc">Browser/device signals plus public-IP geolocation when available.</p>
-      <div class="visitor-lines">
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Public IP</span><span class="nf-colon">: </span><span id="visitor-ip">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Location</span><span class="nf-colon">: </span><span id="visitor-location">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Coords</span><span class="nf-colon">: </span><span id="visitor-coords">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Browser</span><span class="nf-colon">: </span><span id="visitor-browser">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">User Agent</span><span class="nf-colon">: </span><span id="visitor-user-agent">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">OS</span><span class="nf-colon">: </span><span id="visitor-os">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Device</span><span class="nf-colon">: </span><span id="visitor-device">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Language</span><span class="nf-colon">: </span><span id="visitor-language">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Timezone</span><span class="nf-colon">: </span><span id="visitor-timezone">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Viewport</span><span class="nf-colon">: </span><span id="visitor-viewport">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Screen</span><span class="nf-colon">: </span><span id="visitor-screen">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Network</span><span class="nf-colon">: </span><span id="visitor-network">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Posts</span><span class="nf-colon">: </span><span id="post-count">11</span></div>
-      </div>
-    </div>
-  </div>
-
   <!-- Ticker -->
   <div class="ticker">
     <div class="ticker-inner">
@@ -138,42 +112,8 @@
         <span class="post-item-title">Arch Linux Install Guide for Beginners</span>
         <span class="post-item-tag">arch</span>
       </a>
-      <a href="/guides/neovim-beginners/" class="post-item">
-        <span class="post-item-date">Feb 25, 2026</span>
-        <span class="post-item-title">Neovim for Beginners</span>
-        <span class="post-item-tag">nvim</span>
-      </a>
-      <a href="/blog/pirate-copilot-website/" class="post-item">
-        <span class="post-item-date">Feb 24, 2026</span>
-        <span class="post-item-title">Pirate Copilot: Building a Website with AI</span>
-        <span class="post-item-tag">web</span>
-      </a>
-      <a href="/guides/coding-with-ai-agents/" class="post-item">
-        <span class="post-item-date">Feb 23, 2026</span>
-        <span class="post-item-title">Coding with Claude AI, Claude Code, and Codex</span>
-        <span class="post-item-tag">ai</span>
-      </a>
-      <a href="/guides/git-guide/" class="post-item">
-        <span class="post-item-date">Feb 21, 2026</span>
-        <span class="post-item-title">Git from Zero</span>
-        <span class="post-item-tag">git</span>
-      </a>
-      <a href="/guides/github-ssh-linux/" class="post-item">
-        <span class="post-item-date">Feb 20, 2026</span>
-        <span class="post-item-title">GitHub SSH Keys on Linux</span>
-        <span class="post-item-tag">ssh</span>
-      </a>
-      <a href="/guides/virtualbox-guest-additions/" class="post-item">
-        <span class="post-item-date">Feb 20, 2026</span>
-        <span class="post-item-title">VirtualBox Guest Additions on Linux</span>
-        <span class="post-item-tag">linux</span>
-      </a>
-      <a href="/blog/how-i-set-up-swf-wtf/" class="post-item">
-        <span class="post-item-date">Feb 20, 2026</span>
-        <span class="post-item-title">How I set up swf.wtf in one morning</span>
-        <span class="post-item-tag">meta</span>
-      </a>
     </div>
+    <a href="/guides/" class="post-see-all">see all posts →</a>
   </section>
 
   <!-- Links / projects -->
@@ -286,6 +226,32 @@
     </div>
 
   </section>
+
+  <!-- Visitor info block -->
+  <div class="nf-card visitor-card">
+    <div class="nf-inner visitor-inner">
+      <div class="visitor-top">
+        <div class="nf-head"><span class="nf-user">visitor</span><span class="nf-at">@</span><span class="nf-host">swf.wtf</span></div>
+        <button type="button" class="visitor-refresh-btn" id="visitor-refresh-btn">refresh</button>
+      </div>
+      <p class="visitor-desc">Browser/device signals plus public-IP geolocation when available.</p>
+      <div class="visitor-lines">
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Public IP</span><span class="nf-colon">: </span><span id="visitor-ip">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Location</span><span class="nf-colon">: </span><span id="visitor-location">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Coords</span><span class="nf-colon">: </span><span id="visitor-coords">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Browser</span><span class="nf-colon">: </span><span id="visitor-browser">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">User Agent</span><span class="nf-colon">: </span><span id="visitor-user-agent">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">OS</span><span class="nf-colon">: </span><span id="visitor-os">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Device</span><span class="nf-colon">: </span><span id="visitor-device">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Language</span><span class="nf-colon">: </span><span id="visitor-language">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Timezone</span><span class="nf-colon">: </span><span id="visitor-timezone">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Viewport</span><span class="nf-colon">: </span><span id="visitor-viewport">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Screen</span><span class="nf-colon">: </span><span id="visitor-screen">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Network</span><span class="nf-colon">: </span><span id="visitor-network">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Posts</span><span class="nf-colon">: </span><span id="post-count">11</span></div>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <div class="footer-sig">// swf<span>.wtf</span> — built on Fedora</div>
