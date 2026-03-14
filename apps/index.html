@@ -175,6 +175,12 @@
     border: 1px solid rgba(0, 255, 157, 0.2);
   }
 
+  .badge-dev {
+    color: var(--muted);
+    background: rgba(90, 122, 148, 0.1);
+    border: 1px solid rgba(90, 122, 148, 0.25);
+  }
+
   .app-desc {
     color: var(--muted);
     font-size: 0.9rem;
@@ -252,7 +258,7 @@
   <a class="top" href="/">&larr; home</a>
   <div class="eyebrow">App Store</div>
   <h1>Apps</h1>
-  <p class="subtitle">iOS apps I've built and shipped. Each has its own support and privacy pages linked below.</p>
+  <p class="subtitle">iOS apps I've built. Some are in the App Store, some are still in progress.</p>
 
   <div class="app-grid">
 
@@ -277,9 +283,55 @@
       </div>
     </div>
 
-    <!-- Placeholder -->
-    <div class="app-card app-card--soon">
-      <div class="soon-label">// more apps coming soon</div>
+    <!-- IC4 Monitor -->
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-icon">🚴</div>
+        <div class="app-meta">
+          <div class="app-name">
+            IC4 Monitor
+            <span class="app-status-badge badge-dev">In Development</span>
+          </div>
+          <div class="app-platform">iOS &middot; Fitness / Bluetooth</div>
+        </div>
+      </div>
+      <p class="app-desc">
+        A Bluetooth FTMS dashboard for the Schwinn IC4 spin bike (also Bowflex C6 / Schwinn IC8). Shows the stats Apple's Workout app won't — instantaneous power, average power, cadence, speed, resistance, and heart rate — all read directly from the bike's FTMS characteristic. Includes a power correction slider since the IC4 is known to over-report by ~10–15%.
+      </p>
+    </div>
+
+    <!-- Kingston Bus Tracker -->
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-icon">🚌</div>
+        <div class="app-meta">
+          <div class="app-name">
+            Kingston Bus Tracker
+            <span class="app-status-badge badge-dev">In Development</span>
+          </div>
+          <div class="app-platform">iOS &middot; Transit / Maps</div>
+        </div>
+      </div>
+      <p class="app-desc">
+        Native iOS app for Kingston Transit using the City of Kingston's public GTFS and GTFS-Realtime feeds. Live vehicle positions on a SwiftUI map, stop arrivals, trip updates, and service alerts — no API key required, all public data.
+      </p>
+    </div>
+
+    <!-- ACLS Simulator -->
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-icon">🫀</div>
+        <div class="app-meta">
+          <div class="app-name">
+            ACLS Simulator
+            <span class="app-status-badge badge-dev">Early Dev</span>
+          </div>
+          <div class="app-platform">iOS · iPad &middot; Medical / Education</div>
+        </div>
+      </div>
+      <p class="app-desc">
+        iOS port of an Advanced Cardiac Life Support training simulator. The deterministic scenario engine and domain models are ported from Android to a Swift package. SwiftUI app shell in progress.
+      </p>
     </div>
 
   </div>
