@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Memory
+
+Additional memory for this project is stored outside the repo:
+
+- **Project notes**: `~/Documents/memory/Projects/swf.wtf Site.md`
+- **Problems & solutions**: `~/Documents/memory/Problems&Solutions/`
+
+At the start of each session read the project file above for context. When you solve a non-obvious problem, log it in `Problems&Solutions/` using the template at `~/Documents/memory/Problems&Solutions/_Problem Template.md`. Update the project file when significant decisions or architecture changes occur.
+
 ## Project Overview
 
 Personal blog/portfolio website for swf.wtf (Steven William Fry), hosted on GitHub Pages. Pure static HTML — no build system, no framework, no package manager. Main content uses folder URLs (`<section>/<slug>/index.html`) plus a few top-level pages.
