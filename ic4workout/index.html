@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IC4Workout — Indoor Cycling Dashboard</title>
+<meta name="description" content="IC4Workout is an iPhone app for Schwinn IC4 family bikes that shows FTMS workout data Apple’s Workout app misses.">
+<link rel="canonical" href="https://swf.wtf/ic4workout/">
+<meta property="og:title" content="IC4Workout — Indoor Cycling Dashboard">
+<meta property="og:description" content="Power, cadence, speed, heart rate, workout time, estimated distance, calories, and Apple Health export for Schwinn IC4 family bikes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://swf.wtf/ic4workout/">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/about.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<div class="terminal-bar">
+  <div class="terminal-dots">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+  </div>
+  <div class="terminal-title">ic4workout — app page — bash — 220×52</div>
+  <a href="/apps/" class="terminal-back">← apps</a>
+  <div class="terminal-cmd">q to quit <span class="blink">▋</span></div>
+</div>
+
+<div class="manpage">
+  <div class="man-header">
+    <span class="man-header-left">ic4workout(1)</span>
+    <span class="man-header-center">Indoor Cycling Dashboard</span>
+    <span class="man-header-right">ic4workout(1)</span>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Name</div>
+    <div class="synopsis"><span class="cmd">IC4Workout</span> — Bluetooth FTMS dashboard for the Schwinn IC4 family</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">What It Is</div>
+    <div class="man-body">
+      <p>IC4Workout is an iPhone app for indoor cycling bikes that speak Bluetooth FTMS, built first for the Schwinn IC4. It surfaces ride data Apple’s Workout app does not read directly from FTMS, especially live power.</p>
+      <p>The app currently shows power, cadence, speed, heart rate, elapsed workout time, estimated distance, and estimated calories during a ride. Completed rides can be written to Apple Health.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Compatibility</div>
+    <div class="man-body">
+      <p><strong>Verified:</strong> Schwinn IC4.</p>
+      <p><strong>Expected but not yet externally confirmed:</strong> Bowflex C6 and Schwinn IC8.</p>
+      <p>The app depends on standard FTMS Indoor Bike Data. Bike support depends on what data each bike actually advertises over Bluetooth.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Features</div>
+    <div class="def-list">
+      <div class="def-item"><div class="def-term">Live ride metrics</div><div class="def-desc">Power, cadence, speed, heart rate, workout time, estimated distance, and calories in a high-contrast workout dashboard.</div></div>
+      <div class="def-item"><div class="def-term">Apple Health export</div><div class="def-desc">Save completed indoor cycling workouts to Apple Health, including ride duration, distance, calories, and captured heart-rate samples.</div></div>
+      <div class="def-item"><div class="def-term">Power correction</div><div class="def-desc">Adjust the IC4 family’s known power over-reporting with a configurable correction slider.</div></div>
+      <div class="def-item"><div class="def-term">Heart-rate zones</div><div class="def-desc">Configure your own heart-rate zone thresholds instead of using fixed defaults.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Support</div>
+    <div class="see-also">
+      <a href="/ic4workout/support/">Support page</a><br>
+      <a href="/ic4workout/privacy/">Privacy Policy</a><br>
+      <a href="mailto:steven@swf.wtf">steven@swf.wtf</a>
+    </div>
+  </div>
+
+  <div class="man-footer">
+    <span>swf.wtf</span>
+    <span>March 2026</span>
+    <span>ic4workout(1)</span>
+  </div>
+</div>
+
+<script defer src="/assets/js/site.js"></script>
+</body>
+</html>
