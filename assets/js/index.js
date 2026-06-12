@@ -21,13 +21,6 @@ document.getElementById('swf-s').textContent = s;
 document.getElementById('swf-w').textContent = w;
 document.getElementById('swf-f').textContent = f;
 
-const postCountEl = document.getElementById('post-count');
-if (postCountEl) {
-  const featuredPosts = document.querySelectorAll('#writing .post-featured[href]:not(.post-item--soon)').length;
-  const listedPosts = document.querySelectorAll('#writing .post-list .post-item[href]:not(.post-item--soon)').length;
-  postCountEl.textContent = String(featuredPosts + listedPosts);
-}
-
 const visitorIpEl = document.getElementById('visitor-ip');
 if (visitorIpEl) {
   const visitorLocationEl = document.getElementById('visitor-location');

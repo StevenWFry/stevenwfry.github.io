@@ -65,6 +65,24 @@ header {
   display: inline-block;
 }
 
+/* Chromatic glitch on hover */
+.hero-name:hover #swf-s,
+.hero-name:hover #swf-w,
+.hero-name:hover #swf-f {
+  animation: heroGlitch 0.35s steps(2, end) 1;
+  text-shadow: 2px 0 rgba(255, 77, 109, 0.6), -2px 0 rgba(0, 255, 157, 0.6);
+}
+
+@keyframes heroGlitch {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-2px, 1px) skewX(-2deg); }
+  50%  { transform: translate(2px, -1px) skewX(2deg); }
+  75%  { transform: translate(-1px, 0) skewX(-1deg); }
+  100% { transform: translate(0, 0); }
+}
+
+#swf-s, #swf-w, #swf-f { display: inline-block; }
+
 .hero-name .domain {
   display: block;
   font-size: 0.48em;
