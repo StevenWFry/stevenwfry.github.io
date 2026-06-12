@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tmux for Beginners - swf.wtf</title>
+<meta name="description" content="Practical tmux guide: sessions, windows, panes, detach/attach, copy mode, and a minimal config that makes the terminal feel like a tiling desktop.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/guides/tmux-beginners/"> <meta property="og:title" content="tmux for Beginners - swf.wtf"> <meta property="og:description" content="Practical tmux guide: sessions, windows, panes, detach/attach, copy mode, and a minimal config that makes the terminal feel like a tiling desktop."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/guides/tmux-beginners/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="tmux for Beginners - swf.wtf"> <meta name="twitter:description" content="Practical tmux guide: sessions, windows, panes, detach/attach, copy mode, and a minimal config that makes the terminal feel like a tiling desktop."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"tmux for Beginners - swf.wtf","description":"Practical tmux guide: sessions, windows, panes, detach/attach, copy mode, and a minimal config that makes the terminal feel like a tiling desktop.","url":"https://swf.wtf/guides/tmux-beginners/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/arch-linux-install-beginners.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="/">swf<span>.wtf</span></a>
+    <nav>
+      <a href="/#writing">writing</a>
+      <a href="/guides/">guides</a>
+      <a href="/about.html">about</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="post-meta">
+    <span>Jun 12, 2026</span>
+    <span class="tag green">guide</span>
+    <span class="tag">tmux</span>
+    <span class="tag">terminal</span>
+    <span class="tag">beginner</span>
+  </div>
+
+  <h1>tmux for Beginners.<br><span class="dim">// one terminal, infinite terminals.</span></h1>
+  <p class="subtitle">tmux turns one terminal window into sessions, windows, and panes that survive disconnects, reboots of your SSH connection, and your own accidental <kbd>Cmd-W</kbd>. This is the smallest set of commands and habits that makes it stick.</p>
+
+  <div class="terminal-intro">
+    <div><span class="prompt">$</span> <span class="cmd-text">tmux new -s dev</span></div>
+    <div class="output">[detached terminal multiplexer activated]</div>
+    <div><span class="prompt">$</span> <span class="cmd-text">ssh box "long running job" &amp;&amp; close laptop</span></div>
+    <div class="output">job still running. tmux does not care about your Wi-Fi.</div>
+    <div><span class="prompt">$</span> <span class="cmd-text">tmux attach -t dev</span></div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">// contents</div>
+    <a href="#model">The 30-second model</a>
+    <a href="#install">Install</a>
+    <a href="#first">First session</a>
+    <a href="#prefix">The prefix key</a>
+    <a href="#panes">Panes</a>
+    <a href="#windows">Windows</a>
+    <a href="#sessions">Sessions, detach, attach</a>
+    <a href="#copy">Scrolling and copy mode</a>
+    <a href="#config">Minimal config</a>
+    <a href="#practice">Practice plan</a>
+    <a href="#cheatsheet">Cheat sheet</a>
+    <a href="#troubleshoot">Common issues</a>
+  </div>
+
+  <hr>
+
+  <h2 id="model">The 30-second model</h2>
+  <p>tmux has exactly three layers. Once this hierarchy clicks, every command makes sense.</p>
+
+  <ul class="mini-list">
+    <li><strong>Session</strong> — a workspace that lives on the server side, independent of your terminal window. Close the terminal; the session keeps running.</li>
+    <li><strong>Window</strong> — a full-screen tab inside a session. Like browser tabs, but for shells.</li>
+    <li><strong>Pane</strong> — a split inside a window. Editor on the left, logs on the right, that kind of thing.</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-title">// why bother</div>
+    Two killer features: your work survives SSH disconnects, and you stop juggling terminal windows. Everything lives in one place, addressable by name. If you already use Neovim splits, tmux is the same idea one level up — see <a href="/guides/neovim-beginners/">Neovim for Beginners</a>.
+  </div>
+
+  <hr>
+
+  <h2 id="install">Install</h2>
+
+  <div class="code-block">
+    <span class="label">arch</span>
+    <pre><span class="cmd">sudo pacman -S tmux</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">fedora</span>
+    <pre><span class="cmd">sudo dnf install -y tmux</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">ubuntu / debian / mint</span>
+    <pre><span class="cmd">sudo apt install -y tmux</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">macos</span>
+    <pre><span class="cmd">brew install tmux</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">verify</span>
+    <pre><span class="cmd">tmux -V</span> <span class="cmt"># any 3.x version is fine</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="first">First session</h2>
+
+  <div class="code-block">
+    <span class="label">start named, always</span>
+    <pre><span class="cmd">tmux new -s dev</span>     <span class="cmt"># new session called "dev"</span>
+<span class="cmd">tmux ls</span>             <span class="cmt"># list sessions (from outside tmux)</span>
+<span class="cmd">tmux attach -t dev</span>  <span class="cmt"># reattach to it later</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">// name your sessions</div>
+    Plain <code>tmux</code> works but gives you sessions named 0, 1, 2... and in a week you will have no idea which is which. <code>tmux new -s projectname</code> costs four extra keystrokes and saves your sanity.
+  </div>
+
+  <hr>
+
+  <h2 id="prefix">The prefix key</h2>
+  <p>Inside tmux, every command starts with the <strong>prefix</strong>: <kbd>Ctrl-b</kbd> by default. Press prefix, release, then press the command key. <kbd>Ctrl-b</kbd> then <kbd>%</kbd> splits the screen. You are not holding all three keys at once.</p>
+
+  <div class="code-block">
+    <span class="label">the pattern</span>
+    <pre><span class="cmt"># prefix, then key:</span>
+<span class="cmd">Ctrl-b  %</span>      <span class="cmt"># split vertically</span>
+<span class="cmd">Ctrl-b  c</span>      <span class="cmt"># new window</span>
+<span class="cmd">Ctrl-b  d</span>      <span class="cmt"># detach</span>
+<span class="cmd">Ctrl-b  ?</span>      <span class="cmt"># list ALL keybindings (q to exit)</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// most popular remap</div>
+    Many people rebind the prefix to <kbd>Ctrl-a</kbd> because it is easier to reach. The config section below shows how. This guide writes <code>prefix</code> from here on — use whichever you set.
+  </div>
+
+  <hr>
+
+  <h2 id="panes">Panes</h2>
+  <p>Panes are where tmux starts feeling like a tiling window manager that lives in your terminal.</p>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3>Create and close</h3>
+      <div class="code-block compact">
+        <pre><span class="cmd">prefix %</span>     <span class="cmt">split left/right</span>
+<span class="cmd">prefix "</span>     <span class="cmt">split top/bottom</span>
+<span class="cmd">prefix x</span>     <span class="cmt">kill current pane</span>
+<span class="cmd">exit</span>         <span class="cmt">or just exit the shell</span></pre>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Navigate and resize</h3>
+      <div class="code-block compact">
+        <pre><span class="cmd">prefix ←↑↓→</span>  <span class="cmt">move between panes</span>
+<span class="cmd">prefix o</span>     <span class="cmt">cycle panes</span>
+<span class="cmd">prefix z</span>     <span class="cmt">zoom pane fullscreen (toggle)</span>
+<span class="cmd">prefix Ctrl-←↑↓→</span> <span class="cmt">resize pane</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// the zoom trick</div>
+    <code>prefix z</code> is the single most useful pane command. Temporarily fullscreen the pane you care about, press it again to restore the layout. No more squinting at logs in a quarter of the screen.
+  </div>
+
+  <hr>
+
+  <h2 id="windows">Windows</h2>
+
+  <div class="code-block">
+    <span class="label">window basics</span>
+    <pre><span class="cmd">prefix c</span>      <span class="cmt"># create window</span>
+<span class="cmd">prefix ,</span>      <span class="cmt"># rename window</span>
+<span class="cmd">prefix n</span>      <span class="cmt"># next window</span>
+<span class="cmd">prefix p</span>      <span class="cmt"># previous window</span>
+<span class="cmd">prefix 0-9</span>    <span class="cmt"># jump to window by number</span>
+<span class="cmd">prefix w</span>      <span class="cmt"># interactive window picker</span>
+<span class="cmd">prefix &amp;</span>      <span class="cmt"># kill window (asks first)</span></pre>
+  </div>
+
+  <p>A common layout: window 1 named <code>edit</code> (Neovim), window 2 named <code>run</code> (server/tests), window 3 named <code>git</code>. Rename them — the status bar becomes a map of your project instead of a row of <code>zsh</code> labels.</p>
+
+  <hr>
+
+  <h2 id="sessions">Sessions, detach, attach</h2>
+  <p>This is the feature that makes tmux non-negotiable for SSH work.</p>
+
+  <div class="code-block">
+    <span class="label">the detach/attach loop</span>
+    <pre><span class="cmd">prefix d</span>               <span class="cmt"># detach — session keeps running</span>
+<span class="cmd">tmux ls</span>                <span class="cmt"># see what is running</span>
+<span class="cmd">tmux attach -t dev</span>     <span class="cmt"># pick up exactly where you left off</span>
+<span class="cmd">tmux kill-session -t dev</span>  <span class="cmt"># actually end it</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">the ssh workflow</span>
+    <pre><span class="cmt"># on the remote box:</span>
+<span class="cmd">ssh you@server</span>
+<span class="cmd">tmux new -s work</span>       <span class="cmt"># or: tmux attach -t work</span>
+<span class="cmt"># ... start a long job ...</span>
+<span class="cmt"># Wi-Fi dies / laptop sleeps / you go home. job keeps running.</span>
+<span class="cmd">ssh you@server</span>
+<span class="cmd">tmux attach -t work</span>    <span class="cmt"># everything still there</span></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">// attach-or-create one-liner</div>
+    <code>tmux new -A -s work</code> attaches to <code>work</code> if it exists, creates it if not. Perfect for shell aliases and SSH habits.
+  </div>
+
+  <hr>
+
+  <h2 id="copy">Scrolling and copy mode</h2>
+  <p>The first thing every beginner hits: the mouse wheel does nothing and you can't scroll up. tmux has its own scrollback called <strong>copy mode</strong>.</p>
+
+  <div class="code-block">
+    <span class="label">copy mode basics</span>
+    <pre><span class="cmd">prefix [</span>      <span class="cmt"># enter copy mode (now you can scroll)</span>
+<span class="cmd">↑↓ / PgUp</span>     <span class="cmt"># move around</span>
+<span class="cmd">q</span>             <span class="cmt"># quit copy mode</span>
+
+<span class="cmt"># with vi keys enabled in the config below:</span>
+<span class="cmd">v</span>             <span class="cmt"># start selection</span>
+<span class="cmd">y</span>             <span class="cmt"># yank selection and exit</span>
+<span class="cmd">prefix ]</span>      <span class="cmt"># paste inside tmux</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">// or just enable the mouse</div>
+    The config below turns on mouse support: scroll wheel scrolls, clicking switches panes, dragging borders resizes. Purists scoff. Ignore them — it's one line and it makes week one painless.
+  </div>
+
+  <hr>
+
+  <h2 id="config">Minimal config</h2>
+  <p>tmux reads <code>~/.tmux.conf</code> at startup. This is a sane starter — small enough to understand every line.</p>
+
+  <div class="code-block">
+    <span class="label">create config</span>
+    <pre><span class="cmd">nvim ~/.tmux.conf</span></pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">~/.tmux.conf</span>
+    <pre><span class="cmt"># prefix: Ctrl-a instead of Ctrl-b</span>
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+
+<span class="cmt"># quality of life</span>
+set -g mouse on              <span class="cmt"># scroll, click panes, drag borders</span>
+set -g base-index 1          <span class="cmt"># windows start at 1, matches keyboard row</span>
+setw -g pane-base-index 1
+set -g renumber-windows on   <span class="cmt"># no gaps after closing windows</span>
+set -g history-limit 50000   <span class="cmt"># bigger scrollback</span>
+set -g escape-time 10        <span class="cmt"># no Esc delay (Neovim users want this)</span>
+
+<span class="cmt"># vi keys in copy mode</span>
+setw -g mode-keys vi
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi y send -X copy-selection-and-cancel
+
+<span class="cmt"># saner splits: | and - instead of % and "</span>
+bind | split-window -h
+bind - split-window -v
+
+<span class="cmt"># true color (matches modern terminals)</span>
+set -g default-terminal "tmux-256color"
+set -ag terminal-overrides ",xterm-256color:RGB"</pre>
+  </div>
+
+  <div class="code-block">
+    <span class="label">apply it</span>
+    <pre><span class="cmt"># from a shell inside tmux:</span>
+<span class="cmd">tmux source-file ~/.tmux.conf</span>
+
+<span class="cmt"># or kill the server and start clean:</span>
+<span class="cmd">tmux kill-server</span>
+<span class="cmd">tmux new -s dev</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">// skip plugins for now</div>
+    Yes, TPM and the plugin ecosystem exist. Like with Neovim: build the muscle memory first, decorate later. Everything in this guide is stock tmux.
+  </div>
+
+  <hr>
+
+  <h2 id="practice">Practice plan (7 days)</h2>
+  <ul class="practice-list">
+    <li><strong>Day 1:</strong> Start a named session, detach with <code>prefix d</code>, reattach. Repeat until boring.</li>
+    <li><strong>Day 2:</strong> Live in two panes: editor + shell. Use <code>prefix z</code> to zoom.</li>
+    <li><strong>Day 3:</strong> Add windows. Rename them with <code>prefix ,</code>. Jump by number.</li>
+    <li><strong>Day 4:</strong> Install the config above. Re-learn your splits as <code>|</code> and <code>-</code>.</li>
+    <li><strong>Day 5:</strong> Enter copy mode, scroll a long log, yank a line, paste it.</li>
+    <li><strong>Day 6:</strong> SSH somewhere, run something slow in tmux, disconnect on purpose, reattach.</li>
+    <li><strong>Day 7:</strong> One full work session entirely inside one tmux session. No extra terminal windows allowed.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="cheatsheet">Cheat sheet</h2>
+
+  <div class="code-block">
+    <span class="label">daily core</span>
+    <pre><span class="cmd">tmux new -s name</span>       <span class="cmt"># new named session</span>
+<span class="cmd">tmux new -A -s name</span>    <span class="cmt"># attach or create</span>
+<span class="cmd">tmux ls</span>                <span class="cmt"># list sessions</span>
+<span class="cmd">tmux attach -t name</span>    <span class="cmt"># reattach</span>
+<span class="cmd">prefix d</span>               <span class="cmt"># detach</span>
+<span class="cmd">prefix c , n p 0-9</span>     <span class="cmt"># windows: new, rename, next, prev, jump</span>
+<span class="cmd">prefix % "</span>             <span class="cmt"># split (or | and - with config)</span>
+<span class="cmd">prefix ←↑↓→</span>            <span class="cmt"># move between panes</span>
+<span class="cmd">prefix z</span>               <span class="cmt"># zoom pane</span>
+<span class="cmd">prefix x</span>               <span class="cmt"># kill pane</span>
+<span class="cmd">prefix [</span>               <span class="cmt"># copy mode / scrollback</span>
+<span class="cmd">prefix ?</span>               <span class="cmt"># all keybindings</span></pre>
+  </div>
+
+  <hr>
+
+  <h2 id="troubleshoot">Common issues</h2>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">I can't scroll up</div>
+      <div class="faq-a">That's copy mode: <code>prefix [</code>, then arrows or PgUp, <code>q</code> to leave. Or add <code>set -g mouse on</code> to <code>~/.tmux.conf</code> and the wheel just works.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Colors look wrong in Neovim inside tmux</div>
+      <div class="faq-a">Add the two <code>default-terminal</code> / <code>terminal-overrides</code> lines from the config section, restart the tmux server (<code>tmux kill-server</code>), and reattach.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Esc is laggy in Neovim</div>
+      <div class="faq-a">tmux waits to see if Esc starts an escape sequence. <code>set -g escape-time 10</code> fixes it.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Changed the config but nothing happened</div>
+      <div class="faq-a"><code>~/.tmux.conf</code> is only read when the server starts. Run <code>tmux source-file ~/.tmux.conf</code> inside tmux, or <code>tmux kill-server</code> and start fresh. Detaching is not enough — the server keeps running.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">"lost server" or "no sessions" after reboot</div>
+      <div class="faq-a">tmux sessions live in memory — a real reboot ends them. That's expected. (Persisting across reboots is plugin territory: tmux-resurrect, when you're ready.)</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h2 id="sources">Sources</h2>
+  <ul class="resource-list">
+    <li><a href="https://github.com/tmux/tmux/wiki/Getting-Started" target="_blank" rel="noopener">tmux wiki: Getting Started</a></li>
+    <li><a href="https://man.openbsd.org/tmux.1" target="_blank" rel="noopener">tmux(1) man page</a></li>
+  </ul>
+
+</main>
+
+<footer>
+  <span>// swf.wtf - tmux-beginners</span>
+  <span><a href="/guides/">more guides</a></span>
+</footer>
+
+<script defer src="/assets/js/site.js"></script>
+
+</body>
+</html>

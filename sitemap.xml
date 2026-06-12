@@ -18,7 +18,7 @@
   </url>
   <url>
     <loc>https://swf.wtf/guides/arch-linux-install-beginners/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/arch-linux-virtualbox-omarchy/</loc>
@@ -26,7 +26,7 @@
   </url>
   <url>
     <loc>https://swf.wtf/guides/coding-with-ai-agents/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/drupal-admin-beginners/</loc>
@@ -38,7 +38,7 @@
   </url>
   <url>
     <loc>https://swf.wtf/guides/git-guide/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/github-ssh-linux/</loc>
@@ -46,11 +46,11 @@
   </url>
   <url>
     <loc>https://swf.wtf/guides/hyprland-base-arch/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/linux-downloads/</loc>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://swf.wtf/guides/neovim-beginners/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/python-beginners/</loc>
@@ -157,12 +157,16 @@
     <lastmod>2026-02-26</lastmod>
   </url>
   <url>
+    <loc>https://swf.wtf/guides/tmux-beginners/</loc>
+    <lastmod>2026-06-12</lastmod>
+  </url>
+  <url>
     <loc>https://swf.wtf/guides/virtualbox-guest-additions/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/now.html</loc>

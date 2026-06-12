@@ -243,6 +243,7 @@
     <span class="label">inside chroot: systemd-boot (UEFI)</span>
     <pre><span class="cmd">bootctl install</span>
 <span class="cmd">ROOT_PARTUUID=$(blkid -s PARTUUID -o value /dev/sda3)</span>
+<span class="cmd">echo $ROOT_PARTUUID</span> <span class="cmt"># note this value, you need it below</span>
 
 <span class="cmt"># open /boot/loader/loader.conf and paste these lines exactly (no #):</span>
 <span class="cmd">default arch.conf</span>
@@ -254,7 +255,7 @@
 <span class="cmd">title Arch Linux</span>
 <span class="cmd">linux /vmlinuz-linux</span>
 <span class="cmd">initrd /initramfs-linux.img</span>
-<span class="cmd">replace &lt;ROOT_PARTUUID&gt; below with the value from the command above</span>
+<span class="cmt"># in the next line, replace &lt;ROOT_PARTUUID&gt; with the echoed value from above</span>
 <span class="cmd">options root=PARTUUID=&lt;ROOT_PARTUUID&gt; rw</span>
 <span class="cmd">nvim /boot/loader/entries/arch.conf</span></pre>
   </div>

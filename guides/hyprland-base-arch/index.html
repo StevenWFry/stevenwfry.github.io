@@ -106,7 +106,7 @@
 <span class="cmd">sudo pacman -S --needed hyprland xdg-desktop-portal xdg-desktop-portal-hyprland</span>
 <span class="cmd">sudo pacman -S --needed waybar wofi kitty hyprpaper hyprlock hypridle hyprpolkitagent</span>
 <span class="cmd">sudo pacman -S --needed wl-clipboard grim slurp</span>
-<span class="cmd">sudo pacman -S --needed pipewire wireplumber pipewire-audio pavucontrol</span>
+<span class="cmd">sudo pacman -S --needed pipewire wireplumber pipewire-audio pipewire-pulse pavucontrol</span>
 <span class="cmd">sudo pacman -S --needed ttf-dejavu ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji</span></pre>
   </div>
 
@@ -195,7 +195,7 @@
     <pre><span class="cmd">echo $XDG_SESSION_TYPE</span> <span class="cmt"># should print wayland</span>
 <span class="cmd">hyprctl monitors</span>
 <span class="cmd">systemctl --user status xdg-desktop-portal.service xdg-desktop-portal-hyprland.service --no-pager</span>
-<span class="cmd">pactl info | grep \"Server Name\"</span>
+<span class="cmd">pactl info | grep "Server Name"</span>
 <span class="cmd">nmcli general status</span></pre>
   </div>
 
