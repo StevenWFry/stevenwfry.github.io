@@ -129,6 +129,10 @@ window.toggleTrouble = function toggleTrouble(el) {
     'now.txt': [
       'What I\'m up to right now → <a href="/now.html">/now</a>',
     ],
+    'feed.xml': [
+      'RSS. Yes, really. Still the best way to follow a blog.',
+      '→ subscribe: <a href="/feed.xml">/feed.xml</a>',
+    ],
     '.secrets': [
       '↑ ↑ ↓ ↓ ← → ← → B A',
     ],
@@ -162,7 +166,7 @@ window.toggleTrouble = function toggleTrouble(el) {
     },
     ls(args) {
       const all = args.includes('-a') || args.includes('-la') || args.includes('-al');
-      const entries = ['<a href="/guides/">guides/</a>', '<a href="/blog/">blog/</a>', '<a href="/apps/">apps/</a>', '<a href="/pirate-copilot/">pirate-copilot/</a>', 'about.txt', 'now.txt'];
+      const entries = ['<a href="/guides/">guides/</a>', '<a href="/blog/">blog/</a>', '<a href="/apps/">apps/</a>', '<a href="/pirate-copilot/">pirate-copilot/</a>', 'about.txt', 'now.txt', '<a href="/feed.xml">feed.xml</a>'];
       if (all) entries.unshift('<span class="t-dim">.secrets</span>');
       print(entries.join('  '));
     },

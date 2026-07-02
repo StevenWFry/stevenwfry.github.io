@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>swf.wtf</title>
+  <link>https://swf.wtf/</link>
+  <description>I tinker with Linux and write about it. Guides and build logs on Linux, Git, Neovim, tmux, Python, SQL, and AI-assisted development.</description>
+  <language>en</language>
+  <lastBuildDate>Fri, 12 Jun 2026 12:00:00 +0000</lastBuildDate>
+  <atom:link href="https://swf.wtf/feed.xml" rel="self" type="application/rss+xml"/>
+  <item>
+    <title>tmux for Beginners</title>
+    <link>https://swf.wtf/guides/tmux-beginners/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/tmux-beginners/</guid>
+    <pubDate>Fri, 12 Jun 2026 12:00:00 +0000</pubDate>
+    <description>One terminal, infinite terminals. Sessions, windows, panes, detach/attach, copy mode, and a minimal config — the smallest set of commands that makes tmux stick.</description>
+  </item>
+  <item>
+    <title>Drupal Administration for Beginners</title>
+    <link>https://swf.wtf/guides/drupal-admin-beginners/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/drupal-admin-beginners/</guid>
+    <pubDate>Fri, 06 Mar 2026 12:00:00 +0000</pubDate>
+    <description>Practical Drupal site admin basics: content modeling, roles, permissions, Views, updates, and backups.</description>
+  </item>
+  <item>
+    <title>Arch Linux on VirtualBox (Omarchy-style, command by command)</title>
+    <link>https://swf.wtf/guides/arch-linux-virtualbox-omarchy/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/arch-linux-virtualbox-omarchy/</guid>
+    <pubDate>Thu, 26 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Replicate Omarchy&#x27;s install flow manually: Limine, LUKS, Btrfs subvolumes, and archinstall JSON.</description>
+  </item>
+  <item>
+    <title>Hyprland on Base Arch Linux</title>
+    <link>https://swf.wtf/guides/hyprland-base-arch/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/hyprland-base-arch/</guid>
+    <pubDate>Thu, 26 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Install and configure a usable Hyprland desktop on fresh Arch: packages, portals, audio, startup, and validation.</description>
+  </item>
+  <item>
+    <title>Arch Linux Install Guide for Beginners</title>
+    <link>https://swf.wtf/guides/arch-linux-install-beginners/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/arch-linux-install-beginners/</guid>
+    <pubDate>Wed, 25 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Beginner path based on ArchWiki, with both archinstall and manual command routes.</description>
+  </item>
+  <item>
+    <title>Python for Beginners</title>
+    <link>https://swf.wtf/guides/python-beginners/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/python-beginners/</guid>
+    <pubDate>Wed, 25 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Practical setup from install to venv, pip, syntax, and first project workflow.</description>
+  </item>
+  <item>
+    <title>Neovim for Beginners</title>
+    <link>https://swf.wtf/guides/neovim-beginners/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/neovim-beginners/</guid>
+    <pubDate>Wed, 25 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Mode-based editing fundamentals and daily command patterns for getting fluent.</description>
+  </item>
+  <item>
+    <title>Pirate Copilot: Building a Website with AI Without Losing the Plot</title>
+    <link>https://swf.wtf/blog/pirate-copilot-website/</link>
+    <guid isPermaLink="true">https://swf.wtf/blog/pirate-copilot-website/</guid>
+    <pubDate>Tue, 24 Feb 2026 12:00:00 +0000</pubDate>
+    <description>A practical breakdown of what AI helped with, where it did not, and how the project was shipped without letting generated code drive architecture.</description>
+  </item>
+  <item>
+    <title>Coding with Claude AI, Claude Code, and Codex</title>
+    <link>https://swf.wtf/guides/coding-with-ai-agents/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/coding-with-ai-agents/</guid>
+    <pubDate>Mon, 23 Feb 2026 12:00:00 +0000</pubDate>
+    <description>A practical division-of-labor workflow for multiple coding assistants in one repo.</description>
+  </item>
+  <item>
+    <title>SQL Guide</title>
+    <link>https://swf.wtf/guides/sql-guide/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/sql-guide/</guid>
+    <pubDate>Mon, 23 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Oracle 19c and MySQL study notes, split into web chapters for easy reference.</description>
+  </item>
+  <item>
+    <title>Git from Zero</title>
+    <link>https://swf.wtf/guides/git-guide/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/git-guide/</guid>
+    <pubDate>Sat, 21 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Command-first Git guide from setup and commits to branching and remotes.</description>
+  </item>
+  <item>
+    <title>Fedora 43 x Omakub Setup Guide</title>
+    <link>https://swf.wtf/guides/fedora-setup/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/fedora-setup/</guid>
+    <pubDate>Fri, 20 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Interactive post-install checklist for terminal setup, GNOME theming, apps, and dotfiles.</description>
+  </item>
+  <item>
+    <title>GitHub SSH Keys on Linux</title>
+    <link>https://swf.wtf/guides/github-ssh-linux/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/github-ssh-linux/</guid>
+    <pubDate>Fri, 20 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Set up secure key-based auth for GitHub with ssh-agent and verification steps.</description>
+  </item>
+  <item>
+    <title>VirtualBox Guest Additions on Linux</title>
+    <link>https://swf.wtf/guides/virtualbox-guest-additions/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/virtualbox-guest-additions/</guid>
+    <pubDate>Fri, 20 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Per-distro install instructions for resizing, clipboard sharing, and smoother VM UX.</description>
+  </item>
+  <item>
+    <title>Linux Downloads</title>
+    <link>https://swf.wtf/guides/linux-downloads/</link>
+    <guid isPermaLink="true">https://swf.wtf/guides/linux-downloads/</guid>
+    <pubDate>Fri, 20 Feb 2026 12:00:00 +0000</pubDate>
+    <description>Curated distro download links organized for quick decision-making.</description>
+  </item>
+  <item>
+    <title>How I set up swf.wtf in one morning</title>
+    <link>https://swf.wtf/blog/how-i-set-up-swf-wtf/</link>
+    <guid isPermaLink="true">https://swf.wtf/blog/how-i-set-up-swf-wtf/</guid>
+    <pubDate>Fri, 20 Feb 2026 12:00:00 +0000</pubDate>
+    <description>The full setup story: domain, GitHub Pages, DNS, email forwarding, and why a static site with clear constraints beat overengineering.</description>
+  </item>
+</channel>
+</rss>
