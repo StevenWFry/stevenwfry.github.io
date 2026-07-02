@@ -27,7 +27,6 @@ nav a {
   text-decoration: none;
   color: var(--muted);
   transition: color 0.2s;
-  cursor: none;
 }
 nav a:hover { color: var(--accent); }
 nav .logo { color: var(--accent) !important; font-weight: 600; }
@@ -88,7 +87,6 @@ h1 span { color: var(--accent); }
   border: 1px solid var(--border);
   background: transparent;
   color: var(--muted);
-  cursor: none;
   transition: all 0.18s;
 }
 .filter-btn:hover { border-color: var(--dim); color: var(--text); }
@@ -126,7 +124,6 @@ h1 span { color: var(--accent); }
   border-radius: 10px;
   padding: 18px 20px;
   transition: all 0.2s;
-  cursor: none;
   position: relative;
   overflow: hidden;
 }
@@ -242,7 +239,6 @@ h1 span { color: var(--accent); }
   text-decoration: none;
   letter-spacing: 0.06em;
   transition: color 0.2s;
-  cursor: none;
 }
 .back-link:hover { color: var(--accent); }
 

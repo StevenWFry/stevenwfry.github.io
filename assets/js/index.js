@@ -1,4 +1,4 @@
-// Daily SWF name rotation
+// SWF name expansions — real name by default, click the h1 to cycle.
 const swfNames = [
   ["Steven",       "William",    "Fry"],
   ["Sudo",         "Wget",       "Fedora"],
@@ -16,10 +16,28 @@ const swfNames = [
   ["Static",       "Website",    "Fan"],
   ["Skeleton",     "With",       "Fingers"],
 ];
-const [s, w, f] = swfNames[Math.floor(Date.now() / 86400000) % swfNames.length];
-document.getElementById('swf-s').textContent = s;
-document.getElementById('swf-w').textContent = w;
-document.getElementById('swf-f').textContent = f;
+
+const heroName = document.querySelector('.hero-name');
+if (heroName) {
+  let nameIndex = 0;
+  const setName = ([s, w, f]) => {
+    document.getElementById('swf-s').textContent = s;
+    document.getElementById('swf-w').textContent = w;
+    document.getElementById('swf-f').textContent = f;
+  };
+  const cycleName = () => {
+    nameIndex = (nameIndex + 1) % swfNames.length;
+    setName(swfNames[nameIndex]);
+  };
+  heroName.style.cursor = 'pointer';
+  heroName.title = 'click to re-expand the initials';
+  heroName.setAttribute('role', 'button');
+  heroName.setAttribute('tabindex', '0');
+  heroName.addEventListener('click', cycleName);
+  heroName.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleName(); }
+  });
+}
 
 const visitorIpEl = document.getElementById('visitor-ip');
 if (visitorIpEl) {
@@ -146,7 +164,8 @@ if (visitorIpEl) {
 
   updateViewportInfo();
   updateNetworkInfo();
-  loadPublicIpAndGeo();
+  // IP + geolocation hit third-party APIs, so they only run when the
+  // visitor presses scan — never automatically.
 
   window.addEventListener('resize', updateViewportInfo);
   window.addEventListener('online', updateNetworkInfo);
@@ -157,6 +176,7 @@ if (visitorIpEl) {
       updateViewportInfo();
       updateNetworkInfo();
       loadPublicIpAndGeo();
+      visitorRefreshBtn.textContent = 'rescan';
     });
   }
 }

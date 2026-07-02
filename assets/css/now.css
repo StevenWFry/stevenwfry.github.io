@@ -20,7 +20,6 @@ nav a {
   text-decoration: none;
   color: var(--muted);
   transition: color 0.2s;
-  cursor: none;
 }
 
 nav a:hover { color: var(--accent); }
@@ -51,7 +50,6 @@ article {
   text-decoration: none;
   border-bottom: 1px solid var(--dim);
   transition: color 0.2s, border-color 0.2s;
-  cursor: none;
 }
 
 .page-eyebrow a:hover { color: var(--accent); border-color: var(--accent); }
@@ -115,7 +113,6 @@ h1 {
   text-decoration: none;
   border-bottom: 1px solid rgba(0,255,157,0.3);
   transition: border-color 0.2s;
-  cursor: none;
 }
 
 .page-body a:hover { border-color: var(--accent); }
@@ -202,7 +199,6 @@ h1 {
   text-decoration: none;
   letter-spacing: 0.06em;
   transition: color 0.2s;
-  cursor: none;
   display: flex;
   align-items: center;
   gap: 6px;

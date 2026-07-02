@@ -27,7 +27,7 @@
     <link>https://swf.wtf/guides/arch-linux-virtualbox-omarchy/</link>
     <guid isPermaLink="true">https://swf.wtf/guides/arch-linux-virtualbox-omarchy/</guid>
     <pubDate>Thu, 26 Feb 2026 12:00:00 +0000</pubDate>
-    <description>Replicate Omarchy&#x27;s install flow manually: Limine, LUKS, Btrfs subvolumes, and archinstall JSON.</description>
+    <description>Replicate Omarchy's install flow manually: Limine, LUKS, Btrfs subvolumes, and archinstall JSON.</description>
   </item>
   <item>
     <title>Hyprland on Base Arch Linux</title>

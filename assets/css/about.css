@@ -68,7 +68,6 @@ body::after {
   text-decoration: none;
   font-size: 0.68rem;
   transition: color 0.2s;
-  cursor: none;
 }
 
 .terminal-back:hover { color: var(--accent); }
@@ -282,7 +281,6 @@ sup {
   text-underline-offset: 3px;
   text-decoration-color: var(--dim);
   transition: color 0.2s;
-  cursor: none;
 }
 
 .see-also a:hover { color: var(--accent); text-decoration-color: var(--accent); }

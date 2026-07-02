@@ -55,9 +55,10 @@ Aesthetic: dark terminal/hacker vibe with scanline overlays, monospace fonts (Ma
 
 When adding a new post:
 1. Create a new folder-based page: `blog/<slug>/index.html` or `guides/<slug>/index.html`, following the structure of an existing page in that section
-2. Update `index.html` to add the post to the blog list and update the "latest post" card if applicable
-3. Update `sitemap.xml`
-4. Remove any "coming soon" stub for that topic if one exists in `index.html`
+2. Add an entry to `scripts/posts.json` (title, url, date, type, tag, description)
+3. Run `python3 scripts/build_site_indexes.py` — this regenerates `feed.xml`, `sitemap.xml`, and the homepage featured/post-list sections (between the `BUILD:` markers in `index.html`). Never edit those regions by hand.
+4. Add the post to `guides/index.html` or `blog/index.html` (still hand-maintained)
+5. Remove any "coming soon" stub for that topic if one exists in `index.html`
 
 ### JavaScript Patterns
 

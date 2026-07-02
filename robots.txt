@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+# codex is a finished experiment containing a full mirror of this site;
+# keep crawlers out so it isn't indexed as duplicate content.
+Disallow: /codex/
 
 Sitemap: https://swf.wtf/sitemap.xml

@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://swf.wtf/</loc>
+    <lastmod>2026-07-02</lastmod>
+  </url>
+  <url>
     <loc>https://swf.wtf/about.html</loc>
     <lastmod>2026-07-01</lastmod>
   </url>
   <url>
-    <loc>https://swf.wtf/blog/how-i-set-up-swf-wtf/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <loc>https://swf.wtf/apps/</loc>
+    <lastmod>2026-03-14</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/blog/</loc>
     <lastmod>2026-02-26</lastmod>
   </url>
   <url>
+    <loc>https://swf.wtf/blog/how-i-set-up-swf-wtf/</loc>
+    <lastmod>2026-02-26</lastmod>
+  </url>
+  <url>
     <loc>https://swf.wtf/blog/pirate-copilot-website/</loc>
     <lastmod>2026-02-26</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/guides/</loc>
+    <lastmod>2026-07-02</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/arch-linux-install-beginners/</loc>
@@ -49,10 +61,6 @@
     <lastmod>2026-06-12</lastmod>
   </url>
   <url>
-    <loc>https://swf.wtf/guides/</loc>
-    <lastmod>2026-06-12</lastmod>
-  </url>
-  <url>
     <loc>https://swf.wtf/guides/linux-downloads/</loc>
     <lastmod>2026-02-26</lastmod>
   </url>
@@ -62,6 +70,10 @@
   </url>
   <url>
     <loc>https://swf.wtf/guides/python-beginners/</loc>
+    <lastmod>2026-02-25</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/guides/sql-guide/</loc>
     <lastmod>2026-02-26</lastmod>
   </url>
   <url>
@@ -153,40 +165,12 @@
     <lastmod>2026-02-26</lastmod>
   </url>
   <url>
-    <loc>https://swf.wtf/guides/sql-guide/</loc>
-    <lastmod>2026-02-26</lastmod>
-  </url>
-  <url>
     <loc>https://swf.wtf/guides/tmux-beginners/</loc>
     <lastmod>2026-06-12</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/guides/virtualbox-guest-additions/</loc>
     <lastmod>2026-06-12</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/</loc>
-    <lastmod>2026-07-01</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/now.html</loc>
-    <lastmod>2026-07-01</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/pirate-copilot/</loc>
-    <lastmod>2026-02-26</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/apps/</loc>
-    <lastmod>2026-03-14</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/packetmanifest/privacy/</loc>
-    <lastmod>2026-03-11</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/packetmanifest/support/</loc>
-    <lastmod>2026-03-11</lastmod>
   </url>
   <url>
     <loc>https://swf.wtf/ic4workout/</loc>
@@ -199,5 +183,21 @@
   <url>
     <loc>https://swf.wtf/ic4workout/support/</loc>
     <lastmod>2026-03-16</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/now.html</loc>
+    <lastmod>2026-07-01</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/packetmanifest/privacy/</loc>
+    <lastmod>2026-03-11</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/packetmanifest/support/</loc>
+    <lastmod>2026-03-11</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/pirate-copilot/</loc>
+    <lastmod>2026-02-26</lastmod>
   </url>
 </urlset>

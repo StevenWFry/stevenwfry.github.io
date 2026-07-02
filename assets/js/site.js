@@ -1,20 +1,4 @@
 (function () {
-  const cursor = document.getElementById('cursor');
-  if (cursor) {
-    document.addEventListener('mousemove', (e) => {
-      cursor.classList.add('active');
-      cursor.style.transform = `translate(${e.clientX - 2}px, ${e.clientY}px)`;
-    });
-
-    document.addEventListener('mousedown', () => {
-      cursor.style.opacity = '0';
-    });
-
-    document.addEventListener('mouseup', () => {
-      cursor.style.opacity = '1';
-    });
-  }
-
   if (document.body && document.body.dataset.konami === 'true') {
     const konamiHue = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
     const konamiCodex = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyA', 'KeyB'];

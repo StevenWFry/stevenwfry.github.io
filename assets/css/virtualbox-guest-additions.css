@@ -28,7 +28,6 @@ nav a {
   text-decoration: none;
   color: var(--muted);
   transition: color 0.2s;
-  cursor: none;
 }
 nav a:hover { color: var(--accent); }
 nav .logo { color: var(--accent) !important; font-weight: 600; }
@@ -47,7 +46,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
-  cursor: none;
   transition: all 0.2s;
   letter-spacing: 0.05em;
 }
@@ -155,7 +153,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--muted);
-  cursor: none;
   transition: all 0.2s;
   letter-spacing: 0.04em;
   display: flex;
@@ -261,7 +258,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   color: var(--muted);
   padding: 3px 10px;
   border-radius: 4px;
-  cursor: none;
   transition: all 0.2s;
   letter-spacing: 0.04em;
 }
@@ -366,7 +362,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text);
-  cursor: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -417,7 +412,7 @@ footer {
 .footer-links { display: flex; gap: 20px; }
 .footer-links a {
   font-family: var(--font-mono); font-size: 0.65rem; color: var(--dim);
-  text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; cursor: none;
+  text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s;
 }
 .footer-links a:hover { color: var(--accent); }
 

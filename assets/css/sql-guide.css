@@ -21,7 +21,6 @@ nav a {
   text-decoration: none;
   color: var(--muted);
   transition: color 0.2s;
-  cursor: none;
 }
 
 nav a:hover { color: var(--accent); }
@@ -111,7 +110,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   flex-direction: column;
   gap: 10px;
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  cursor: none;
 }
 
 .lesson-card:hover {
@@ -164,7 +162,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   border-bottom: 1px solid var(--dim);
   letter-spacing: 0.05em;
   transition: color 0.2s, border-color 0.2s;
-  cursor: none;
 }
 
 .sql-links a:hover {
@@ -240,7 +237,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   text-decoration: none;
   border-bottom: 1px solid rgba(0,255,157,0.28);
   transition: border-color 0.2s;
-  cursor: none;
 }
 
 .chapter a:hover { border-color: var(--accent); }
@@ -290,7 +286,6 @@ nav .logo { color: var(--accent) !important; font-weight: 600; }
   border-bottom: 1px solid var(--dim);
   letter-spacing: 0.06em;
   transition: color 0.2s, border-color 0.2s;
-  cursor: none;
 }
 
 .chapter-nav a:hover {

@@ -10,8 +10,8 @@
 <link rel="alternate" type="application/rss+xml" title="swf.wtf" href="/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css?v=20260612">
-<link rel="stylesheet" href="/assets/css/index.css?v=20260612">
+<link rel="stylesheet" href="/assets/css/site.css?v=20260702">
+<link rel="stylesheet" href="/assets/css/index.css?v=20260702">
 </head>
 <body data-konami="true">
 
@@ -78,7 +78,9 @@
   <section class="section" id="writing">
     <div class="section-label">Latest writing</div>
 
-    <!-- Featured post -->
+    <!-- Featured post + list below are generated from scripts/posts.json
+         by scripts/build_site_indexes.py — edit the manifest, not this HTML. -->
+    <!-- BUILD:FEATURED START -->
     <a href="/guides/tmux-beginners/" class="post-featured">
       <div class="post-featured-label">★ Latest guide</div>
       <div class="post-featured-title">tmux for Beginners</div>
@@ -94,8 +96,9 @@
         <span class="tag">beginner</span>
       </div>
     </a>
+    <!-- BUILD:FEATURED END -->
 
-    <!-- Post list -->
+    <!-- BUILD:POSTLIST START -->
     <div class="post-list">
       <a href="/guides/drupal-admin-beginners/" class="post-item">
         <span class="post-item-date">Mar 6, 2026</span>
@@ -112,12 +115,13 @@
         <span class="post-item-title">Hyprland on Base Arch Linux</span>
         <span class="post-item-tag">hypr</span>
       </a>
-      <a href="/guides/python-beginners/" class="post-item">
+      <a href="/guides/arch-linux-install-beginners/" class="post-item">
         <span class="post-item-date">Feb 25, 2026</span>
-        <span class="post-item-title">Python for Beginners</span>
-        <span class="post-item-tag">python</span>
+        <span class="post-item-title">Arch Linux Install Guide for Beginners</span>
+        <span class="post-item-tag">arch</span>
       </a>
     </div>
+    <!-- BUILD:POSTLIST END -->
     <a href="/guides/" class="post-see-all">see all posts →</a>
   </section>
 
@@ -237,13 +241,13 @@
     <div class="nf-inner visitor-inner">
       <div class="visitor-top">
         <div class="nf-head"><span class="nf-user">visitor</span><span class="nf-at">@</span><span class="nf-host">swf.wtf</span></div>
-        <button type="button" class="visitor-refresh-btn" id="visitor-refresh-btn">refresh</button>
+        <button type="button" class="visitor-refresh-btn" id="visitor-refresh-btn">scan</button>
       </div>
-      <p class="visitor-desc">Browser/device signals plus public-IP geolocation when available.</p>
+      <p class="visitor-desc">Local browser signals only. IP + geolocation are looked up via two public APIs — but only if you press scan. Nothing is stored.</p>
       <div class="visitor-lines">
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Public IP</span><span class="nf-colon">: </span><span id="visitor-ip">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Location</span><span class="nf-colon">: </span><span id="visitor-location">loading...</span></div>
-        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Coords</span><span class="nf-colon">: </span><span id="visitor-coords">loading...</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Public IP</span><span class="nf-colon">: </span><span id="visitor-ip">[press scan]</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Location</span><span class="nf-colon">: </span><span id="visitor-location">[press scan]</span></div>
+        <div class="visitor-line nf-line"><span class="visitor-key nf-key">Coords</span><span class="nf-colon">: </span><span id="visitor-coords">[press scan]</span></div>
         <div class="visitor-line nf-line"><span class="visitor-key nf-key">Browser</span><span class="nf-colon">: </span><span id="visitor-browser">loading...</span></div>
         <div class="visitor-line nf-line"><span class="visitor-key nf-key">User Agent</span><span class="nf-colon">: </span><span id="visitor-user-agent">loading...</span></div>
         <div class="visitor-line nf-line"><span class="visitor-key nf-key">OS</span><span class="nf-colon">: </span><span id="visitor-os">loading...</span></div>
@@ -272,8 +276,8 @@
   </footer>
 </div>
 
-<script defer src="/assets/js/site.js?v=20260612"></script>
-<script defer src="/assets/js/index.js?v=20260612"></script>
+<script defer src="/assets/js/site.js?v=20260702"></script>
+<script defer src="/assets/js/index.js?v=20260702"></script>
 
 </body>
 </html>

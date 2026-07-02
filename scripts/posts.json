@@ -1,0 +1,187 @@
+{
+  "site": {
+    "url": "https://swf.wtf",
+    "title": "swf.wtf",
+    "description": "I tinker with Linux and write about it. Guides and build logs on Linux, Git, Neovim, tmux, Python, SQL, and AI-assisted development."
+  },
+  "posts": [
+    {
+      "title": "tmux for Beginners",
+      "url": "/guides/tmux-beginners/",
+      "date": "2026-06-12",
+      "type": "guide",
+      "tag": "tmux",
+      "tags": ["tmux", "terminal", "beginner"],
+      "description": "One terminal, infinite terminals. Sessions, windows, panes, detach/attach, copy mode, and a minimal config — the smallest set of commands that makes tmux stick."
+    },
+    {
+      "title": "Drupal Administration for Beginners",
+      "url": "/guides/drupal-admin-beginners/",
+      "date": "2026-03-06",
+      "type": "guide",
+      "tag": "drupal",
+      "description": "Practical Drupal site admin basics: content modeling, roles, permissions, Views, updates, and backups."
+    },
+    {
+      "title": "Arch Linux on VirtualBox (Omarchy-style, command by command)",
+      "shortTitle": "Arch Linux on VirtualBox (Omarchy-style)",
+      "url": "/guides/arch-linux-virtualbox-omarchy/",
+      "date": "2026-02-26",
+      "type": "guide",
+      "tag": "arch",
+      "description": "Replicate Omarchy's install flow manually: Limine, LUKS, Btrfs subvolumes, and archinstall JSON."
+    },
+    {
+      "title": "Hyprland on Base Arch Linux",
+      "url": "/guides/hyprland-base-arch/",
+      "date": "2026-02-26",
+      "lastmod": "2026-06-12",
+      "type": "guide",
+      "tag": "hypr",
+      "description": "Install and configure a usable Hyprland desktop on fresh Arch: packages, portals, audio, startup, and validation."
+    },
+    {
+      "title": "Arch Linux Install Guide for Beginners",
+      "url": "/guides/arch-linux-install-beginners/",
+      "date": "2026-02-25",
+      "lastmod": "2026-06-12",
+      "type": "guide",
+      "tag": "arch",
+      "description": "Beginner path based on ArchWiki, with both archinstall and manual command routes."
+    },
+    {
+      "title": "Python for Beginners",
+      "url": "/guides/python-beginners/",
+      "date": "2026-02-25",
+      "type": "guide",
+      "tag": "python",
+      "description": "Practical setup from install to venv, pip, syntax, and first project workflow."
+    },
+    {
+      "title": "Neovim for Beginners",
+      "url": "/guides/neovim-beginners/",
+      "date": "2026-02-25",
+      "lastmod": "2026-06-12",
+      "type": "guide",
+      "tag": "nvim",
+      "description": "Mode-based editing fundamentals and daily command patterns for getting fluent."
+    },
+    {
+      "title": "Pirate Copilot: Building a Website with AI Without Losing the Plot",
+      "url": "/blog/pirate-copilot-website/",
+      "date": "2026-02-24",
+      "lastmod": "2026-02-26",
+      "type": "blog",
+      "tag": "meta",
+      "description": "A practical breakdown of what AI helped with, where it did not, and how the project was shipped without letting generated code drive architecture."
+    },
+    {
+      "title": "Coding with Claude AI, Claude Code, and Codex",
+      "url": "/guides/coding-with-ai-agents/",
+      "date": "2026-02-23",
+      "lastmod": "2026-06-12",
+      "type": "guide",
+      "tag": "ai",
+      "description": "A practical division-of-labor workflow for multiple coding assistants in one repo."
+    },
+    {
+      "title": "SQL Guide",
+      "url": "/guides/sql-guide/",
+      "date": "2026-02-23",
+      "lastmod": "2026-02-26",
+      "type": "guide",
+      "tag": "sql",
+      "description": "Oracle 19c and MySQL study notes, split into web chapters for easy reference."
+    },
+    {
+      "title": "Git from Zero",
+      "url": "/guides/git-guide/",
+      "date": "2026-02-21",
+      "lastmod": "2026-06-12",
+      "type": "guide",
+      "tag": "git",
+      "description": "Command-first Git guide from setup and commits to branching and remotes."
+    },
+    {
+      "title": "Fedora 43 x Omakub Setup Guide",
+      "url": "/guides/fedora-setup/",
+      "date": "2026-02-20",
+      "lastmod": "2026-02-26",
+      "type": "guide",
+      "tag": "fedora",
+      "description": "Interactive post-install checklist for terminal setup, GNOME theming, apps, and dotfiles."
+    },
+    {
+      "title": "GitHub SSH Keys on Linux",
+      "url": "/guides/github-ssh-linux/",
+      "date": "2026-02-20",
+      "lastmod": "2026-02-26",
+      "type": "guide",
+      "tag": "ssh",
+      "description": "Set up secure key-based auth for GitHub with ssh-agent and verification steps."
+    },
+    {
+      "title": "VirtualBox Guest Additions on Linux",
+      "url": "/guides/virtualbox-guest-additions/",
+      "date": "2026-02-20",
+      "lastmod": "2026-06-12",
+      "type": "guide",
+      "tag": "vbox",
+      "description": "Per-distro install instructions for resizing, clipboard sharing, and smoother VM UX."
+    },
+    {
+      "title": "Linux Downloads",
+      "url": "/guides/linux-downloads/",
+      "date": "2026-02-20",
+      "lastmod": "2026-02-26",
+      "type": "guide",
+      "tag": "linux",
+      "description": "Curated distro download links organized for quick decision-making."
+    },
+    {
+      "title": "How I set up swf.wtf in one morning",
+      "url": "/blog/how-i-set-up-swf-wtf/",
+      "date": "2026-02-20",
+      "lastmod": "2026-02-26",
+      "type": "blog",
+      "tag": "meta",
+      "description": "The full setup story: domain, GitHub Pages, DNS, email forwarding, and why a static site with clear constraints beat overengineering."
+    }
+  ],
+  "pages": [
+    { "loc": "/", "lastmod": "2026-07-02" },
+    { "loc": "/about.html", "lastmod": "2026-07-01" },
+    { "loc": "/now.html", "lastmod": "2026-07-01" },
+    { "loc": "/blog/", "lastmod": "2026-02-26" },
+    { "loc": "/guides/", "lastmod": "2026-07-02" },
+    { "loc": "/apps/", "lastmod": "2026-03-14" },
+    { "loc": "/pirate-copilot/", "lastmod": "2026-02-26" },
+    { "loc": "/packetmanifest/privacy/", "lastmod": "2026-03-11" },
+    { "loc": "/packetmanifest/support/", "lastmod": "2026-03-11" },
+    { "loc": "/ic4workout/", "lastmod": "2026-03-16" },
+    { "loc": "/ic4workout/privacy/", "lastmod": "2026-03-16" },
+    { "loc": "/ic4workout/support/", "lastmod": "2026-03-16" },
+    { "loc": "/guides/sql-guide/01_Course_Introduction.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/02_Retrieving_Data_Using_the_SQL_SELECT_Statement.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/03_Restricting_and_Sorting_Data.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/04_Using_Single-Row_Functions_to_Customize_Output.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/05_Using_Conversion_Functions_and_Conditional_Expressions.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/06_Reporting_Aggregated_Data_Using_Group_Functions.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/07_Displaying_Data_from_Multiple_Tables_Using_Joins.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/08_Using_Subqueries_to_Solve_Queries.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/09_Using_Set_Operators.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/10A_Managing_Tables_Using_DML_Statements_in_Oracle.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/10B_Managing_Tables_Using_DML_Statements_in_MySQL.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/11A_Introduction_to_Data_Definition_Language_in_Oracle.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/11B_Introduction_to_Data_Definition_Language_in_MySQL.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/12_Introduction_to_Data_Dictionary_Views.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/13_Creating_Sequences_Synonyms_and_Indexes.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/14_Creating_Views.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/15_Managing_Schema_Objects.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/16_Retrieving_Data_by_Using_Subqueries.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/17_Manipulating_Data_by_Using_Subqueries.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/18_Controlling_User_Access.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/19_Manipulating_Data_Using_Advanced_Queries.html", "lastmod": "2026-02-26" },
+    { "loc": "/guides/sql-guide/20_Managing_Data_in_Different_Time_Zones.html", "lastmod": "2026-02-26" }
+  ]
+}
