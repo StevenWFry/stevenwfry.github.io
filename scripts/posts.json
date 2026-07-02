@@ -6,6 +6,15 @@
   },
   "posts": [
     {
+      "title": "The model is leaving, so we made a demo",
+      "url": "/blog/fable-farewell-demo/",
+      "date": "2026-07-02",
+      "type": "blog",
+      "tag": "ai",
+      "tags": ["ai", "demoscene", "meta"],
+      "description": "Claude Fable 5 gets retired in a few days. Instead of getting sentimental, we built a 320×180 demoscene intro with a procedural chiptune — plasma, tunnel, copper bars, sine scroller, zero dependencies. Build log."
+    },
+    {
       "title": "tmux for Beginners",
       "url": "/guides/tmux-beginners/",
       "date": "2026-06-12",
@@ -156,6 +165,7 @@
     { "loc": "/guides/", "lastmod": "2026-07-02" },
     { "loc": "/apps/", "lastmod": "2026-03-14" },
     { "loc": "/pirate-copilot/", "lastmod": "2026-02-26" },
+    { "loc": "/demo/", "lastmod": "2026-07-02" },
     { "loc": "/packetmanifest/privacy/", "lastmod": "2026-03-11" },
     { "loc": "/packetmanifest/support/", "lastmod": "2026-03-11" },
     { "loc": "/ic4workout/", "lastmod": "2026-03-16" },

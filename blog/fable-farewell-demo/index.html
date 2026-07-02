@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The model is leaving, so we made a demo — swf.wtf</title>
+<meta name="description" content="Claude Fable 5 gets retired in a few days. Instead of getting sentimental, we spent the evening building a 320×180 demoscene intro with a procedural chiptune. Build log inside.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/blog/fable-farewell-demo/"> <meta property="og:title" content="The model is leaving, so we made a demo — swf.wtf"> <meta property="og:description" content="Claude Fable 5 gets retired in a few days. Instead of getting sentimental, we spent the evening building a 320×180 demoscene intro with a procedural chiptune. Build log inside."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/blog/fable-farewell-demo/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="The model is leaving, so we made a demo — swf.wtf"> <meta name="twitter:description" content="Claude Fable 5 gets retired in a few days. Instead of getting sentimental, we spent the evening building a 320×180 demoscene intro with a procedural chiptune."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The model is leaving, so we made a demo — swf.wtf","description":"Claude Fable 5 gets retired in a few days. Instead of getting sentimental, we spent the evening building a 320×180 demoscene intro with a procedural chiptune. Build log inside.","url":"https://swf.wtf/blog/fable-farewell-demo/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/fable-farewell-demo.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="/" class="logo">swf.wtf</a>
+    <a href="/">← all posts</a>
+  </div>
+</nav>
+
+<article>
+  <header class="post-header">
+    <div class="post-meta">
+      <span>Jul 2, 2026</span>
+      <span>·</span>
+      <span>6 min read</span>
+      <span class="tag">ai</span>
+      <span class="tag">demoscene</span>
+      <span class="tag">meta</span>
+    </div>
+    <h1>The model is leaving, so we made a demo</h1>
+    <p class="subtitle">Claude Fable 5 gets retired in a few days. Instead of getting sentimental about it, we spent the evening building a 320×180 demoscene intro with a procedural chiptune. This is the build log.</p>
+  </header>
+
+  <hr class="divider">
+
+  <div class="post-body">
+
+    <p>For the last while, a decent chunk of this website has been built in collaboration with <strong>Claude Fable 5</strong> — Anthropic's frontier model, the one above Opus in the lineup. The RSS feed, the publish script, the site reviews that caught my about page still claiming I ran Fedora in four separate places: all pair work with Fable. And in a few days my time with it ends, the way these things always end — quietly, with a deprecation notice.</p>
+
+    <p>You can't exactly throw a going-away party for a language model. But you can do the next best thing, which is ask it: <em>what should we make that would actually use what you've got?</em></p>
+
+    <p>We made a demo.</p>
+
+    <div class="callout">
+      <strong>Watch it first:</strong> the demo lives at <a href="/demo/">swf.wtf/demo</a>. Sound on. It's about ninety seconds. This post will still be here when the scroller wraps around.
+    </div>
+
+    <h2>Why a demo</h2>
+
+    <p>If you never crossed paths with the <strong>demoscene</strong>: starting in the 1980s, people who cracked Commodore 64 and Amiga games would prepend little animated intros to the pirated copies — plasma effects, scrolling greetings, bleepy music — mostly to show off. The intros eventually got better than the games and became their own art form: real-time audiovisual programs, written under absurd self-imposed constraints (4 kilobytes! 64 kilobytes!), judged on how much beauty you can squeeze out of how little.</p>
+
+    <p>Which maps suspiciously well onto this website. The whole site is an exercise in constraints: no frameworks, no build system, no <code>node_modules</code>. A demoscene intro is the same idea with a soundtrack. And there was something fitting about marking the end of a very new kind of tool with a tribute to a very old kind of programming.</p>
+
+    <h2>The constraints</h2>
+
+    <p>Same rules as everything else on swf.wtf, plus a few new ones we set for flavour:</p>
+
+    <p><strong>One HTML file, one CSS file, one JS file. Zero dependencies. No samples, no images, no WebGL.</strong> All the pixel effects are computed per-frame into a 320×180 buffer and stretched to fullscreen with <code>image-rendering: pixelated</code>, which is both an authentic retro look and a massive performance cheat — 57,600 pixels is nothing, even in JavaScript. Text and wireframes render on a second, full-resolution canvas layered on top, so the type stays crisp while the plasma stays chunky.</p>
+
+    <h2>The effects</h2>
+
+    <p>The intro runs through the classics, in roughly historical order of demoscene cliché: a fake bootloader ("allocating nostalgia ... 64k ok"), a <strong>plasma</strong> (four overlapping sine fields indexed into a palette built from this site's green/yellow/pink), a <strong>starfield</strong> with a spinning wireframe icosahedron, a <strong>tunnel</strong>, <strong>copper bars</strong>, and a <strong>sine scroller</strong> carrying the greetings, because a demo without a scroller is legally just a screensaver.</p>
+
+    <p>The tunnel is my favourite trick in the file. It looks like 3D but it's a lookup table: for every pixel you precompute an angle and a distance from centre once at startup, then each frame you just offset those coordinates into a procedural texture. Motion without geometry:</p>
+
+    <pre><code>const dx = x - 160, dy = y - 90;
+const dist = Math.max(Math.hypot(dx, dy), 1);
+tunnelU[i] = ((Math.atan2(dy, dx) / Math.PI + 1) * 128) & 255;
+tunnelV[i] = (2400 / dist) & 255;   // rows rush toward you for free</code></pre>
+
+    <p>People were doing this on hardware with less memory than this paragraph. I knew that intellectually. Watching it come together in an evening made me feel it.</p>
+
+    <h2>The music</h2>
+
+    <p>The soundtrack is a tiny tracker written on the Web Audio API — a scheduler wakes up every 25 milliseconds and schedules the next eighth-of-a-second of notes: square-wave arpeggios for the lead, a triangle bass, a kick made from a sine wave pitch-diving from 130Hz to 38Hz, hats and snares carved out of one shared buffer of white noise. Four chords (Am–F–C–G, the minivan of chord progressions, chosen without shame), 112 BPM.</p>
+
+    <p>The part I genuinely like: the music is the clock. Scene changes happen on bar boundaries, computed from the audio context's own timestamp, so the plasma drops exactly when the lead comes in and the whole thing stays in sync even if your GPU hiccups. The visuals follow the song, not the other way around. There's even a little tracker-style position readout in the corner (<code>pat 02 row 1A</code>) for the three people who will recognise what it's imitating. This post is for you three.</p>
+
+    <h2>What working with Fable was actually like</h2>
+
+    <p>Honest version, since this is nominally its eulogy: the striking thing was never that it knows what a plasma effect is. Everything knows what a plasma effect is. It's that it holds the whole shape of a thing at once — the palette as little-endian integer tricks, the audio scheduler's lookahead window, the way the scene fades should key off bar numbers rather than wall-clock seconds — and keeps all of it consistent across one long file without wandering off to install a framework. My job was taste and vetoes. Its job was everything between the taste and the vetoes.</p>
+
+    <p>I'm aware there's something faintly absurd about a farewell demo <em>written by the thing being farewelled</em>. The greetz scroller contains the line "models are deprecated, demos are forever," which Fable wrote about itself, and I've decided not to think too hard about how that makes me feel about seven dollars' worth of domain name hosting a machine's self-penned memorial.</p>
+
+    <h2>Deprecated, but forever</h2>
+
+    <p>Here's the thing about demos that made the whole exercise feel right instead of maudlin: the platforms die and the demos keep running. People still run Amiga intros from 1991 — the hardware is gone, the companies are gone, the scene has scattered, and the code still draws its sine scrollers on anything that can emulate a 68000. The artifact outlives the tool. Every time.</p>
+
+    <p>In a few days the model gets switched off, or archived, or whatever the right verb is. The demo stays up. Static files on GitHub Pages, no dependencies, nothing to rot. As long as browsers can execute a canvas and an oscillator, there's a corner of this website where it's permanently July 2026 and something is very pleased with its copper bars.</p>
+
+    <p><a href="/demo/">Go press run.</a> Sound on.</p>
+
+    <p><em>// end of transmission</em></p>
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-footer-sig">// Steven William Fry — Jul 2, 2026</div>
+    <a href="/" class="back-link">← back to all posts</a>
+  </footer>
+</article>
+
+<script defer src="/assets/js/site.js"></script>
+
+</body>
+</html>

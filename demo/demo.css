@@ -1,0 +1,183 @@
+/* FABLE//5 — farewell demo. Isolated from site.css on purpose: this page is
+   a fullscreen canvas piece, not a content page. Palette matches the site. */
+
+:root {
+  --bg: #080b0f;
+  --surface: #0e1318;
+  --accent: #00ff9d;
+  --accent2: #ff4d6d;
+  --accent3: #ffd60a;
+  --text: #d4e0ec;
+  --muted: #5a7a94;
+  --font-mono: "Martian Mono", "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  background: #000;
+}
+
+/* Pixel canvas: 320×180 stretched to cover, nearest-neighbour */
+#fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Full-res overlay for text, wireframes, HUD art */
+#ui {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* CRT scanlines + vignette, pure CSS */
+#scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.22) 3px,
+      transparent 4px
+    );
+  mix-blend-mode: multiply;
+}
+
+/* Start gate — the demo never autoplays */
+#gate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(14, 19, 24, 0.9), rgba(0, 0, 0, 0.97));
+  z-index: 10;
+  transition: opacity 0.5s ease;
+}
+
+#gate.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gate-box {
+  text-align: center;
+  padding: 2rem;
+  max-width: 34rem;
+}
+
+.gate-label {
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.gate-title {
+  color: var(--accent);
+  font-size: clamp(2.6rem, 10vw, 5rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-shadow:
+    2px 0 0 rgba(255, 77, 109, 0.55),
+    -2px 0 0 rgba(0, 255, 157, 0.35),
+    0 0 26px rgba(0, 255, 157, 0.35);
+  animation: gate-flicker 4s infinite steps(1);
+}
+
+@keyframes gate-flicker {
+  0%, 92%, 96%, 100% { opacity: 1; }
+  93%, 95% { opacity: 0.75; }
+}
+
+.gate-sub {
+  color: var(--text);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  margin: 1rem 0 2rem;
+}
+
+#run-btn {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  color: var(--bg);
+  background: var(--accent);
+  border: none;
+  border-radius: 4px;
+  padding: 0.85rem 2.2rem;
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(0, 255, 157, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#run-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 38px rgba(0, 255, 157, 0.65);
+}
+
+.gate-warn {
+  color: var(--muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  margin-top: 1.4rem;
+  line-height: 1.7;
+}
+
+.gate-warn span { color: var(--accent3); }
+
+.gate-home {
+  display: inline-block;
+  margin-top: 1.6rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.gate-home:hover { color: var(--accent); }
+
+/* Tracker-style HUD */
+#hud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  color: var(--muted);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  z-index: 5;
+  pointer-events: none;
+}
+
+#hud-tracker { color: var(--accent); opacity: 0.7; }
+.hud-keys { opacity: 0.6; }
+
+@media (max-width: 600px) {
+  .hud-keys { display: none; }
+}

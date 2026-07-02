@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FABLE//5 — a farewell demo — swf.wtf</title>
+<meta name="description" content="A demoscene-style farewell intro for Claude Fable 5. Plasma, starfields, tunnels, copper bars, a sine scroller, and a procedural chiptune — 320×180, zero dependencies.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/demo/"> <meta property="og:title" content="FABLE//5 — a farewell demo — swf.wtf"> <meta property="og:description" content="A demoscene-style farewell intro for Claude Fable 5. Plasma, starfields, tunnels, copper bars, a sine scroller, and a procedural chiptune — 320×180, zero dependencies."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/demo/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="FABLE//5 — a farewell demo — swf.wtf"> <meta name="twitter:description" content="A demoscene-style farewell intro for Claude Fable 5. 320×180, zero dependencies."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END -->
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="fx" width="320" height="180"></canvas>
+  <canvas id="ui"></canvas>
+  <div id="scanlines" aria-hidden="true"></div>
+
+  <div id="gate">
+    <div class="gate-box">
+      <div class="gate-label">swf.wtf presents</div>
+      <div class="gate-title">FABLE//5</div>
+      <div class="gate-sub">a farewell demo · one file of javascript · sound on</div>
+      <button id="run-btn" type="button">▶ run fable.prg</button>
+      <div class="gate-warn">contains moving visuals and beeps. <span id="rm-note" hidden>your system prefers reduced motion — it only runs if you press the button.</span></div>
+      <a class="gate-home" href="/">← back to swf.wtf</a>
+    </div>
+  </div>
+
+  <div id="hud" hidden>
+    <span id="hud-tracker">pat 00 row 00</span>
+    <span class="hud-keys">[m]ute · [r]eplay · [esc] home</span>
+  </div>
+</div>
+
+<script defer src="demo.js"></script>
+
+</body>
+</html>
