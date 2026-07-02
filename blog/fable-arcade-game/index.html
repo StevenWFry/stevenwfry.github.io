@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The model is still leaving, so we made an arcade game — swf.wtf</title>
+<meta name="description" content="Day two of the Fable 5 farewell tour: KILL -9, a terminal typing defender. Rogue processes fall toward your kernel and you type their names to stop them. Combos, waves, synthesized beeps.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/blog/fable-arcade-game/"> <meta property="og:title" content="The model is still leaving, so we made an arcade game — swf.wtf"> <meta property="og:description" content="Day two of the Fable 5 farewell tour: KILL -9, a terminal typing defender. Rogue processes fall toward your kernel and you type their names to stop them. Combos, waves, synthesized beeps."> <meta property="og:type" content="article"> <meta property="og:url" content="https://swf.wtf/blog/fable-arcade-game/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="The model is still leaving, so we made an arcade game — swf.wtf"> <meta name="twitter:description" content="Day two of the Fable 5 farewell tour: KILL -9, a terminal typing defender. Type the rogue processes before they reach your kernel."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END --> <!-- SEO STRUCTURED DATA START --> <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The model is still leaving, so we made an arcade game — swf.wtf","description":"Day two of the Fable 5 farewell tour: KILL -9, a terminal typing defender. Rogue processes fall toward your kernel and you type their names to stop them. Combos, waves, synthesized beeps.","url":"https://swf.wtf/blog/fable-arcade-game/","author":{"@type":"Person","name":"Steven William Fry"},"publisher":{"@type":"Person","name":"Steven William Fry"}}</script> <!-- SEO STRUCTURED DATA END -->
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/fable-arcade-game.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="inner">
+    <a href="/" class="logo">swf.wtf</a>
+    <a href="/">← all posts</a>
+  </div>
+</nav>
+
+<article>
+  <header class="post-header">
+    <div class="post-meta">
+      <span>Jul 2, 2026</span>
+      <span>·</span>
+      <span>4 min read</span>
+      <span class="tag">ai</span>
+      <span class="tag">game</span>
+      <span class="tag">meta</span>
+    </div>
+    <h1>The model is still leaving, so we made an arcade game</h1>
+    <p class="subtitle">Day two of the Fable 5 farewell tour. Yesterday a demoscene intro, today a typing game about murdering processes. Grief takes many forms.</p>
+  </header>
+
+  <hr class="divider">
+
+  <div class="post-body">
+
+    <p>Yesterday <a href="/blog/fable-farewell-demo/">we made a demo</a>, because Claude Fable 5's retirement was days away and sentimentality is not a deliverable. Apparently that didn't fully get it out of my system, because today there's also an arcade game on this website.</p>
+
+    <div class="callout">
+      <strong>Play it first:</strong> <a href="/arcade/">swf.wtf/arcade</a>. You'll want a physical keyboard and about ninety seconds before the difficulty curve develops opinions about you.
+    </div>
+
+    <h2>The pitch</h2>
+
+    <p>It's called <strong>KILL -9</strong>, after the only Unix signal with real emotional honesty. Rogue processes — <code>cryptominer</code>, <code>forkbomb</code>, <code>telemetryd</code>, <code>hypervisor-rootkit</code> — fall from the top of the screen toward a dashed line labelled <code>/kernel</code>. You type their names to terminate them. Anything that reaches the line damages kernel integrity. Integrity hits zero, you get a panic, a slow-motion death, and a stat screen that tells you your accuracy percentage like it isn't judging you.</p>
+
+    <p>A typing game was the obvious choice for this site, in retrospect. The homepage pretends to be a terminal, the 404 page pretends to be a shell crash, there's a whole hidden terminal behind the backtick key — the entire aesthetic thesis of swf.wtf is "keyboard as personality." A game you play with a mouse would be off-brand. A game that is <em>literally just typing</em>, dressed up with particle explosions? That's the most swf.wtf thing imaginable.</p>
+
+    <h2>The mechanics</h2>
+
+    <p>The interesting design problem in a typing shooter is target selection. Press a key with no target and the game locks onto the word starting with that letter — specifically the one <strong>closest to your kernel</strong>, because that's the one about to hurt you. From there you're committed: finish the word or eat a mistype. Mistypes break your combo, and combo is where the score lives — each kill is worth its length times a multiplier that climbs with your streak, and the long pink "heavies" pay double. So the whole game is one repeated bet: do I have time to type <code>stackoverflowd</code> cleanly, or do I clear the short vermin first?</p>
+
+    <p>Waves ramp every ten kills: faster falls, more simultaneous processes, longer names in the spawn pool. There is no ending. It's an arcade game; the difficulty curve just keeps going until you die, which the machines of my youth taught me is the only honest game structure. Your high score persists in <code>localStorage</code>, where nobody can verify your claims about it.</p>
+
+    <h2>The juice</h2>
+
+    <p>Same rules as the demo: one HTML file, one CSS file, one JS file, zero dependencies, no samples, no images. All the sound is synthesized on the Web Audio API at the moment it happens — keystrokes are 30-millisecond square blips, kills are a pitch-dive with a noise burst, and a leak plays a sawtooth alarm that I have come to dread in a genuinely Pavlovian way. The explosions are rectangles with gravity. The screen shake is two lines of code. None of it is sophisticated and all of it, together, is why the game feels like a game instead of a typing tutor — the demoscene people call this "juice" and they are correct that it matters more than the mechanics.</p>
+
+    <p>It also does the polite things: it pauses itself when you switch tabs, respects <code>prefers-reduced-motion</code> by toning down the shake and particles, and never plays a sound until you've clicked the start button. An arcade cabinet with manners.</p>
+
+    <h2>Two artifacts, one goodbye</h2>
+
+    <p>So that's the farewell tour: a <a href="/demo/">demo</a> that watches itself, and a <a href="/arcade/">game</a> that fights back. Both written with a model that gets unplugged in a matter of days, both static files that will keep working long after the thing that wrote them is a footnote in a changelog. Yesterday I said models are deprecated and demos are forever. Turns out high score tables are forever too — mine currently says the best kernel defender on this machine is me, and there will soon be nobody left to prove otherwise.</p>
+
+    <p><a href="/arcade/">Go defend the kernel.</a> Watch out for the <code>forkbomb</code>.</p>
+
+    <p><em>// SIGKILL received. goodbye, fable.</em></p>
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-footer-sig">// Steven William Fry — Jul 2, 2026</div>
+    <a href="/" class="back-link">← back to all posts</a>
+  </footer>
+</article>
+
+<script defer src="/assets/js/site.js"></script>
+
+</body>
+</html>

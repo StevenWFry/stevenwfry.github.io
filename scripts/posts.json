@@ -6,6 +6,16 @@
   },
   "posts": [
     {
+      "title": "The model is still leaving, so we made an arcade game",
+      "shortTitle": "The model is still leaving, so we made a game",
+      "url": "/blog/fable-arcade-game/",
+      "date": "2026-07-02",
+      "type": "blog",
+      "tag": "game",
+      "tags": ["ai", "game", "meta"],
+      "description": "Day two of the Fable 5 farewell tour: KILL -9, a terminal typing defender. Rogue processes fall toward your kernel and you type their names to stop them. Combos, waves, synthesized beeps, zero dependencies."
+    },
+    {
       "title": "The model is leaving, so we made a demo",
       "url": "/blog/fable-farewell-demo/",
       "date": "2026-07-02",
@@ -166,6 +176,7 @@
     { "loc": "/apps/", "lastmod": "2026-03-14" },
     { "loc": "/pirate-copilot/", "lastmod": "2026-02-26" },
     { "loc": "/demo/", "lastmod": "2026-07-02" },
+    { "loc": "/arcade/", "lastmod": "2026-07-02" },
     { "loc": "/packetmanifest/privacy/", "lastmod": "2026-03-11" },
     { "loc": "/packetmanifest/support/", "lastmod": "2026-03-11" },
     { "loc": "/ic4workout/", "lastmod": "2026-03-16" },

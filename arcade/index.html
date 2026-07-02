@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KILL -9 — a terminal typing defender — swf.wtf</title>
+<meta name="description" content="Rogue processes are falling toward your kernel. Type their names to terminate them. A keyboard-first arcade game in one file of JavaScript — combos, waves, synthesized beeps, zero dependencies.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/arcade/"> <meta property="og:title" content="KILL -9 — a terminal typing defender — swf.wtf"> <meta property="og:description" content="Rogue processes are falling toward your kernel. Type their names to terminate them. A keyboard-first arcade game in one file of JavaScript — combos, waves, synthesized beeps, zero dependencies."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/arcade/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="KILL -9 — a terminal typing defender — swf.wtf"> <meta name="twitter:description" content="Rogue processes are falling toward your kernel. Type their names to terminate them. Keyboard-first, zero dependencies."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END -->
+<link rel="stylesheet" href="arcade.css">
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="game"></canvas>
+  <div id="scanlines" aria-hidden="true"></div>
+
+  <div id="start" class="overlay">
+    <div class="panel">
+      <div class="panel-label">swf.wtf arcade</div>
+      <div class="panel-title">KILL -9</div>
+      <div class="panel-sub">a terminal typing defender</div>
+      <p class="panel-text">
+        rogue processes are falling toward your kernel.<br>
+        <strong>type their names to terminate them.</strong><br>
+        mistypes break your combo. leaks damage the kernel.<br>
+        when integrity hits zero, it's a panic.
+      </p>
+      <button id="start-btn" type="button">▶ sudo ./kill-9</button>
+      <div class="panel-hiscore" id="hiscore-line">high score: 0</div>
+      <div class="panel-keys">[esc] pause · [m] mute · best with a physical keyboard</div>
+      <a class="panel-home" href="/">← back to swf.wtf</a>
+    </div>
+  </div>
+
+  <div id="pause" class="overlay" hidden>
+    <div class="panel">
+      <div class="panel-title small">PAUSED</div>
+      <p class="panel-text">the processes wait for no one. except now.</p>
+      <button id="resume-btn" type="button">▶ resume</button>
+      <button id="quit-btn" type="button" class="ghost">✕ abort run</button>
+    </div>
+  </div>
+
+  <div id="over" class="overlay" hidden>
+    <div class="panel">
+      <div class="panel-label">kernel panic</div>
+      <div class="panel-title small">GAME OVER</div>
+      <div class="panel-stats" id="stats"></div>
+      <button id="retry-btn" type="button">▶ respawn</button>
+      <a class="panel-home" href="/">← back to swf.wtf</a>
+    </div>
+  </div>
+
+  <!-- summons the soft keyboard on touch devices -->
+  <input id="mobile-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-hidden="true" tabindex="-1">
+</div>
+
+<script defer src="arcade.js"></script>
+
+</body>
+</html>

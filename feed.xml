@@ -9,6 +9,13 @@
   <lastBuildDate>Thu, 02 Jul 2026 12:00:00 +0000</lastBuildDate>
   <atom:link href="https://swf.wtf/feed.xml" rel="self" type="application/rss+xml"/>
   <item>
+    <title>The model is still leaving, so we made an arcade game</title>
+    <link>https://swf.wtf/blog/fable-arcade-game/</link>
+    <guid isPermaLink="true">https://swf.wtf/blog/fable-arcade-game/</guid>
+    <pubDate>Thu, 02 Jul 2026 12:00:00 +0000</pubDate>
+    <description>Day two of the Fable 5 farewell tour: KILL -9, a terminal typing defender. Rogue processes fall toward your kernel and you type their names to stop them. Combos, waves, synthesized beeps, zero dependencies.</description>
+  </item>
+  <item>
     <title>The model is leaving, so we made a demo</title>
     <link>https://swf.wtf/blog/fable-farewell-demo/</link>
     <guid isPermaLink="true">https://swf.wtf/blog/fable-farewell-demo/</guid>
