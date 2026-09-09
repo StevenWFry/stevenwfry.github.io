@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WattDeck — Support</title>
+<meta name="description" content="Support page for the WattDeck iOS app.">
+<link rel="canonical" href="https://swf.wtf/wattdeck/support/">
+<meta property="og:title" content="WattDeck — Support">
+<meta property="og:description" content="Support, compatibility notes, and common questions for WattDeck.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://swf.wtf/wattdeck/support/">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/about.css">
+</head>
+<body data-konami="true">
+<div class="cursor" id="cursor"></div>
+<div class="terminal-bar">
+  <div class="terminal-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+  <div class="terminal-title">wattdeck — support — bash — 220×52</div>
+  <a href="/apps/" class="terminal-back">← apps</a>
+  <div class="terminal-cmd">q to quit <span class="blink">▋</span></div>
+</div>
+<div class="manpage">
+  <div class="man-header">
+    <span class="man-header-left">wattdeck(1)</span>
+    <span class="man-header-center">Support</span>
+    <span class="man-header-right">wattdeck(1)</span>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Name</div>
+    <div class="synopsis"><span class="cmd">WattDeck</span> — support</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Contact</div>
+    <div class="man-body">
+      <p>Need help, or want to report that your bike works? Email <a href="mailto:steven@swf.wtf" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">steven@swf.wtf</a></p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Common Questions</div>
+    <div class="def-list">
+      <div class="def-item"><div class="def-term">Which bikes work?</div><div class="def-desc">Any indoor bike that broadcasts the standard Bluetooth Fitness Machine Service (FTMS) for Indoor Bike Data. Most modern connected spin bikes do. If yours does not appear, it may not support FTMS.</div></div>
+      <div class="def-item"><div class="def-term">My bike does not appear while scanning</div><div class="def-desc">Wake the bike by pedalling or pressing a console button, then scan again. Also check that no other app is already connected — most bikes allow only one active Bluetooth connection at a time, so a training app running in the background will hold the bike.</div></div>
+      <div class="def-item"><div class="def-term">I see power, cadence and speed, but not distance or elapsed time</div><div class="def-desc">Some bikes leave those fields out of their FTMS packets. WattDeck estimates elapsed time and distance locally during an active workout so you still get a complete ride summary.</div></div>
+      <div class="def-item"><div class="def-term">My ride did not appear in history</div><div class="def-desc">Rides shorter than a minute are treated as accidental and are not saved, so a stray start and stop does not clutter your history. Ride for at least a minute before stopping.</div></div>
+      <div class="def-item"><div class="def-term">The power numbers look too high</div><div class="def-desc">Consumer bikes estimate power from cadence and resistance rather than measuring it with a strain gauge, and many read high. Use the power correction slider in settings to scale readings so they line up with a meter you trust.</div></div>
+      <div class="def-item"><div class="def-term">Apple Health permission seems slow to appear</div><div class="def-desc">The system permission sheet can take a moment. The app shows a requesting state immediately while iOS prepares the prompt.</div></div>
+      <div class="def-item"><div class="def-term">Heart-rate zones look wrong for me</div><div class="def-desc">Zone thresholds are adjustable in settings. The defaults are only a starting point.</div></div>
+      <div class="def-item"><div class="def-term">Can WattDeck change my bike's resistance?</div><div class="def-desc">No. WattDeck reads your bike; it does not control it. Most bikes do not expose resistance control over Bluetooth.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">See Also</div>
+    <div class="see-also">
+      <a href="/wattdeck/">App page</a><br>
+      <a href="/wattdeck/privacy/">Privacy Policy</a>
+    </div>
+  </div>
+
+  <div class="man-footer"><span>swf.wtf</span><span>September 2026</span><span>wattdeck(1)</span></div>
+</div>
+<script defer src="/assets/js/site.js"></script>
+</body>
+</html>

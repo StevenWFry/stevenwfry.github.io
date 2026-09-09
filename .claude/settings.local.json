@@ -5,7 +5,19 @@
       "Bash(git restore:*)",
       "Bash(git commit:*)",
       "Bash(git push)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git push:*)",
+      "Bash(for repo:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $repo ===\")",
+      "Read(//Users/swf/Documents/repos/$repo/**)",
+      "Bash(done)",
+      "Bash(echo \"=== $repo CLAUDE.md ===\")",
+      "Bash(python3 -)",
+      "Bash(python3 -c \"import xml.dom.minidom; xml.dom.minidom.parse\\('feed.xml'\\); print\\('feed.xml is well-formed XML'\\)\")",
+      "Bash(python3 -c \"import xml.dom.minidom; xml.dom.minidom.parse\\('feed.xml'\\); print\\('feed.xml still well-formed'\\)\")",
+      "Bash(python3 scripts/build_site_indexes.py)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }

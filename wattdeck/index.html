@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WattDeck — Indoor Cycling Dashboard</title>
+<meta name="description" content="WattDeck is an iPhone app for Bluetooth FTMS indoor bikes that shows the live power, cadence and heart rate data Apple’s Workout app misses.">
+<link rel="canonical" href="https://swf.wtf/wattdeck/">
+<meta property="og:title" content="WattDeck — Indoor Cycling Dashboard">
+<meta property="og:description" content="Live power, cadence, speed and heart rate from your Bluetooth FTMS indoor bike, with on-device ride history and Apple Health export.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://swf.wtf/wattdeck/">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/about.css">
+</head>
+<body data-konami="true">
+
+<div class="cursor" id="cursor"></div>
+
+<div class="terminal-bar">
+  <div class="terminal-dots">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+  </div>
+  <div class="terminal-title">wattdeck — app page — bash — 220×52</div>
+  <a href="/apps/" class="terminal-back">← apps</a>
+  <div class="terminal-cmd">q to quit <span class="blink">▋</span></div>
+</div>
+
+<div class="manpage">
+  <div class="man-header">
+    <span class="man-header-left">wattdeck(1)</span>
+    <span class="man-header-center">Indoor Cycling Dashboard</span>
+    <span class="man-header-right">wattdeck(1)</span>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Name</div>
+    <div class="synopsis"><span class="cmd">WattDeck</span> — Bluetooth FTMS dashboard for indoor bikes</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">What It Is</div>
+    <div class="man-body">
+      <p>WattDeck is an iPhone app for indoor cycling bikes that speak Bluetooth FTMS. It surfaces the ride data Apple’s Workout app does not read from FTMS — above all, live power.</p>
+      <p>During a ride it shows power, cadence, speed, heart rate, elapsed time, distance and calories, and charts power, cadence and heart rate as you go. Finished rides are stored on the device and can be written to Apple Health.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Compatibility</div>
+    <div class="man-body">
+      <p>WattDeck works with indoor bikes that broadcast the standard Bluetooth Fitness Machine Service (FTMS) for Indoor Bike Data. Most modern connected spin bikes do.</p>
+      <p>What you see depends on what your bike actually advertises. Bikes that omit distance or elapsed time from their FTMS packets are handled by estimating those locally during a workout.</p>
+      <p>Heart rate is read from the bike, or from any standard Bluetooth heart rate monitor.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Features</div>
+    <div class="def-list">
+      <div class="def-item"><div class="def-term">Live ride metrics</div><div class="def-desc">Power, cadence, speed, heart rate, elapsed time, distance and calories in a high-contrast workout dashboard.</div></div>
+      <div class="def-item"><div class="def-term">Live graphs</div><div class="def-desc">Power, cadence and heart rate charted across the last few minutes of the ride, so you can see your effort as a shape rather than a number.</div></div>
+      <div class="def-item"><div class="def-term">Ride history</div><div class="def-desc">Every ride is kept on the device with its full recording, not just totals. Open a past ride to see the whole session charted from start to finish.</div></div>
+      <div class="def-item"><div class="def-term">Apple Health export</div><div class="def-desc">Save completed rides to Apple Health as indoor cycling workouts, including duration, distance, active energy and heart-rate samples.</div></div>
+      <div class="def-item"><div class="def-term">Power correction</div><div class="def-desc">Consumer bikes estimate power rather than measuring it, and many read high. A correction slider scales the readings to match a known-good meter.</div></div>
+      <div class="def-item"><div class="def-term">Heart-rate zones</div><div class="def-desc">Set your own zone thresholds instead of accepting fixed defaults.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Privacy</div>
+    <div class="man-body">
+      <p>No account, no sign-in, no server. WattDeck has no network access at all — your rides live on your device and in Apple Health, and nowhere else.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Support</div>
+    <div class="see-also">
+      <a href="/wattdeck/support/">Support page</a><br>
+      <a href="/wattdeck/privacy/">Privacy Policy</a><br>
+      <a href="mailto:steven@swf.wtf">steven@swf.wtf</a>
+    </div>
+  </div>
+
+  <div class="man-footer">
+    <span>swf.wtf</span>
+    <span>September 2026</span>
+    <span>wattdeck(1)</span>
+  </div>
+</div>
+
+<script defer src="/assets/js/site.js"></script>
+</body>
+</html>

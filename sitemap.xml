@@ -189,18 +189,6 @@
     <lastmod>2026-06-12</lastmod>
   </url>
   <url>
-    <loc>https://swf.wtf/ic4workout/</loc>
-    <lastmod>2026-03-16</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/ic4workout/privacy/</loc>
-    <lastmod>2026-03-16</lastmod>
-  </url>
-  <url>
-    <loc>https://swf.wtf/ic4workout/support/</loc>
-    <lastmod>2026-03-16</lastmod>
-  </url>
-  <url>
     <loc>https://swf.wtf/now.html</loc>
     <lastmod>2026-07-01</lastmod>
   </url>
@@ -215,5 +203,17 @@
   <url>
     <loc>https://swf.wtf/pirate-copilot/</loc>
     <lastmod>2026-02-26</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/wattdeck/</loc>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/wattdeck/privacy/</loc>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://swf.wtf/wattdeck/support/</loc>
+    <lastmod>2026-09-09</lastmod>
   </url>
 </urlset>
