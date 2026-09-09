@@ -5,8 +5,8 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apps - swf.wtf</title>
-<meta name="description" content="iOS apps by Steven Fry — PacketManifest, WattDeck, and more.">
-<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/apps/"> <meta property="og:title" content="Apps - swf.wtf"> <meta property="og:description" content="iOS apps by Steven Fry — PacketManifest and more."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/apps/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Apps - swf.wtf"> <meta name="twitter:description" content="iOS apps by Steven Fry — PacketManifest and more."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END -->
+<meta name="description" content="iOS apps by Steven Fry — WattDeck, ACLS Simulator, OSCE Sim.">
+<!-- SEO META START --> <link rel="canonical" href="https://swf.wtf/apps/"> <meta property="og:title" content="Apps - swf.wtf"> <meta property="og:description" content="iOS apps by Steven Fry — WattDeck, ACLS Simulator, OSCE Sim."> <meta property="og:type" content="website"> <meta property="og:url" content="https://swf.wtf/apps/"> <meta property="og:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Apps - swf.wtf"> <meta name="twitter:description" content="iOS apps by Steven Fry — WattDeck, ACLS Simulator, OSCE Sim."> <meta name="twitter:image" content="https://swf.wtf/assets/img/og-default.png"> <meta name="twitter:site" content="@swfwtf"> <!-- SEO META END -->
 <link rel="stylesheet" href="/assets/css/site.css">
 <style>
   header {
@@ -262,27 +262,6 @@
 
   <div class="app-grid">
 
-    <!-- PacketManifest -->
-    <div class="app-card app-card--active">
-      <div class="app-header">
-        <div class="app-icon">📡</div>
-        <div class="app-meta">
-          <div class="app-name">
-            PacketManifest
-            <span class="app-status-badge badge-review">In Review</span>
-          </div>
-          <div class="app-platform">iOS &middot; Network Monitor</div>
-        </div>
-      </div>
-      <p class="app-desc">
-        See every connection your iPhone makes in real time. PacketManifest captures outbound traffic via a local VPN tunnel and displays hostnames, IP addresses, ports, and geographic locations on a live world map — all stored on-device, never sent anywhere.
-      </p>
-      <div class="app-links">
-        <a href="/packetmanifest/support/" class="app-link app-link--primary">Support</a>
-        <a href="/packetmanifest/privacy/" class="app-link">Privacy Policy</a>
-      </div>
-    </div>
-
     <!-- WattDeck -->
     <div class="app-card app-card--active">
       <div class="app-header">
@@ -290,7 +269,7 @@
         <div class="app-meta">
           <div class="app-name">
             WattDeck
-            <span class="app-status-badge badge-dev">In Review</span>
+            <span class="app-status-badge badge-review">In Review</span>
           </div>
           <div class="app-platform">iOS &middot; Indoor Cycling / Bluetooth</div>
         </div>
@@ -305,23 +284,6 @@
       </div>
     </div>
 
-    <!-- Kingston Bus Tracker -->
-    <div class="app-card">
-      <div class="app-header">
-        <div class="app-icon">🚌</div>
-        <div class="app-meta">
-          <div class="app-name">
-            Kingston Bus Tracker
-            <span class="app-status-badge badge-dev">In Development</span>
-          </div>
-          <div class="app-platform">iOS &middot; Transit / Maps</div>
-        </div>
-      </div>
-      <p class="app-desc">
-        Native iOS app for Kingston Transit using the City of Kingston's public GTFS and GTFS-Realtime feeds. Live vehicle positions on a SwiftUI map, stop arrivals, trip updates, and service alerts — no API key required, all public data.
-      </p>
-    </div>
-
     <!-- ACLS Simulator -->
     <div class="app-card">
       <div class="app-header">
@@ -329,13 +291,30 @@
         <div class="app-meta">
           <div class="app-name">
             ACLS Simulator
-            <span class="app-status-badge badge-dev">Early Dev</span>
+            <span class="app-status-badge badge-dev">Pre-Release</span>
           </div>
-          <div class="app-platform">iOS · iPad &middot; Medical / Education</div>
+          <div class="app-platform">iOS &middot; iPad &middot; Medical / Education</div>
         </div>
       </div>
       <p class="app-desc">
-        iOS port of an Advanced Cardiac Life Support training simulator. The deterministic scenario engine and domain models are ported from Android to a Swift package. SwiftUI app shell in progress.
+        A SwiftUI training simulator for Advanced Cardiac Life Support, ported from an Android original that stays the reference for clinical content. A deterministic scenario engine drives the monitor — live ECG waveform rendering, monitor audio and equipment state — alongside flashcards, briefings, narrated lessons and a scored results review. Educational use only; not for clinical decision-making or patient care.
+      </p>
+    </div>
+
+    <!-- OSCE Sim -->
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-icon">🩺</div>
+        <div class="app-meta">
+          <div class="app-name">
+            OSCE Sim
+            <span class="app-status-badge badge-dev">In Development</span>
+          </div>
+          <div class="app-platform">iOS &middot; Medical / Education</div>
+        </div>
+      </div>
+      <p class="app-desc">
+        A native SwiftUI simulator for the OSCE — the Objective Structured Clinical Examination that medical students sit. Work a full patient encounter end to end: history taking, physical exam and clinical reasoning, speaking to the simulated patient using on-device speech recognition, then weighted scoring, SOAP notes and a structured discussion. Audio never leaves the device. Educational use only; not for clinical decision-making or patient care.
       </p>
     </div>
 
